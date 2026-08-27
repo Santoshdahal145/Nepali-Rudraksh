@@ -1,5 +1,5 @@
 
-import { db } from "@/src/prisma/db";
+import { db } from "../../src/prisma/db"
 import type { CreateUserInput } from "./user.schema"
 
 export async function createUser(input: CreateUserInput) {
@@ -14,15 +14,13 @@ export async function createUser(input: CreateUserInput) {
 
     return db.orm.public.User.create({
         email: input.email,
-        name: input.name,
-
     });
 }
 
 export async function getUserById(id: number) {
-    return db.orm.public.User.select("id", "email", "name").where({ id }).first();
+    return db.orm.public.User.select("id", "email").where({ id }).first();
 }
 
 export async function listUsers() {
-    return db.orm.public.User.select("id", "email", "name").all();
+    return db.orm.public.User.select("id", "email").all();
 }

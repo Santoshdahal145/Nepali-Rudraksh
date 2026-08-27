@@ -1,0 +1,4 @@
+bunx prisma@latest contract emit
+bunx prisma@latest migration ref set db {previous-migration-hash}
+bunx prisma@latest migration plan --name {migration-name}
+bunx prisma@latest db migrate
