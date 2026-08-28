@@ -17,10 +17,3 @@ export async function createUser(input: CreateUserInput) {
     });
 }
 
-export async function getUserById(id: number) {
-    return db.orm.public.User.select("id", "email").where({ id }).first();
-}
-
-export async function listUsers() {
-    return db.orm.public.User.select("id", "email").all();
-}
