@@ -16,6 +16,10 @@
       "model": "Category",
       "namespace": "public"
     },
+    "otp": {
+      "model": "Otp",
+      "namespace": "public"
+    },
     "product": {
       "model": "Product",
       "namespace": "public"
@@ -29,6 +33,23 @@
     "namespaces": {
       "public": {
         "enum": {
+          "OtpType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "EMAIL_VERIFICATION",
+                "value": "EMAIL_VERIFICATION"
+              },
+              {
+                "name": "PASSWORD_RESET",
+                "value": "PASSWORD_RESET"
+              },
+              {
+                "name": "PHONE_VERIFICATION",
+                "value": "PHONE_VERIFICATION"
+              }
+            ]
+          },
           "ProductType": {
             "codecId": "pg/text@1",
             "members": [
@@ -344,6 +365,119 @@
               "table": "category"
             }
           },
+          "Otp": {
+            "fields": {
+              "attempts": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "codeHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "consumedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "OtpType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "attempts": {
+                  "column": "attempts"
+                },
+                "codeHash": {
+                  "column": "codeHash"
+                },
+                "consumedAt": {
+                  "column": "consumedAt"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "otp"
+            }
+          },
           "Product": {
             "fields": {
               "categoryId": {
@@ -539,6 +673,13 @@
                 }
               },
               "firstName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "hashedRefreshToken": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -552,22 +693,29 @@
                   "kind": "scalar"
                 }
               },
-              "lastName": {
+              "isEmailVerified": {
                 "nullable": true,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastName": {
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
               "password": {
-                "nullable": true,
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
               "phoneNumber": {
-                "nullable": true,
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -609,6 +757,21 @@
                   "model": "Cart",
                   "namespace": "public"
                 }
+              },
+              "otps": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Otp",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -622,8 +785,14 @@
                 "firstName": {
                   "column": "firstName"
                 },
+                "hashedRefreshToken": {
+                  "column": "hashedRefreshToken"
+                },
                 "id": {
                   "column": "id"
+                },
+                "isEmailVerified": {
+                  "column": "isEmailVerified"
                 },
                 "lastName": {
                   "column": "lastName"
@@ -907,6 +1076,116 @@
                 }
               ]
             },
+            "otp": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('EMAIL_VERIFICATION', 'PASSWORD_RESET', 'PHONE_VERIFICATION')",
+                  "name": "otp_type_check_8270ed16",
+                  "prefix": "otp_type_check"
+                }
+              ],
+              "columns": {
+                "attempts": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "codeHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "consumedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "OtpType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "userId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "otp"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "otp_userId_idx_a489d58a",
+                  "prefix": "otp_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "userId",
+                    "type"
+                  ]
+                }
+              ]
+            },
             "product": {
               "checks": [
                 {
@@ -1071,6 +1350,11 @@
                 "firstName": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
+                  "nullable": false
+                },
+                "hashedRefreshToken": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
                   "nullable": true
                 },
                 "id": {
@@ -1082,20 +1366,25 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "isEmailVerified": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": true
+                },
                 "lastName": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": true
+                  "nullable": false
                 },
                 "password": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": true
+                  "nullable": false
                 },
                 "phoneNumber": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": true
+                  "nullable": false
                 },
                 "role": {
                   "codecId": "pg/text@1",
@@ -1135,6 +1424,14 @@
             }
           },
           "valueSet": {
+            "OtpType": {
+              "kind": "valueSet",
+              "values": [
+                "EMAIL_VERIFICATION",
+                "PASSWORD_RESET",
+                "PHONE_VERIFICATION"
+              ]
+            },
             "ProductType": {
               "kind": "valueSet",
               "values": [
@@ -1155,7 +1452,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7a0541a535c27f20a4efa887168cba246d7eb4945e1dd7022f844051815c1d27"
+    "storageHash": "db40fe91f4b1ca4f26a001bb0f3acf44f68747451556fb9cdf73a2884f519f7d"
   },
   "execution": {
     "executionHash": "56c39f607f60f4327ae379320a9888637bd9842afd32c9b784e499c7ab96c14f",

@@ -3,22 +3,45 @@ enum UserRole {
   USER
 }
 
+enum OtpType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  PHONE_VERIFICATION
+}
+
 enum ProductType {
   RAW_BEAD
   ORNAMENT
 }
 
 model User {
-  id          Int               @id @default(autoincrement())
-  email       String            @unique
-  role        UserRole?         @default(USER)
-  firstName   String?
-  lastName    String?
-  password    String?
-  phoneNumber String?
-  cart        Cart?
-  createdAt   TimestamptzString @default(now())
+  id                 Int               @id @default(autoincrement())
+  email              String            @unique
+  role               UserRole?         @default(USER)
+  firstName          String
+  lastName           String
+  hashedRefreshToken String?
+  isEmailVerified    Boolean?
+  password           String
+  phoneNumber        String
+  cart               Cart?
+  otps               Otp[]
+  createdAt          TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+}
+
+model Otp {
+  id         Int                @id @default(autoincrement())
+  userId     Int
+  user       User               @relation(fields: [userId], references: [id])
+  codeHash   String // store a HASH of the code, never the raw code
+  type       OtpType
+  expiresAt  TimestamptzString
+  consumedAt TimestamptzString? // set when used, so a code can't be reused
+  attempts   Int                @default(0) // rate-limit verification tries
+  createdAt  TimestamptzString  @default(now())
+
+  @@unique([userId, type]) // one OTP per type per user at a time
 }
 
 model Category {
