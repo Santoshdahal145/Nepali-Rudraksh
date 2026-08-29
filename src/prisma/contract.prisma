@@ -15,9 +15,9 @@ enum ProductType {
 }
 
 model User {
-  id                 Int               @id @default(autoincrement())
-  email              String            @unique
-  role               UserRole?         @default(USER)
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique
+  role               UserRole? @default(USER)
   firstName          String
   lastName           String
   hashedRefreshToken String?
@@ -26,71 +26,71 @@ model User {
   phoneNumber        String
   cart               Cart?
   otps               Otp[]
-  createdAt          TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @default(now())
 }
 
 model Otp {
-  id         Int                @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   userId     Int
-  user       User               @relation(fields: [userId], references: [id])
-  codeHash   String // store a HASH of the code, never the raw code
+  user       User      @relation(fields: [userId], references: [id])
+  codeHash   String
   type       OtpType
-  expiresAt  TimestamptzString
-  consumedAt TimestamptzString? // set when used, so a code can't be reused
-  attempts   Int                @default(0) // rate-limit verification tries
-  createdAt  TimestamptzString  @default(now())
+  expiresAt  DateTime  @default(now())
+  consumedAt DateTime? @default(now())
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
 
-  @@unique([userId, type]) // one OTP per type per user at a time
+  @@unique([userId, type])
 }
 
 model Category {
-  id          Int               @id @default(autoincrement())
-  name        String            @unique
-  slug        String            @unique
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  slug        String      @unique
   type        ProductType
   description String?
   products    Product[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now())
 }
 
 model Product {
-  id          Int               @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
-  slug        String            @unique
+  slug        String      @unique
   type        ProductType
   description String?
-  price       Int // store in paisa/cents — integer, never float for money
-  stock       Int               @default(0)
-  mukhi       Int? // faces — meaningful for rudraksh beads, null for ornaments
+  price       Int
+  stock       Int         @default(0)
+  mukhi       Int?
   imageUrl    String?
-  isActive    Boolean           @default(true)
+  isActive    Boolean     @default(true)
   categoryId  Int
-  category    Category          @relation(fields: [categoryId], references: [id])
+  category    Category    @relation(fields: [categoryId], references: [id])
   cartItems   CartItem[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now())
 }
 
 model Cart {
-  id        Int               @id @default(autoincrement())
-  userId    Int               @unique // unique → one cart per user (one-to-one)
-  user      User              @relation(fields: [userId], references: [id])
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique // unique → one cart per user (one-to-one)
+  user      User       @relation(fields: [userId], references: [id])
   items     CartItem[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
 }
 
 model CartItem {
-  id        Int               @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   cartId    Int
-  cart      Cart              @relation(fields: [cartId], references: [id])
+  cart      Cart     @relation(fields: [cartId], references: [id])
   productId Int
-  product   Product           @relation(fields: [productId], references: [id])
-  quantity  Int               @default(1)
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
   @@unique([cartId, productId]) // same product appears once per cart; bump quantity instead
 }

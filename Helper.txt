@@ -1,4 +1,61 @@
+//LOCAL DEV WORK FLOW
+
+You edit the contract, emit, and reconcile the database directly. No migration files, no graph, no plan step. Simple. 
+Good while your schema is churning and you're the only one touching the DB. This is what you used last time and it worked.
+
+# 1. edit src/prisma/contract.prisma
+# 2. compile the contract to JSON + types
 bunx prisma@latest contract emit
-bunx prisma@latest migration ref set db {previous-migration-hash}
-bunx prisma@latest migration plan --name {migration-name}
+# 3. preview what will change in the DB
+bunx prisma@latest db update --db $env:DB --dry-run
+# 4. apply it
+bunx prisma@latest db update --db $env:DB
+
+contract emit — reads your human-written contract.prisma and compiles it into contract.json (the machine-readable schema) and
+contract.d.ts (the TypeScript types your db.orm.public.* client uses). Nothing downstream sees your .prisma edits until you emit.
+This never touches the database.
+
+db update --dry-run — introspects the live database, diffs it against contract.json, and 
+shows you the operations needed to close the gap — without applying them. This is your 
+safety check. Read it: watch for destructive ops (dropping columns, setting NOT NULL on populated columns) that could fail or lose data.
+
+db update — same diff, but actually applies it, and stamps the new marker.
+If there are destructive operations it makes you type the database name to confirm.
+Now DB matches contract.
+
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+
+//PRODUCTION WORK FLOW : file-based migration workflow
+
+every change to your database is recorded as a migration file on disk.
+These files form a graph — a chain of states, each one recording "starting from schema state X, here are the operations to reach state Y." 
+Your database carries a marker saying which state it's currently at.
+
+Applying a migration means walking the graph from the marker to the target, running each migration's operations. This is what gives you
+reproducibility: anyone (a teammate, your production server, CI) can replay the same files and arrive at the identical schema.
+
+# 1. edit src/prisma/contract.prisma
+
+# 2. Emit the contract
+contract emit — reads your human-written contract.prisma and compiles it into contract.json (the machine-readable schema) and
+contract.d.ts (the TypeScript types your db.orm.public.* client uses). Nothing downstream sees your .prisma edits until you emit.
+This never touches the database.
+
+IMPORTANT ------IMPORTANT ----The emit also produces the storageHash that identifies this exact schema state; that hash becomes the migration's target.
+
+# 3. Plan the migration
+bunx prisma@latest migration plan --name add_something
+
+This diffs your newly-emitted contract against the current end of the migration graph, 
+works out the operations needed to bridge them, and writes a new migration folder under migrations/app/ —
+containing migration.ts (editable operations),
+ ops.json (compiled operations that actually run), and migration.json (the history marker recording from and to states).
+The --name is just a human label in the folder name.
+This step only writes files. It doesn't touch the database. Think of it as "record the intended change as a reviewable artifact."
+
+# 4. Review the migration
+Open the generated migration folder and read it. This is the point of Workflow B — the change is a file you inspect before it runs.
+
+# 5. Apply the migration
 bunx prisma@latest db migrate

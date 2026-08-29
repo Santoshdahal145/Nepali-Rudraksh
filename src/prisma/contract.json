@@ -83,7 +83,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -97,7 +97,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -172,7 +172,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -200,7 +200,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               }
@@ -267,7 +267,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -315,7 +315,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               }
@@ -384,21 +384,21 @@
               "consumedAt": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
               "expiresAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -490,7 +490,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -573,7 +573,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               }
@@ -661,7 +661,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -737,7 +737,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               }
@@ -826,7 +826,7 @@
             "cart": {
               "columns": {
                 "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -844,7 +844,11 @@
                   "nullable": false
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
@@ -894,7 +898,7 @@
                   "nullable": false
                 },
                 "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -926,7 +930,11 @@
                   "nullable": false
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 }
@@ -1007,7 +1015,7 @@
               ],
               "columns": {
                 "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1051,7 +1059,11 @@
                   }
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 }
@@ -1100,12 +1112,16 @@
                   "nullable": false
                 },
                 "consumedAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
                 "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1114,7 +1130,11 @@
                   "nullable": false
                 },
                 "expiresAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
@@ -1201,7 +1221,7 @@
                   "nullable": false
                 },
                 "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1278,7 +1298,11 @@
                   }
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 }
@@ -1334,7 +1358,7 @@
               ],
               "columns": {
                 "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1402,7 +1426,11 @@
                   }
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 }
@@ -1452,89 +1480,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "db40fe91f4b1ca4f26a001bb0f3acf44f68747451556fb9cdf73a2884f519f7d"
-  },
-  "execution": {
-    "executionHash": "56c39f607f60f4327ae379320a9888637bd9842afd32c9b784e499c7ab96c14f",
-    "mutations": {
-      "defaults": [
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "cart"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "cartItem"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "category"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "product"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "user"
-          }
-        }
-      ]
-    }
+    "storageHash": "ab6534e1aaf907154d80b275896292132d55692d7e21ba7267438323090b0d6c"
   },
   "capabilities": {
     "postgres": {
