@@ -3,6 +3,7 @@ import { db } from "../../src/prisma/db";
 import { sendEmail } from "../helpers/emailHelper";
 import { generateOtp } from "../user/user.service";
 import type { ForgotPasswordInput, LoginInput, ResetPasswordInput } from "./auth.schema";
+import { issueTokens } from "./token.service";
 
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 5;
@@ -24,7 +25,9 @@ export async function login(input: LoginInput) {
         throw new Error("Invalid password");
     }
     const { password, ...safeUser } = existing;
-    return safeUser;
+    const tokens = await issueTokens(existing.id, existing.role ?? "USER");
+
+    return { user:safeUser, tokens };
 }
 
 /**
