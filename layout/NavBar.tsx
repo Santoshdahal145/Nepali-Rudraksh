@@ -16,11 +16,17 @@ const links = [
   { label: "Our Story", hash: "story" },
 ];
 
+const sheetLinks = [
+  {
+    label: "Login/Register",
+    hash: "login",
+  },
+];
+
 export default function NavBar() {
   return (
     <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
       <Link href="/" className="flex items-center gap-2">
-        <span className="text-2xl text-primary">🕉</span>
         <span className="font-display text-xl font-semibold tracking-tight">
           Nepali Rudraksh
         </span>
@@ -40,7 +46,7 @@ export default function NavBar() {
       </nav>
 
       <div className="flex items-center gap-1">
-        <Button variant="ghost">
+        <Button variant="ghost" className="hidden sm:block">
           <Link href="/login">Login / Register</Link>
         </Button>
         <Button variant="ghost" size="icon" aria-label="Search">
@@ -65,7 +71,7 @@ export default function NavBar() {
           <SheetContent side="right" className="w-72">
             <SheetTitle className="font-display text-xl">Menu</SheetTitle>
             <nav className="mt-6 flex flex-col gap-4">
-              {links.map((l) => (
+              {links.concat(sheetLinks).map((l) => (
                 <Link
                   key={l.hash}
                   href="/"
