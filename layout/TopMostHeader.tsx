@@ -1,7 +1,7 @@
 const TopMostHeader = () => {
   return (
-    <div className="bg-primary py-1.5 text-center text-sm font-medium  tracking-widest text-primary-foreground uppercase">
-      ॐ नमः शिवाय — Free worldwide shipping over $150
+    <div className="bg-[#713f12] px-4 py-1.5 text-center text-[10px] sm:text-xs font-medium tracking-wider sm:tracking-widest text-amber-100 uppercase overflow-hidden text-ellipsis whitespace-nowrap">
+      ॐ नमः शिवाय &nbsp;·&nbsp; Free worldwide shipping over $150 &nbsp;·&nbsp; 100% Authentic Himalayan Rudraksha
     </div>
   );
 };

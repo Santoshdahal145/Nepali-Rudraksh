@@ -1,5 +1,12 @@
 import { Footer, NavBar, TopMostHeader } from "@/layout";
-import { CollectionSection, DevoteeStorySection, FeatureSection, HeroSection, OfferSection, OurStorySection } from "@/components/section";
+import {
+  CollectionSection,
+  DevoteeStorySection,
+  FeatureSection,
+  HeroSection,
+  OfferSection,
+  OurStorySection,
+} from "@/components/section";
 
 export default function Home() {
   return (
@@ -7,7 +14,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-md">
         <TopMostHeader />
         <NavBar />
-      </header >
+      </header>
       <HeroSection />
       <FeatureSection />
       <CollectionSection />
