@@ -4,6 +4,7 @@ import { sendEmail } from "../helpers/emailHelper";
 import { generateOtp } from "../user/user.service";
 import type { ForgotPasswordInput, LoginInput, ResetPasswordInput } from "./auth.schema";
 import { issueTokens } from "./token.service";
+import { UnauthorizedError } from "@/lib/error";
 
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 5;
@@ -13,16 +14,17 @@ const MAX_OTP_ATTEMPTS = 5;
 // ── services ─────────────────────────────────────────────────────────────────
 
 export async function login(input: LoginInput) {
+
     const existing = await db.orm.public.User
         .where({ email: input.email })
         .first();
     if (!existing) {
-        throw new Error("User not found");
+  throw new UnauthorizedError("Invalid email or password");
     }
 
     const isPasswordValid = await bcrypt.compare(input.password, existing.password);
     if (!isPasswordValid) {
-        throw new Error("Invalid password");
+         throw new UnauthorizedError("Invalid email or password");
     }
     const { password, ...safeUser } = existing;
     const tokens = await issueTokens(existing.id, existing.role ?? "USER");

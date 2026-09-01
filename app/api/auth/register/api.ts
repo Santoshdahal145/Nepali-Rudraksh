@@ -16,10 +16,10 @@ type RegisterDataPayload = {
     }
 }
 
-export const register = (data: RegisterDataPayload): ApiRequestType => {
+export const registerApi = (data: RegisterDataPayload): ApiRequestType => {
     return {
         method: "post",
-        route: `/register`,
+        route: `/user/register`,
         payload: data,
 
     };
