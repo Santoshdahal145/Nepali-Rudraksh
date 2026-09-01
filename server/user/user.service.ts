@@ -79,6 +79,51 @@ export async function createUser(input: CreateUserInput) {
     return safeUser;
 }
 
+//create admin
+export async function createAdmin(input: CreateUserInput) {
+    const existing = await checkIfUserExistsByEmail(input.email);
+    if (existing) {
+        throw new Error("Email already in use");
+    }
+
+    const hashedPassword = await bcrypt.hash(input.password, 10);
+    const code = generateOtp();
+    const codeHash = await bcrypt.hash(code, 10);
+    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60_000);
+
+    const user = await db.transaction(async (tx) => {
+        const createdUser = await tx.orm.public.User.create({
+            email: input.email,
+            firstName: input.firstName,
+            lastName: input.lastName,
+            password: hashedPassword,
+            phoneNumber: input.phoneNumber,
+            isEmailVerified: false,
+        });
+
+        await tx.orm.public.Otp.create({
+            userId: createdUser.id,
+            codeHash,
+            type: "EMAIL_VERIFICATION",
+            expiresAt,
+        });
+
+        return createdUser;
+    });
+
+    // send the raw code by email — AFTER the transaction commits
+    await sendEmail({
+        to: user.email,
+        subject: "Verify your email",
+        html: `<p>Your verification code is <strong>${code}</strong>. It expires in ${OTP_EXPIRY_MINUTES} minutes.</p>`,
+    });
+
+    // never return the password hash to the caller
+    const { password, ...safeUser } = user;
+    return safeUser;
+}
+
+
 // updates user by id
 export async function updateUser(id: number, input: UpdateUserInput) {
     const existing = await checkIfUserExistsById(id);
