@@ -18,6 +18,16 @@ export const resetPasswordSchema = z.object({
     otp: z.string(),
     password: z.string().min(8, "Password must be at least 8 characters long"),
 });
+export const validateOtpSchema = z.object({
+    email: z.email(),
+    otp: z.string(),
+
+});
+export const resendOtpSchema = z.object({
+    email: z.email(),
+
+
+});
 
 export const changePasswordSchema = z.object({
     oldPassword: z.string().min(8, "Password must be at least 8 characters long"),
@@ -27,3 +37,5 @@ export const changePasswordSchema = z.object({
 
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type ValidateOtpInput = z.infer<typeof validateOtpSchema>;
+export type ResendOtpInput = z.infer<typeof resendOtpSchema>;

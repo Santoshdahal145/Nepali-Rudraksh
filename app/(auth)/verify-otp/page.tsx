@@ -1,9 +1,27 @@
 "use client";
 
-import { useRef, useState, useEffect, KeyboardEvent, ClipboardEvent } from "react";
-import { ArrowRight, ArrowLeft, RotateCcw, ShieldCheck, Leaf, Gem, Star } from "lucide-react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  KeyboardEvent,
+  ClipboardEvent,
+} from "react";
+import {
+  ArrowRight,
+  ArrowLeft,
+  RotateCcw,
+  ShieldCheck,
+  Leaf,
+  Gem,
+  Star,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { requestAPI } from "@/lib/requestAPI";
+import { resendOtpApi } from "@/app/api/auth/resend-otp/api";
+import { verifyOtpRegisterApi } from "@/app/api/auth/verify-otp/api";
+import { useSearchParams } from "next/navigation";
 
 const OTP_LENGTH = 6;
 
@@ -31,6 +49,10 @@ const steps = [
 ];
 
 export default function VerifyOtpPage() {
+  const searchParams = useSearchParams();
+
+  const paramsEmail = searchParams.get("email");
+
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -46,11 +68,24 @@ export default function VerifyOtpPage() {
     return () => clearTimeout(timer);
   }, [countdown]);
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setCountdown(60);
     setCanResend(false);
     setOtp(Array(OTP_LENGTH).fill(""));
     inputRefs.current[0]?.focus();
+    try {
+      await requestAPI(resendOtpApi({ email: paramsEmail || "" }));
+    } catch (error) {
+      console.log("resend error", error);
+    }
+  };
+
+  const handleVerifyOtpAndEmail = async (otp: string) => {
+    try {
+      await requestAPI(verifyOtpRegisterApi({ email: paramsEmail || "", otp }));
+    } catch (error) {
+      console.log("verify error", error);
+    }
   };
 
   const handleChange = (index: number, value: string) => {
@@ -71,13 +106,17 @@ export default function VerifyOtpPage() {
 
   const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, OTP_LENGTH);
     const next = [...otp];
     pasted.split("").forEach((char, i) => {
       next[i] = char;
     });
     setOtp(next);
-    const nextEmpty = pasted.length < OTP_LENGTH ? pasted.length : OTP_LENGTH - 1;
+    const nextEmpty =
+      pasted.length < OTP_LENGTH ? pasted.length : OTP_LENGTH - 1;
     inputRefs.current[nextEmpty]?.focus();
   };
 
@@ -117,7 +156,9 @@ export default function VerifyOtpPage() {
                 {otp.map((digit, i) => (
                   <input
                     key={i}
-                    ref={(el) => { inputRefs.current[i] = el; }}
+                    ref={(el) => {
+                      inputRefs.current[i] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     maxLength={1}
@@ -129,7 +170,7 @@ export default function VerifyOtpPage() {
                     className={`h-12 w-10 rounded-xl border-2 bg-white text-center text-xl font-bold text-[#422006] outline-none transition-all sm:h-14 sm:w-12 ${
                       digit
                         ? "border-[#713f12] shadow-sm shadow-amber-900/10"
-                        : "border-amber-900/15 focus:border-amber-700"
+                        : " focus:border-amber-700"
                     }`}
                     aria-label={`OTP digit ${i + 1}`}
                   />
@@ -142,6 +183,7 @@ export default function VerifyOtpPage() {
               type="button"
               disabled={!isComplete}
               className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e] disabled:opacity-50"
+              onClick={() => handleVerifyOtpAndEmail(otp.join(""))}
             >
               Verify &amp; Continue
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -205,7 +247,9 @@ export default function VerifyOtpPage() {
               <p className="text-xs font-semibold uppercase tracking-widest text-amber-300/80">
                 Nepali Rudraksh
               </p>
-              <p className="text-lg font-bold text-white">Sacred. Authentic. Pure.</p>
+              <p className="text-lg font-bold text-white">
+                Sacred. Authentic. Pure.
+              </p>
             </div>
           </div>
           <h2 className="text-4xl font-extrabold leading-snug text-white">
@@ -213,8 +257,8 @@ export default function VerifyOtpPage() {
             <span className="text-amber-300">Your Collection</span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-amber-100/80">
-            Verify your identity to safely access your account and continue exploring
-            our authentic Himalayan Rudraksha collection.
+            Verify your identity to safely access your account and continue
+            exploring our authentic Himalayan Rudraksha collection.
           </p>
         </div>
 
@@ -230,7 +274,9 @@ export default function VerifyOtpPage() {
                   <Icon className="h-4 w-4 text-amber-300" />
                 </div>
                 <p className="text-sm font-semibold text-white">{title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-amber-100/70">{desc}</p>
+                <p className="mt-1 text-xs leading-relaxed text-amber-100/70">
+                  {desc}
+                </p>
               </div>
             ))}
           </div>
@@ -240,29 +286,33 @@ export default function VerifyOtpPage() {
         <div className="relative px-12 pb-10">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-amber-300/80">
-              Recovery progress
+              Account progress
             </p>
             <div className="flex items-center gap-3">
               {[
                 { label: "Email sent", done: true },
                 { label: "Verify code", done: false, active: true },
-                { label: "New password", done: false },
               ].map((step, i) => (
-                <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+                <div
+                  key={i}
+                  className="flex flex-1 flex-col items-center gap-1.5"
+                >
                   <div
                     className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all ${
                       step.done
                         ? "bg-amber-400 text-[#422006]"
                         : step.active
-                        ? "border-2 border-amber-400 bg-transparent text-amber-300"
-                        : "border border-white/20 bg-transparent text-white/40"
+                          ? "border-2 border-amber-400 bg-transparent text-amber-300"
+                          : "border border-white/20 bg-transparent text-white/40"
                     }`}
                   >
                     {step.done ? "✓" : i + 1}
                   </div>
                   <p
                     className={`text-center text-[10px] leading-none ${
-                      step.done || step.active ? "text-amber-200" : "text-white/40"
+                      step.done || step.active
+                        ? "text-amber-200"
+                        : "text-white/40"
                     }`}
                   >
                     {step.label}

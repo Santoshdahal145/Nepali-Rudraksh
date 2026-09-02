@@ -2,9 +2,10 @@ import bcrypt from "bcryptjs";
 import { db } from "../../src/prisma/db";
 import { sendEmail } from "../helpers/emailHelper";
 import { generateOtp } from "../user/user.service";
-import type { ChangePasswordInput, ForgotPasswordInput, LoginInput, ResetPasswordInput } from "./auth.schema";
+import type { ChangePasswordInput, ForgotPasswordInput, LoginInput, ResetPasswordInput, ValidateOtpInput } from "./auth.schema";
 import { issueTokens } from "./token.service";
 import { NotFoundError, UnauthorizedError } from "@/lib/error";
+import { Temporal } from "@js-temporal/polyfill";
 
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 5;
@@ -36,9 +37,10 @@ export async function login(input: LoginInput) {
  * Validates a user's EMAIL_VERIFICATION OTP.
  * On success the OTP is consumed and the user's email is marked verified.
  */
-export async function validateUserEmailVerificationOtp(email: string, code: string) {
+export async function validateUserEmailVerificationOtp(input: ValidateOtpInput) {
+
     const user = await db.orm.public.User
-        .where({ email })
+        .where({ email: input.email })
         .first();
     if (!user) {
         throw new Error("User not found");
@@ -47,16 +49,18 @@ export async function validateUserEmailVerificationOtp(email: string, code: stri
     const otp = await db.orm.public.Otp
         .where({ userId: user.id, type: "EMAIL_VERIFICATION" })
         .first();
+
     if (!otp) {
         throw new Error("No verification OTP found. Please request a new one.");
     }
-
-    if (otp.consumedAt && otp.consumedAt <= otp.expiresAt) {
-        // consumedAt being set to a non-null past value means it was already used
+   if (otp.consumedAt && otp.consumedAt <= otp.expiresAt) {
+     
         throw new Error("OTP has already been used.");
     }
+    const now = Temporal.Now.instant();
+    const expiresAt = otp.expiresAt;
 
-    if (new Date() > otp.expiresAt) {
+    if (Temporal.Instant.compare(now, expiresAt) > 0) {
         throw new Error("OTP has expired. Please request a new one.");
     }
 
@@ -64,7 +68,7 @@ export async function validateUserEmailVerificationOtp(email: string, code: stri
         throw new Error("Too many failed attempts. Please request a new OTP.");
     }
 
-    const isValid = await bcrypt.compare(code, otp.codeHash);
+    const isValid = await bcrypt.compare(input.otp, otp.codeHash);
 
     if (!isValid) {
         // Increment attempt counter
@@ -74,11 +78,10 @@ export async function validateUserEmailVerificationOtp(email: string, code: stri
         throw new Error("Invalid OTP.");
     }
 
-    // Consume the OTP and verify the user's email in one transaction
     await db.transaction(async (tx) => {
         await tx.orm.public.Otp
             .where({ id: otp.id })
-            .update({ consumedAt: new Date() });
+            .update({ consumedAt: Temporal.Now.instant() });
 
         await tx.orm.public.User
             .where({ id: user.id })
@@ -87,7 +90,6 @@ export async function validateUserEmailVerificationOtp(email: string, code: stri
 
     return { message: "Email verified successfully." };
 }
-
 /**
  * Issues a PASSWORD_RESET OTP for the given email and mails it to the user.
  * If a previous OTP of this type exists for the user it is replaced (upsert).
