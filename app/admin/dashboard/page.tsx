@@ -21,7 +21,13 @@ import {
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,16 +39,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAdmin } from "../data/AdminContext";
+import { initialOrders, initialProducts, initialUsers } from "../data/mockData";
 
 export default function AdminDashboardPage() {
-  const { orders, products, users } = useAdmin();
-  const [timeRange, setTimeRange] = useState<"week" | "month" | "year">("month");
+  const [timeRange, setTimeRange] = useState<"week" | "month" | "year">(
+    "month"
+  );
 
   // Compute live stats
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.paymentStatus === "Paid" ? o.total : 0), 48290);
-  const totalOrdersCount = orders.length + 1420;
-  const activeCustomersCount = users.length + 3834;
-  const totalStockCount = products.reduce((sum, p) => sum + p.stock, 0);
+  const totalRevenue = initialOrders.reduce(
+    (sum, o) => sum + (o.paymentStatus === "Paid" ? o.total : 0),
+    48290
+  );
+  const totalOrdersCount = initialOrders.length + 1420;
+  const activeCustomersCount = initialUsers.length + 3834;
+  const totalStockCount = initialProducts.reduce((sum, p) => sum + p.stock, 0);
 
   // Revenue chart data bars for visual graph
   const revenueData = [
@@ -57,10 +68,30 @@ export default function AdminDashboardPage() {
   ];
 
   const categoryStats = [
-    { name: "Collector & Rare Mukhi", share: "45%", amount: "$26,500", color: "bg-amber-800" },
-    { name: "Siddh Japa Malas", share: "28%", amount: "$16,490", color: "bg-[#713f12]" },
-    { name: "Individual Mukhis (1-14)", share: "18%", amount: "$10,600", color: "bg-amber-600" },
-    { name: "Silver Bracelets & Accessories", share: "9%", amount: "$5,300", color: "bg-amber-400" },
+    {
+      name: "Collector & Rare Mukhi",
+      share: "45%",
+      amount: "$26,500",
+      color: "bg-amber-800",
+    },
+    {
+      name: "Siddh Japa Malas",
+      share: "28%",
+      amount: "$16,490",
+      color: "bg-[#713f12]",
+    },
+    {
+      name: "Individual Mukhis (1-14)",
+      share: "18%",
+      amount: "$10,600",
+      color: "bg-amber-600",
+    },
+    {
+      name: "Silver Bracelets & Accessories",
+      share: "9%",
+      amount: "$5,300",
+      color: "bg-amber-400",
+    },
   ];
 
   const getStatusBadge = (status: string) => {
@@ -86,7 +117,10 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-5 sm:p-7 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Badge variant="gold" className="text-[10px] uppercase tracking-wider">
+            <Badge
+              variant="gold"
+              className="text-[10px] uppercase tracking-wider"
+            >
               Live Business Intelligence
             </Badge>
             <span className="text-xs text-muted-foreground">
@@ -97,7 +131,8 @@ export default function AdminDashboardPage() {
             Welcome to Temple Administration 🌿
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 max-w-2xl">
-            Real-time analytics for sacred Himalayan Rudraksha orders, inventory levels, devotee consultations, and consecration schedules.
+            Real-time analytics for sacred Himalayan Rudraksha orders, inventory
+            levels, devotee consultations, and consecration schedules.
           </p>
         </div>
 
@@ -207,7 +242,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs">
               <span className="text-amber-800 font-bold">
-                {products.length} Varieties
+                {initialProducts.length} Varieties
               </span>
               <span className="text-muted-foreground">1 to 21 Mukhi</span>
             </div>
@@ -225,7 +260,8 @@ export default function AdminDashboardPage() {
                 Revenue & Demand Trajectory
               </CardTitle>
               <CardDescription>
-                Monthly gross revenue from verified Rudraksha sales & Vedic consecration
+                Monthly gross revenue from verified Rudraksha sales & Vedic
+                consecration
               </CardDescription>
             </div>
 
@@ -321,7 +357,9 @@ export default function AdminDashboardPage() {
               <div key={cat.name} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-bold text-[#422006]">
                   <span className="truncate">{cat.name}</span>
-                  <span>{cat.share} ({cat.amount})</span>
+                  <span>
+                    {cat.share} ({cat.amount})
+                  </span>
                 </div>
                 <div className="h-2.5 w-full rounded-full bg-amber-100">
                   <div
@@ -338,7 +376,9 @@ export default function AdminDashboardPage() {
                 <span>Vedic Trend Insight</span>
               </div>
               <p className="text-[11px] text-[#5c3a1e]/80 mt-1 leading-relaxed">
-                Demand for <strong>Gauri Shankar</strong> and <strong>14 Mukhi</strong> increased by 34% this month ahead of the holy festival season.
+                Demand for <strong>Gauri Shankar</strong> and{" "}
+                <strong>14 Mukhi</strong> increased by 34% this month ahead of
+                the holy festival season.
               </p>
             </div>
           </CardContent>
@@ -351,11 +391,19 @@ export default function AdminDashboardPage() {
         <Card className="lg:col-span-2 shadow-xs">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base sm:text-lg">Recent Orders</CardTitle>
-              <CardDescription>Latest sacred bead purchases and consecration orders</CardDescription>
+              <CardTitle className="text-base sm:text-lg">
+                Recent Orders
+              </CardTitle>
+              <CardDescription>
+                Latest sacred bead purchases and consecration orders
+              </CardDescription>
             </div>
             <Link href="/admin/orders">
-              <Button variant="outline" size="sm" className="h-8 gap-1 border-amber-900/15 text-xs text-[#713f12]">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1 border-amber-900/15 text-xs text-[#713f12]"
+              >
                 <span>All Orders</span>
                 <ChevronRight className="h-3 w-3" />
               </Button>
@@ -375,10 +423,13 @@ export default function AdminDashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.slice(0, 5).map((order) => (
+                  {initialOrders.slice(0, 5).map((order) => (
                     <TableRow key={order.id}>
                       <TableCell className="font-bold text-[#713f12]">
-                        <Link href={`/admin/orders/${order.orderNumber}`} className="hover:underline">
+                        <Link
+                          href={`/admin/orders/${order.orderNumber}`}
+                          className="hover:underline"
+                        >
                           #{order.orderNumber}
                         </Link>
                         <div className="text-[10px] text-muted-foreground">
@@ -390,7 +441,8 @@ export default function AdminDashboardPage() {
                           {order.customerName}
                         </div>
                         <div className="text-[10px] text-muted-foreground">
-                          {order.shippingAddress.city}, {order.shippingAddress.country}
+                          {order.shippingAddress.city},{" "}
+                          {order.shippingAddress.country}
                         </div>
                       </TableCell>
                       <TableCell className="font-bold text-xs text-[#422006]">
@@ -421,18 +473,24 @@ export default function AdminDashboardPage() {
         <Card className="shadow-xs">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base sm:text-lg">Sacred Catalog</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                Sacred Catalog
+              </CardTitle>
               <CardDescription>Top beads & inventory health</CardDescription>
             </div>
             <Link href="/admin/all-products">
-              <Button variant="ghost" size="xs" className="text-xs text-[#713f12]">
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-xs text-[#713f12]"
+              >
                 Manage
               </Button>
             </Link>
           </CardHeader>
 
           <CardContent className="space-y-3">
-            {products.slice(0, 5).map((prod) => (
+            {initialProducts.slice(0, 5).map((prod) => (
               <Link
                 key={prod.id}
                 href={`/admin/all-products/${prod.id}`}

@@ -14,6 +14,32 @@ enum ProductType {
   ORNAMENT
 }
 
+enum PaymentMethod {
+  ESEWA
+  KHALTI
+  STRIPE
+  COD
+}
+
+model PaymentSettings {
+  id            Int      @id @default(autoincrement())
+  esewaEnabled  Boolean  @default(true)
+  khaltiEnabled Boolean  @default(true)
+  stripeEnabled Boolean  @default(true)
+  codEnabled    Boolean  @default(true)
+  updatedAt     DateTime @default(now())
+}
+
+model StoreSettings {
+  id                              Int      @id @default(autoincrement())
+  storeName                       String
+  customerSupportEmail            String
+  standardConsecrationFee         Int
+  freeShippingThreshold           Int
+  primaryTempleConsecrationOrigin String
+  updatedAt                       DateTime @default(now())
+}
+
 model User {
   id                 Int       @id @default(autoincrement())
   email              String    @unique

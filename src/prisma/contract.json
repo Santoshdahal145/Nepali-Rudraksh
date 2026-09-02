@@ -20,8 +20,16 @@
       "model": "Otp",
       "namespace": "public"
     },
+    "paymentSettings": {
+      "model": "PaymentSettings",
+      "namespace": "public"
+    },
     "product": {
       "model": "Product",
+      "namespace": "public"
+    },
+    "storeSettings": {
+      "model": "StoreSettings",
       "namespace": "public"
     },
     "user": {
@@ -47,6 +55,27 @@
               {
                 "name": "PHONE_VERIFICATION",
                 "value": "PHONE_VERIFICATION"
+              }
+            ]
+          },
+          "PaymentMethod": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ESEWA",
+                "value": "ESEWA"
+              },
+              {
+                "name": "KHALTI",
+                "value": "KHALTI"
+              },
+              {
+                "name": "STRIPE",
+                "value": "STRIPE"
+              },
+              {
+                "name": "COD",
+                "value": "COD"
               }
             ]
           },
@@ -478,6 +507,77 @@
               "table": "otp"
             }
           },
+          "PaymentSettings": {
+            "fields": {
+              "codEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "esewaEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "khaltiEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "stripeEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "codEnabled": {
+                  "column": "codEnabled"
+                },
+                "esewaEnabled": {
+                  "column": "esewaEnabled"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "khaltiEnabled": {
+                  "column": "khaltiEnabled"
+                },
+                "stripeEnabled": {
+                  "column": "stripeEnabled"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "paymentSettings"
+            }
+          },
           "Product": {
             "fields": {
               "categoryId": {
@@ -654,6 +754,87 @@
               },
               "namespaceId": "public",
               "table": "product"
+            }
+          },
+          "StoreSettings": {
+            "fields": {
+              "customerSupportEmail": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "freeShippingThreshold": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "primaryTempleConsecrationOrigin": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "standardConsecrationFee": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "storeName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "customerSupportEmail": {
+                  "column": "customerSupportEmail"
+                },
+                "freeShippingThreshold": {
+                  "column": "freeShippingThreshold"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "primaryTempleConsecrationOrigin": {
+                  "column": "primaryTempleConsecrationOrigin"
+                },
+                "standardConsecrationFee": {
+                  "column": "standardConsecrationFee"
+                },
+                "storeName": {
+                  "column": "storeName"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "storeSettings"
             }
           },
           "User": {
@@ -1206,6 +1387,72 @@
                 }
               ]
             },
+            "paymentSettings": {
+              "columns": {
+                "codEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "esewaEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "khaltiEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "stripeEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "product": {
               "checks": [
                 {
@@ -1348,6 +1595,61 @@
                 }
               ]
             },
+            "storeSettings": {
+              "columns": {
+                "customerSupportEmail": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "freeShippingThreshold": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "primaryTempleConsecrationOrigin": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "standardConsecrationFee": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "storeName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "user": {
               "checks": [
                 {
@@ -1460,6 +1762,15 @@
                 "PHONE_VERIFICATION"
               ]
             },
+            "PaymentMethod": {
+              "kind": "valueSet",
+              "values": [
+                "ESEWA",
+                "KHALTI",
+                "STRIPE",
+                "COD"
+              ]
+            },
             "ProductType": {
               "kind": "valueSet",
               "values": [
@@ -1480,7 +1791,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "ab6534e1aaf907154d80b275896292132d55692d7e21ba7267438323090b0d6c"
+    "storageHash": "8ec9818a898cad5187b0cce2f0b3250d14b797c7ba5d2fd6c3c23ee47af74e44"
   },
   "capabilities": {
     "postgres": {

@@ -1,235 +1,262 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import {
-  AdminUser,
-  AdminProduct,
-  AdminOrder,
-  HomeControlData,
-  AdminSettingsData,
-  initialUsers,
-  initialProducts,
-  initialOrders,
-  initialHomeControl,
-  initialSettings,
-} from "./mockData";
+import { changePasswordApi } from "@/app/api/auth/change-password/api";
+import { loginApi } from "@/app/api/auth/login/api";
+import { logoutApi } from "@/app/api/auth/logout/api";
+import { paymentGatewayApi } from "@/app/api/payment-gateway/api";
+import { storeSettingApi } from "@/app/api/store-setting/api";
+import { updateUserApi } from "@/app/api/users/me/api";
+import { PaymentSettingType, StoreSettingType, UserType } from "@/app/types";
+import { requestAPI } from "@/lib/requestAPI";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AdminContextType {
-  users: AdminUser[];
-  products: AdminProduct[];
-  orders: AdminOrder[];
-  homeControl: HomeControlData;
-  settings: AdminSettingsData;
+  user: UserType | null;
+  storeSetting: StoreSettingType | null;
+  updateStoreSetting: (data: StoreSettingType) => Promise<void>;
+  paymentGateways: PaymentSettingType | null;
+  updatePaymentGateways: (data: PaymentSettingType) => Promise<void>;
   isAuthenticated: boolean;
-  login: (email: string, pass: string) => boolean;
+  login: (email: string, pass: string) => Promise<void>;
   logout: () => void;
-  toggleBlockUser: (userId: string) => void;
-  updateUserStatus: (userId: string, status: "Active" | "Blocked" | "VIP") => void;
-  deleteUser: (userId: string) => void;
-  addProduct: (product: Omit<AdminProduct, "id" | "createdAt" | "salesCount" | "rating" | "reviewsCount">) => void;
-  updateProduct: (id: string, updates: Partial<AdminProduct>) => void;
-  deleteProduct: (id: string) => void;
-  updateOrderStatus: (orderId: string, status: AdminOrder["status"]) => void;
-  updateOrderPaymentStatus: (orderId: string, status: AdminOrder["paymentStatus"]) => void;
-  updateHomeControl: (updates: Partial<HomeControlData>) => void;
-  addOffer: (offer: Omit<HomeControlData["offers"][0], "id">) => void;
-  toggleOfferStatus: (offerId: string) => void;
-  deleteOffer: (offerId: string) => void;
-  updateSettings: (updates: Partial<AdminSettingsData>) => void;
-  changePassword: (currentPass: string, newPass: string) => { success: boolean; message: string };
+  changePassword: (currentPass: string, newPass: string) => Promise<void>;
+  updateProfile: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+  }) => Promise<void>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 const STORAGE_PREFIX = "nepali_rudraksh_admin_";
 
-export function AdminProvider({ children }: { children: React.ReactNode }) {
-  const [users, setUsers] = useState<AdminUser[]>(initialUsers);
-  const [products, setProducts] = useState<AdminProduct[]>(initialProducts);
-  const [orders, setOrders] = useState<AdminOrder[]>(initialOrders);
-  const [homeControl, setHomeControl] = useState<HomeControlData>(initialHomeControl);
-  const [settings, setSettings] = useState<AdminSettingsData>(initialSettings);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true); // default authenticated in dev mode
+const STORAGE_KEYS = {
+  user: `${STORAGE_PREFIX}user`,
+  isAuthenticated: `${STORAGE_PREFIX}isAuthenticated`,
+  storeSetting: `${STORAGE_PREFIX}storeSetting`,
+  paymentGateways: `${STORAGE_PREFIX}paymentGateways`,
+};
 
-  // Load from session storage if present
+export function AdminProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<UserType | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [storeSetting, setStoreSetting] = useState<StoreSettingType | null>(
+    null
+  );
+  const [paymentGateways, setPaymentGateways] =
+    useState<PaymentSettingType | null>(null);
+
+  const getStoreSetting = async () => {
+    try {
+      const res = await requestAPI(storeSettingApi.getStoreSetting());
+      if (res?.data) {
+        setStoreSetting(res.data as StoreSettingType);
+      }
+    } catch (error) {
+      console.error("Failed to get store setting:", error);
+    }
+  };
+
+  const getPaymentGateways = async () => {
+    try {
+      const res = await requestAPI(paymentGatewayApi.getPaymentGateway());
+      if (res?.data) {
+        setPaymentGateways(res.data as PaymentSettingType);
+      }
+    } catch (error) {
+      console.error("Failed to get payment gateways:", error);
+    }
+  };
+
+  useEffect(() => {
+    getStoreSetting();
+    getPaymentGateways();
+  }, []);
+
   useEffect(() => {
     try {
-      const savedUsers = sessionStorage.getItem(`${STORAGE_PREFIX}users`);
-      if (savedUsers) setUsers(JSON.parse(savedUsers));
+      const savedUser = sessionStorage.getItem(STORAGE_KEYS.user);
+      const savedAuth = sessionStorage.getItem(STORAGE_KEYS.isAuthenticated);
+      const savedStoreSetting = sessionStorage.getItem(
+        STORAGE_KEYS.storeSetting
+      );
+      const savedPaymentGateways = sessionStorage.getItem(
+        STORAGE_KEYS.paymentGateways
+      );
 
-      const savedProducts = sessionStorage.getItem(`${STORAGE_PREFIX}products`);
-      if (savedProducts) setProducts(JSON.parse(savedProducts));
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
 
-      const savedOrders = sessionStorage.getItem(`${STORAGE_PREFIX}orders`);
-      if (savedOrders) setOrders(JSON.parse(savedOrders));
+      if (savedAuth === "true") {
+        setIsAuthenticated(true);
+      }
+      if (savedStoreSetting) {
+        setStoreSetting(JSON.parse(savedStoreSetting));
+      }
+      if (savedPaymentGateways) {
+        setPaymentGateways(JSON.parse(savedPaymentGateways));
+      }
+    } catch (error) {
+      console.error("Failed to restore admin session:", error);
+      sessionStorage.removeItem(STORAGE_KEYS.user);
+      sessionStorage.removeItem(STORAGE_KEYS.isAuthenticated);
+      sessionStorage.removeItem(STORAGE_KEYS.storeSetting);
+      sessionStorage.removeItem(STORAGE_KEYS.paymentGateways);
 
-      const savedHome = sessionStorage.getItem(`${STORAGE_PREFIX}homeControl`);
-      if (savedHome) setHomeControl(JSON.parse(savedHome));
-
-      const savedSettings = sessionStorage.getItem(`${STORAGE_PREFIX}settings`);
-      if (savedSettings) setSettings(JSON.parse(savedSettings));
-
-      const savedAuth = sessionStorage.getItem(`${STORAGE_PREFIX}auth`);
-      if (savedAuth !== null) setIsAuthenticated(JSON.parse(savedAuth));
-    } catch (e) {
-      console.error("Failed to load admin state:", e);
+      setUser(null);
+      setIsAuthenticated(false);
     }
   }, []);
 
-  // Sync to session storage
   useEffect(() => {
     try {
-      sessionStorage.setItem(`${STORAGE_PREFIX}users`, JSON.stringify(users));
-      sessionStorage.setItem(`${STORAGE_PREFIX}products`, JSON.stringify(products));
-      sessionStorage.setItem(`${STORAGE_PREFIX}orders`, JSON.stringify(orders));
-      sessionStorage.setItem(`${STORAGE_PREFIX}homeControl`, JSON.stringify(homeControl));
-      sessionStorage.setItem(`${STORAGE_PREFIX}settings`, JSON.stringify(settings));
-      sessionStorage.setItem(`${STORAGE_PREFIX}auth`, JSON.stringify(isAuthenticated));
-    } catch (e) {
-      console.error("Failed to save admin state:", e);
+      if (user) {
+        sessionStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+      } else {
+        sessionStorage.removeItem(STORAGE_KEYS.user);
+      }
+    } catch (error) {
+      console.error("Failed to save admin user:", error);
     }
-  }, [users, products, orders, homeControl, settings, isAuthenticated]);
+  }, [user]);
 
-  const login = (email: string, pass: string) => {
-    // Standard mock admin login check
-    if (email && pass.length >= 4) {
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(
+        STORAGE_KEYS.isAuthenticated,
+        String(isAuthenticated)
+      );
+    } catch (error) {
+      console.error("Failed to save authentication state:", error);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    try {
+      if (storeSetting) {
+        sessionStorage.setItem(
+          STORAGE_KEYS.storeSetting,
+          JSON.stringify(storeSetting)
+        );
+      } else {
+        sessionStorage.removeItem(STORAGE_KEYS.storeSetting);
+      }
+    } catch (error) {
+      console.error("Failed to save store setting:", error);
+    }
+  }, [storeSetting]);
+
+  useEffect(() => {
+    try {
+      if (paymentGateways) {
+        sessionStorage.setItem(
+          STORAGE_KEYS.paymentGateways,
+          JSON.stringify(paymentGateways)
+        );
+      } else {
+        sessionStorage.removeItem(STORAGE_KEYS.paymentGateways);
+      }
+    } catch (error) {
+      console.error("Failed to save payment gateways:", error);
+    }
+  }, [paymentGateways]);
+
+  const login = async (email: string, pass: string) => {
+    try {
+      const response = await requestAPI<UserType>(
+        loginApi({
+          email,
+          password: pass,
+        })
+      );
+
+      if (!response?.data) {
+        throw new Error("Login failed");
+      }
+
+      setUser(response.data);
       setIsAuthenticated(true);
-      return true;
+    } catch (error) {
+      console.error("Login error:", error);
+      setUser(null);
+      setIsAuthenticated(false);
+
+      throw error;
     }
-    return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    setUser(null);
     setIsAuthenticated(false);
+    sessionStorage.removeItem(STORAGE_KEYS.user);
+    sessionStorage.removeItem(STORAGE_KEYS.isAuthenticated);
+    await requestAPI(logoutApi());
   };
 
-  const toggleBlockUser = (userId: string) => {
-    setUsers((prev) =>
-      prev.map((u) => {
-        if (u.id === userId) {
-          const newStatus = u.status === "Blocked" ? "Active" : "Blocked";
-          return { ...u, status: newStatus };
-        }
-        return u;
-      })
-    );
-  };
-
-  const updateUserStatus = (userId: string, status: "Active" | "Blocked" | "VIP") => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, status } : u))
-    );
-  };
-
-  const deleteUser = (userId: string) => {
-    setUsers((prev) => prev.filter((u) => u.id !== userId));
-  };
-
-  const addProduct = (
-    newProd: Omit<AdminProduct, "id" | "createdAt" | "salesCount" | "rating" | "reviewsCount">
-  ) => {
-    const id = `${Date.now()}`;
-    const product: AdminProduct = {
-      ...newProd,
-      id,
-      createdAt: new Date().toISOString().split("T")[0],
-      salesCount: 0,
-      rating: 5.0,
-      reviewsCount: 0,
-    };
-    setProducts((prev) => [product, ...prev]);
-  };
-
-  const updateProduct = (id: string, updates: Partial<AdminProduct>) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...updates } : p))
-    );
-  };
-
-  const deleteProduct = (id: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const updateOrderStatus = (orderId: string, status: AdminOrder["status"]) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId || o.orderNumber === orderId ? { ...o, status } : o))
-    );
-  };
-
-  const updateOrderPaymentStatus = (orderId: string, paymentStatus: AdminOrder["paymentStatus"]) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId || o.orderNumber === orderId ? { ...o, paymentStatus } : o))
-    );
-  };
-
-  const updateHomeControl = (updates: Partial<HomeControlData>) => {
-    setHomeControl((prev) => ({ ...prev, ...updates }));
-  };
-
-  const addOffer = (offerData: Omit<HomeControlData["offers"][0], "id">) => {
-    const id = `off_${Date.now()}`;
-    const newOffer = { ...offerData, id };
-    setHomeControl((prev) => ({
-      ...prev,
-      offers: [newOffer, ...prev.offers],
-    }));
-  };
-
-  const toggleOfferStatus = (offerId: string) => {
-    setHomeControl((prev) => ({
-      ...prev,
-      offers: prev.offers.map((off) =>
-        off.id === offerId ? { ...off, isActive: !off.isActive } : off
-      ),
-    }));
-  };
-
-  const deleteOffer = (offerId: string) => {
-    setHomeControl((prev) => ({
-      ...prev,
-      offers: prev.offers.filter((off) => off.id !== offerId),
-    }));
-  };
-
-  const updateSettings = (updates: Partial<AdminSettingsData>) => {
-    setSettings((prev) => ({ ...prev, ...updates }));
-  };
-
-  const changePassword = (currentPass: string, newPass: string) => {
-    if (!currentPass) {
-      return { success: false, message: "Please enter your current admin password." };
+  const changePassword = async (currentPass: string, newPass: string) => {
+    try {
+      await requestAPI(
+        changePasswordApi({
+          newPassword: newPass,
+          oldPassword: currentPass,
+        })
+      );
+    } catch (error) {
+      console.error("Change password error:", error);
+      throw error;
     }
-    if (newPass.length < 6) {
-      return { success: false, message: "New password must be at least 6 characters long." };
+  };
+
+  const updateProfile = async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+  }) => {
+    try {
+      await requestAPI(updateUserApi(data));
+    } catch (error) {
+      console.error("Update profile error:", error);
+      throw error;
     }
-    return { success: true, message: "Admin password has been updated securely." };
+  };
+
+  const updateStoreSetting = async (data: StoreSettingType) => {
+    try {
+      await requestAPI(storeSettingApi.updateStoreSetting(data));
+      getStoreSetting();
+    } catch (error) {
+      console.error("Update store setting error:", error);
+      throw error;
+    }
+  };
+
+  const updatePaymentGateways = async (data: PaymentSettingType) => {
+    try {
+      await requestAPI(paymentGatewayApi.updatePaymentGateway(data));
+      getPaymentGateways();
+    } catch (error) {
+      console.error("Update payment gateways error:", error);
+      throw error;
+    }
   };
 
   return (
     <AdminContext.Provider
       value={{
-        users,
-        products,
-        orders,
-        homeControl,
-        settings,
+        user,
+        storeSetting,
+        updateStoreSetting,
+        paymentGateways,
+        updatePaymentGateways,
         isAuthenticated,
         login,
         logout,
-        toggleBlockUser,
-        updateUserStatus,
-        deleteUser,
-        addProduct,
-        updateProduct,
-        deleteProduct,
-        updateOrderStatus,
-        updateOrderPaymentStatus,
-        updateHomeControl,
-        addOffer,
-        toggleOfferStatus,
-        deleteOffer,
-        updateSettings,
         changePassword,
+        updateProfile,
       }}
     >
       {children}
@@ -239,8 +266,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
 export function useAdmin() {
   const context = useContext(AdminContext);
+
   if (!context) {
     throw new Error("useAdmin must be used within an AdminProvider");
   }
+
   return context;
 }

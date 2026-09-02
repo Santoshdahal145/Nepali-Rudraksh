@@ -1,23 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  Menu,
-  X,
-  Search,
-  Bell,
-  Sparkles,
-  ExternalLink,
-  ShieldCheck,
-  CheckCircle2,
-  AlertTriangle,
-  Package,
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import {
+  AlertTriangle,
+  Bell,
+  CheckCircle2,
+  ExternalLink,
+  Menu,
+  Search,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { initialOrders, initialProducts } from "../data/mockData";
 import { useAdmin } from "../data/AdminContext";
 
 interface AdminHeaderProps {
@@ -26,7 +24,7 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
   const pathname = usePathname();
-  const { settings, orders, products } = useAdmin();
+  const { user } = useAdmin();
   const [showNotifications, setShowNotifications] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
 
@@ -38,13 +36,14 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
     if (pathname === "/admin/orders") return "Orders Management";
     if (pathname.startsWith("/admin/all-users/")) return "Devotee Profile";
     if (pathname === "/admin/all-users") return "Devotees & Users";
-    if (pathname === "/admin/home-control") return "Homepage CMS & Storefront Control";
+    if (pathname === "/admin/home-control")
+      return "Homepage CMS & Storefront Control";
     if (pathname === "/admin/settings") return "System & Store Settings";
     return "Admin Portal";
   };
 
-  const lowStockCount = products.filter((p) => p.stock <= 5).length;
-  const recentOrders = orders.slice(0, 3);
+  const lowStockCount = initialProducts.filter((p) => p.stock <= 5).length;
+  const recentOrders = initialOrders.slice(0, 3);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-amber-900/10 bg-[#fdfbf7]/90 px-4 sm:px-8 backdrop-blur-md">
@@ -119,7 +118,9 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
             <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-amber-900/10 bg-white p-4 shadow-xl shadow-amber-950/15 animate-in fade-in zoom-in-95 z-50">
               <div className="flex items-center justify-between border-b border-amber-900/10 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#422006]">Notifications</span>
+                  <span className="text-sm font-bold text-[#422006]">
+                    Notifications
+                  </span>
                   <Badge variant="gold" className="text-[10px]">
                     {recentOrders.length + (lowStockCount > 0 ? 1 : 0)} New
                   </Badge>
@@ -148,9 +149,12 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
                         Order #{ord.orderNumber} by {ord.customerName}
                       </p>
                       <p className="text-[11px] text-muted-foreground">
-                        {ord.items.length} sacred item(s) • ${ord.total} • {ord.status}
+                        {ord.items.length} sacred item(s) • ${ord.total} •{" "}
+                        {ord.status}
                       </p>
-                      <span className="text-[10px] text-amber-800/70">{ord.date}</span>
+                      <span className="text-[10px] text-amber-800/70">
+                        {ord.date}
+                      </span>
                     </div>
                   </Link>
                 ))}
@@ -169,7 +173,8 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
                         Low Stock Alert
                       </p>
                       <p className="text-[11px] text-amber-900/80">
-                        {lowStockCount} sacred Rudraksha beads are running low in stock.
+                        {lowStockCount} sacred Rudraksha beads are running low
+                        in stock.
                       </p>
                     </div>
                   </Link>
@@ -195,10 +200,11 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
           className="flex items-center gap-2 rounded-xl border border-amber-900/10 bg-white p-1.5 pr-3 shadow-2xs hover:bg-amber-50 transition"
         >
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#713f12] text-xs font-bold text-white">
-            {settings.adminProfile.avatar}
+            {user?.firstName[0]}
+            {user?.lastName[0]}
           </div>
           <span className="hidden md:inline-block text-xs font-bold text-[#422006]">
-            {settings.adminProfile.name.split(" ")[0]}
+            {user?.firstName} {user?.lastName}
           </span>
         </Link>
       </div>

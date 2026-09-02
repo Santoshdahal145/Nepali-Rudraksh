@@ -1,324 +1,550 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Settings,
-  Lock,
-  User,
-  Store,
-  Bell,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFormik } from "formik";
+import {
   CreditCard,
-  ShieldCheck,
-  CheckCircle2,
-  AlertCircle,
   Eye,
   EyeOff,
-  Save,
   KeyRound,
+  Lock,
+  Store,
+  User,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useState } from "react";
 import { useAdmin } from "../data/AdminContext";
+import {
+  adminProfileValidation,
+  changePasswordValidation,
+  storeSettingsValidation,
+} from "./validation";
 
 export default function AdminSettingsPage() {
-  const { settings, updateSettings, changePassword } = useAdmin();
-
-  // Password state
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const {
+    changePassword,
+    paymentGateways,
+    storeSetting,
+    updatePaymentGateways,
+    updateStoreSetting,
+    user,
+    updateProfile,
+  } = useAdmin();
   const [showPass, setShowPass] = useState(false);
-  const [passwordFeedback, setPasswordFeedback] = useState<{ success?: boolean; message?: string } | null>(null);
+  /*
+   * ------------------------------------------------------------
+   * Password Form
+   * ------------------------------------------------------------
+   */
+  const passwordFormik = useFormik({
+    initialValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    enableReinitialize: true,
+    validationSchema: changePasswordValidation,
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      try {
+        await changePassword(values.currentPassword, values.newPassword);
+        resetForm();
+        setShowPass(false);
+      } catch (error) {
+        console.error("Password update failed:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
-  // Store config state
-  const [profileData, setProfileData] = useState(settings.adminProfile);
-  const [storeConfig, setStoreConfig] = useState(settings.storeConfig);
-  const [notifications, setNotifications] = useState(settings.notifications);
-  const [gateways, setGateways] = useState(settings.paymentGateways);
+  /*
+   * ------------------------------------------------------------
+   * Admin Profile Form
+   * ------------------------------------------------------------
+   */
 
-  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+  const profileFormik = useFormik({
+    initialValues: {
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+    },
+    enableReinitialize: true,
+    validationSchema: adminProfileValidation,
 
-  const showToast = (msg: string) => {
-    setFeedbackToast(msg);
-    setTimeout(() => setFeedbackToast(null), 3000);
-  };
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await updateProfile({
+          email: values.email!,
+          firstName: values.firstName!,
+          lastName: values.lastName!,
+          phoneNumber: values.phoneNumber!,
+        });
+      } catch (error) {
+        console.error("Profile update failed:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordFeedback(null);
+  /*
+   * ------------------------------------------------------------
+   * Store Settings Form
+   * ------------------------------------------------------------
+   */
 
-    if (newPassword !== confirmPassword) {
-      setPasswordFeedback({ success: false, message: "New passwords do not match." });
-      return;
-    }
+  const storeFormik = useFormik({
+    initialValues: {
+      storeName: storeSetting?.storeName!,
+      customerSupportEmail: storeSetting?.customerSupportEmail!,
+      standardConsecrationFee: storeSetting?.standardConsecrationFee!,
+      freeShippingThreshold: storeSetting?.freeShippingThreshold!,
+      primaryTempleConsecrationOrigin:
+        storeSetting?.primaryTempleConsecrationOrigin!,
+    },
+    validationSchema: storeSettingsValidation,
+    enableReinitialize: true,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await updateStoreSetting({
+          storeName: values.storeName,
+          customerSupportEmail: values.customerSupportEmail,
+          standardConsecrationFee: values.standardConsecrationFee,
+          freeShippingThreshold: values.freeShippingThreshold,
+          primaryTempleConsecrationOrigin:
+            values.primaryTempleConsecrationOrigin,
+        });
+      } catch (error) {
+        console.error("Store settings update failed:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+  console.log("🚀 ~ AdminSettingsPage ~ storeFormik:", storeFormik.errors);
 
-    const res = changePassword(currentPassword, newPassword);
-    setPasswordFeedback(res);
+  /*
+   * ------------------------------------------------------------
+   * Payment Gateway Form
+   * ------------------------------------------------------------
+   */
 
-    if (res.success) {
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      showToast("Admin credentials updated securely!");
-    }
-  };
-
-  const handleSaveProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateSettings({ adminProfile: profileData });
-    showToast("Admin Profile updated successfully.");
-  };
-
-  const handleSaveStore = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateSettings({ storeConfig });
-    showToast("Store & Vedic Consecration defaults saved.");
-  };
-
-  const handleSaveNotifications = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateSettings({ notifications });
-    showToast("Notification rules saved.");
-  };
-
-  const handleSaveGateways = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateSettings({ paymentGateways: gateways });
-    showToast("Payment gateways updated.");
-  };
+  const gatewaysFormik = useFormik({
+    initialValues: {
+      esewa: paymentGateways?.esewaEnabled,
+      khalti: paymentGateways?.khaltiEnabled,
+      stripe: paymentGateways?.stripeEnabled,
+      cod: paymentGateways?.codEnabled,
+    },
+    enableReinitialize: true,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await updatePaymentGateways({
+          esewaEnabled: values.esewa ?? true,
+          khaltiEnabled: values.khalti ?? true,
+          stripeEnabled: values.stripe ?? true,
+          codEnabled: values.cod ?? true,
+        });
+      } catch (error) {
+        console.error("Payment gateway update failed:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* Toast */}
-      {feedbackToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-[#713f12] px-4 py-3 text-xs font-bold text-white shadow-2xl animate-in slide-in-from-bottom-5">
-          <CheckCircle2 className="h-4 w-4 text-amber-300" />
-          <span>{feedbackToast}</span>
-        </div>
-      )}
+      {/* =========================================================
+          PAGE HEADER
+          ========================================================= */}
 
-      {/* Top Banner */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-6 shadow-xs">
+      <div className="flex flex-col gap-4 rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="mb-1 flex items-center gap-2">
             <Badge variant="gold" className="text-[10px]">
               System Administration
             </Badge>
+
             <span className="text-xs text-muted-foreground">
               Security & Store Configuration
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#422006]">
+
+          <h1 className="text-2xl font-extrabold text-[#422006] sm:text-3xl">
             Admin Settings & Security
           </h1>
-          <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
-            Update administrator passwords, manage 2-factor authentication, Vedic consecration pricing rules, and payment gateways.
+
+          <p className="mt-1 max-w-2xl text-xs text-[#5c3a1e]/80 sm:text-sm">
+            Update administrator passwords, Vedic consecration pricing rules,
+            and payment gateways.
           </p>
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* =========================================================
+          TABS
+          ========================================================= */}
+
       <Tabs defaultValue="security" className="space-y-6">
-        <TabsList className="flex flex-wrap h-auto p-1.5 gap-1 bg-amber-100/70 border border-amber-900/10 rounded-2xl">
+        <TabsList className="flex h-auto flex-wrap gap-1 rounded-2xl border border-amber-900/10 bg-amber-100/70 p-1.5">
           <TabsTrigger value="security" className="gap-2 text-xs font-bold">
             <Lock className="h-4 w-4 text-[#713f12]" />
             Security & Password
           </TabsTrigger>
+
           <TabsTrigger value="profile" className="gap-2 text-xs font-bold">
             <User className="h-4 w-4 text-[#713f12]" />
             Admin Profile
           </TabsTrigger>
+
           <TabsTrigger value="store" className="gap-2 text-xs font-bold">
             <Store className="h-4 w-4 text-[#713f12]" />
             Store & Consecration
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="gap-2 text-xs font-bold">
-            <Bell className="h-4 w-4 text-[#713f12]" />
-            Alerts & Notifications
-          </TabsTrigger>
+
           <TabsTrigger value="payments" className="gap-2 text-xs font-bold">
             <CreditCard className="h-4 w-4 text-[#713f12]" />
             Payment Gateways
           </TabsTrigger>
         </TabsList>
 
-        {/* 1. Security & Change Password */}
+        {/* =======================================================
+            1. SECURITY
+            ======================================================= */}
+
         <TabsContent value="security">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Password Form Card */}
-            <Card className="lg:col-span-2 shadow-xs">
-              <CardHeader>
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <KeyRound className="h-5 w-5 text-[#713f12]" />
-                  Change Administrator Password
-                </CardTitle>
-                <CardDescription>
-                  Ensure your account is using a long, random password to stay secure.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {passwordFeedback && (
-                  <div
-                    className={`mb-4 flex items-center gap-2 rounded-xl p-3 text-xs font-semibold border ${
-                      passwordFeedback.success
-                        ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                        : "bg-red-50 text-red-800 border-red-200"
-                    }`}
+          <Card className="shadow-xs">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base font-bold">
+                <KeyRound className="h-5 w-5 text-[#713f12]" />
+                Change Administrator Password
+              </CardTitle>
+
+              <CardDescription>
+                Ensure your account is using a long, random password to stay
+                secure.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <form
+                onSubmit={passwordFormik.handleSubmit}
+                className="space-y-4"
+                noValidate
+              >
+                {/* Current Password */}
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="currentPassword"
+                    className="text-xs font-bold text-[#422006]"
                   >
-                    {passwordFeedback.success ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+                    Current Password
+                  </label>
+
+                  <div className="relative">
+                    <Input
+                      id="currentPassword"
+                      name="currentPassword"
+                      type={showPass ? "text" : "password"}
+                      value={passwordFormik.values.currentPassword}
+                      onChange={passwordFormik.handleChange}
+                      onBlur={passwordFormik.handleBlur}
+                      placeholder="Enter current password"
+                      disabled={passwordFormik.isSubmitting}
+                      aria-invalid={
+                        passwordFormik.touched.currentPassword &&
+                        !!passwordFormik.errors.currentPassword
+                      }
+                      className="h-10 pr-10"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowPass((value) => !value)}
+                      disabled={passwordFormik.isSubmitting}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-[#422006] disabled:opacity-50"
+                    >
+                      {showPass ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {passwordFormik.touched.currentPassword &&
+                    passwordFormik.errors.currentPassword && (
+                      <p className="text-xs font-semibold text-red-600">
+                        {passwordFormik.errors.currentPassword}
+                      </p>
                     )}
-                    <span>{passwordFeedback.message}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                  {/* Current Password */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Current Password</label>
-                    <div className="relative">
-                      <Input
-                        type={showPass ? "text" : "password"}
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        placeholder="Enter current password"
-                        className="h-10 pr-10"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPass(!showPass)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                      >
-                        {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* New Password */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">New Password</label>
-                    <Input
-                      type={showPass ? "text" : "password"}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="At least 6 characters"
-                      className="h-10"
-                      required
-                    />
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Confirm New Password</label>
-                    <Input
-                      type={showPass ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat new password"
-                      className="h-10"
-                      required
-                    />
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <Button type="submit" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
-                      Update Password
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-
-            {/* 2FA Card */}
-            <Card className="shadow-xs lg:col-span-1">
-              <CardHeader>
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-[#713f12]" />
-                  Two-Factor Authentication
-                </CardTitle>
-                <CardDescription>Extra layer of security for temple database</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between rounded-xl bg-amber-50 p-3.5 border border-amber-900/10">
-                  <div>
-                    <p className="text-xs font-bold text-[#422006]">2FA Status</p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {profileData.twoFactorEnabled ? "Active & Enforced" : "Disabled"}
-                    </p>
-                  </div>
-                  <Switch
-                    checked={profileData.twoFactorEnabled}
-                    onCheckedChange={(checked) =>
-                      setProfileData({ ...profileData, twoFactorEnabled: checked })
-                    }
-                  />
                 </div>
-                <p className="text-xs text-[#5c3a1e]/80 leading-relaxed">
-                  When enabled, all admin logins require OTP authentication sent to verified email or authenticator app.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+
+                {/* New Password */}
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="newPassword"
+                    className="text-xs font-bold text-[#422006]"
+                  >
+                    New Password
+                  </label>
+
+                  <Input
+                    id="newPassword"
+                    name="newPassword"
+                    type={showPass ? "text" : "password"}
+                    value={passwordFormik.values.newPassword}
+                    onChange={passwordFormik.handleChange}
+                    onBlur={passwordFormik.handleBlur}
+                    placeholder="At least 8 characters"
+                    disabled={passwordFormik.isSubmitting}
+                    aria-invalid={
+                      passwordFormik.touched.newPassword &&
+                      !!passwordFormik.errors.newPassword
+                    }
+                    className="h-10"
+                  />
+
+                  {passwordFormik.touched.newPassword &&
+                    passwordFormik.errors.newPassword && (
+                      <p className="text-xs font-semibold text-red-600">
+                        {passwordFormik.errors.newPassword}
+                      </p>
+                    )}
+                </div>
+
+                {/* Confirm Password */}
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="text-xs font-bold text-[#422006]"
+                  >
+                    Confirm New Password
+                  </label>
+
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showPass ? "text" : "password"}
+                    value={passwordFormik.values.confirmPassword}
+                    onChange={passwordFormik.handleChange}
+                    onBlur={passwordFormik.handleBlur}
+                    placeholder="Repeat new password"
+                    disabled={passwordFormik.isSubmitting}
+                    aria-invalid={
+                      passwordFormik.touched.confirmPassword &&
+                      !!passwordFormik.errors.confirmPassword
+                    }
+                    className="h-10"
+                  />
+
+                  {passwordFormik.touched.confirmPassword &&
+                    passwordFormik.errors.confirmPassword && (
+                      <p className="text-xs font-semibold text-red-600">
+                        {passwordFormik.errors.confirmPassword}
+                      </p>
+                    )}
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <Button
+                    type="submit"
+                    disabled={
+                      passwordFormik.isSubmitting || !passwordFormik.dirty
+                    }
+                    className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#713f12]"
+                  >
+                    {passwordFormik.isSubmitting
+                      ? "Updating..."
+                      : "Update Password"}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* 2. Admin Profile */}
+        {/* =======================================================
+            2. ADMIN PROFILE
+            ======================================================= */}
+
         <TabsContent value="profile">
           <Card className="shadow-xs">
             <CardHeader>
-              <CardTitle className="text-base font-bold">Admin Personal & Contact Info</CardTitle>
-              <CardDescription>Manage display name, administrative email, and authority role</CardDescription>
+              <CardTitle className="text-base font-bold">
+                Admin Personal & Contact Info
+              </CardTitle>
+
+              <CardDescription>
+                Manage display name, administrative email, and authority role
+              </CardDescription>
             </CardHeader>
+
             <CardContent>
-              <form onSubmit={handleSaveProfile} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <form
+                onSubmit={profileFormik.handleSubmit}
+                className="space-y-4"
+                noValidate
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {/* Name */}
+
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Full Name</label>
+                    <label
+                      htmlFor="profile-first-name"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      First Name
+                    </label>
+
                     <Input
+                      id="profile-first-name"
+                      name="firstName"
                       type="text"
-                      value={profileData.name}
-                      onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                      value={profileFormik.values.firstName}
+                      onChange={profileFormik.handleChange}
+                      onBlur={profileFormik.handleBlur}
+                      placeholder="Administrator name"
+                      disabled={profileFormik.isSubmitting}
+                      aria-invalid={
+                        profileFormik.touched.firstName &&
+                        !!profileFormik.errors.firstName
+                      }
                       className="h-10"
                     />
+
+                    {profileFormik.touched.firstName &&
+                      profileFormik.errors.firstName && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {profileFormik.errors.firstName}
+                        </p>
+                      )}
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Admin Email</label>
+                    <label
+                      htmlFor="profile-last-name"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Last Name
+                    </label>
+
                     <Input
+                      id="profile-last-name"
+                      name="lastName"
+                      type="text"
+                      value={profileFormik.values.lastName}
+                      onChange={profileFormik.handleChange}
+                      onBlur={profileFormik.handleBlur}
+                      placeholder="Administrator name"
+                      disabled={profileFormik.isSubmitting}
+                      aria-invalid={
+                        profileFormik.touched.lastName &&
+                        !!profileFormik.errors.lastName
+                      }
+                      className="h-10"
+                    />
+
+                    {profileFormik.touched.lastName &&
+                      profileFormik.errors.lastName && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {profileFormik.errors.lastName}
+                        </p>
+                      )}
+                  </div>
+                  {/* Email */}
+
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="profile-email"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Admin Email
+                    </label>
+
+                    <Input
+                      id="profile-email"
+                      name="email"
                       type="email"
-                      value={profileData.email}
-                      onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                      value={profileFormik.values.email}
+                      onChange={profileFormik.handleChange}
+                      onBlur={profileFormik.handleBlur}
+                      placeholder="admin@example.com"
+                      disabled={profileFormik.isSubmitting}
+                      aria-invalid={
+                        profileFormik.touched.email &&
+                        !!profileFormik.errors.email
+                      }
                       className="h-10"
                     />
+
+                    {profileFormik.touched.email &&
+                      profileFormik.errors.email && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {profileFormik.errors.email}
+                        </p>
+                      )}
                   </div>
+
+                  {/* Phone */}
+
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Phone Number</label>
+                    <label
+                      htmlFor="profile-phone"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Phone Number
+                    </label>
+
                     <Input
-                      type="text"
-                      value={profileData.phone}
-                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                      id="profile-phone"
+                      name="phoneNumber"
+                      type="tel"
+                      value={profileFormik.values.phoneNumber}
+                      onChange={profileFormik.handleChange}
+                      onBlur={profileFormik.handleBlur}
+                      placeholder="98XXXXXXXX"
+                      disabled={profileFormik.isSubmitting}
+                      aria-invalid={
+                        profileFormik.touched.phoneNumber &&
+                        !!profileFormik.errors.phoneNumber
+                      }
                       className="h-10"
                     />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Admin Authority Role</label>
-                    <Input
-                      type="text"
-                      value={profileData.role}
-                      onChange={(e) => setProfileData({ ...profileData, role: e.target.value })}
-                      className="h-10"
-                    />
+
+                    {profileFormik.touched.phoneNumber &&
+                      profileFormik.errors.phoneNumber && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {profileFormik.errors.phoneNumber}
+                        </p>
+                      )}
                   </div>
                 </div>
+
                 <div className="flex justify-end pt-2">
-                  <Button type="submit" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
-                    Save Profile
+                  <Button
+                    type="submit"
+                    disabled={
+                      profileFormik.isSubmitting || !profileFormik.dirty
+                    }
+                    className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#713f12]"
+                  >
+                    {profileFormik.isSubmitting ? "Saving..." : "Save Profile"}
                   </Button>
                 </div>
               </form>
@@ -326,69 +552,213 @@ export default function AdminSettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* 3. Store & Consecration Settings */}
+        {/* =======================================================
+            3. STORE SETTINGS
+            ======================================================= */}
+
         <TabsContent value="store">
           <Card className="shadow-xs">
             <CardHeader>
-              <CardTitle className="text-base font-bold">Store & Vedic Puja Defaults</CardTitle>
-              <CardDescription>Default currency, consecration fees, and shipping policies</CardDescription>
+              <CardTitle className="text-base font-bold">
+                Store & Vedic Puja Defaults
+              </CardTitle>
+
+              <CardDescription>
+                Default currency, consecration fees, and shipping policies
+              </CardDescription>
             </CardHeader>
+
             <CardContent>
-              <form onSubmit={handleSaveStore} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <form
+                onSubmit={storeFormik.handleSubmit}
+                className="space-y-4"
+                noValidate
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {/* Store Name */}
+
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Store Name</label>
+                    <label
+                      htmlFor="store-name"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Store Name
+                    </label>
+
                     <Input
+                      id="store-name"
+                      name="storeName"
                       type="text"
-                      value={storeConfig.storeName}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, storeName: e.target.value })}
+                      value={storeFormik.values.storeName}
+                      onChange={storeFormik.handleChange}
+                      onBlur={storeFormik.handleBlur}
+                      placeholder="Nepali Rudraksh"
+                      disabled={storeFormik.isSubmitting}
+                      aria-invalid={
+                        storeFormik.touched.storeName &&
+                        !!storeFormik.errors.storeName
+                      }
                       className="h-10"
                     />
+
+                    {storeFormik.touched.storeName &&
+                      storeFormik.errors.storeName && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {storeFormik.errors.storeName}
+                        </p>
+                      )}
                   </div>
+
+                  {/* Support Email */}
+
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Customer Support Email</label>
+                    <label
+                      htmlFor="support-email"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Customer Support Email
+                    </label>
+
                     <Input
+                      id="support-email"
+                      name="customerSupportEmail"
                       type="email"
-                      value={storeConfig.supportEmail}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, supportEmail: e.target.value })}
-                      className="h-10"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Standard Consecration Fee ($)</label>
-                    <Input
-                      type="number"
-                      value={storeConfig.defaultConsecrationFee}
-                      onChange={(e) =>
-                        setStoreConfig({ ...storeConfig, defaultConsecrationFee: Number(e.target.value) })
+                      value={storeFormik.values.customerSupportEmail}
+                      onChange={storeFormik.handleChange}
+                      onBlur={storeFormik.handleBlur}
+                      placeholder="support@example.com"
+                      disabled={storeFormik.isSubmitting}
+                      aria-invalid={
+                        storeFormik.touched.customerSupportEmail &&
+                        !!storeFormik.errors.customerSupportEmail
                       }
                       className="h-10"
                     />
+
+                    {storeFormik.touched.customerSupportEmail &&
+                      storeFormik.errors.customerSupportEmail && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {storeFormik.errors.customerSupportEmail}
+                        </p>
+                      )}
                   </div>
+
+                  {/* Consecration Fee */}
+
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Free Shipping Threshold ($)</label>
+                    <label
+                      htmlFor="consecration-fee"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Standard Consecration Fee ($)
+                    </label>
+
                     <Input
+                      id="consecration-fee"
+                      name="standardConsecrationFee"
                       type="number"
-                      value={storeConfig.freeShippingThreshold}
-                      onChange={(e) =>
-                        setStoreConfig({ ...storeConfig, freeShippingThreshold: Number(e.target.value) })
+                      min="0"
+                      step="0.01"
+                      value={storeFormik.values.standardConsecrationFee}
+                      onChange={storeFormik.handleChange}
+                      onBlur={storeFormik.handleBlur}
+                      placeholder="0"
+                      disabled={storeFormik.isSubmitting}
+                      aria-invalid={
+                        storeFormik.touched.standardConsecrationFee &&
+                        !!storeFormik.errors.standardConsecrationFee
                       }
                       className="h-10"
                     />
+
+                    {storeFormik.touched.standardConsecrationFee &&
+                      storeFormik.errors.standardConsecrationFee && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {storeFormik.errors.standardConsecrationFee}
+                        </p>
+                      )}
                   </div>
+
+                  {/* Free Shipping */}
+
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="shipping-threshold"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Free Shipping Threshold ($)
+                    </label>
+
+                    <Input
+                      id="shipping-threshold"
+                      name="freeShippingThreshold"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={storeFormik.values.freeShippingThreshold}
+                      onChange={storeFormik.handleChange}
+                      onBlur={storeFormik.handleBlur}
+                      placeholder="0"
+                      disabled={storeFormik.isSubmitting}
+                      aria-invalid={
+                        storeFormik.touched.freeShippingThreshold &&
+                        !!storeFormik.errors.freeShippingThreshold
+                      }
+                      className="h-10"
+                    />
+
+                    {storeFormik.touched.freeShippingThreshold &&
+                      storeFormik.errors.freeShippingThreshold && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {storeFormik.errors.freeShippingThreshold}
+                        </p>
+                      )}
+                  </div>
+
+                  {/* Temple Origin */}
+
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-xs font-bold text-[#422006]">Primary Temple Consecration Origin</label>
+                    <label
+                      htmlFor="temple-origin"
+                      className="text-xs font-bold text-[#422006]"
+                    >
+                      Primary Temple Consecration Origin
+                    </label>
+
                     <Input
+                      id="temple-origin"
+                      name="primaryTempleConsecrationOrigin"
                       type="text"
-                      value={storeConfig.templeOrigin}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, templeOrigin: e.target.value })}
+                      value={storeFormik.values.primaryTempleConsecrationOrigin}
+                      onChange={storeFormik.handleChange}
+                      onBlur={storeFormik.handleBlur}
+                      placeholder="Enter temple origin"
+                      disabled={storeFormik.isSubmitting}
+                      aria-invalid={
+                        storeFormik.touched.primaryTempleConsecrationOrigin &&
+                        !!storeFormik.errors.primaryTempleConsecrationOrigin
+                      }
                       className="h-10"
                     />
+
+                    {storeFormik.touched.primaryTempleConsecrationOrigin &&
+                      storeFormik.errors.primaryTempleConsecrationOrigin && (
+                        <p className="text-xs font-semibold text-red-600">
+                          {storeFormik.errors.primaryTempleConsecrationOrigin}
+                        </p>
+                      )}
                   </div>
                 </div>
+
                 <div className="flex justify-end pt-2">
-                  <Button type="submit" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
-                    Save Store Settings
+                  <Button
+                    type="submit"
+                    disabled={storeFormik.isSubmitting || !storeFormik.dirty}
+                    className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#713f12]"
+                  >
+                    {storeFormik.isSubmitting
+                      ? "Saving..."
+                      : "Save Store Settings"}
                   </Button>
                 </div>
               </form>
@@ -396,124 +766,128 @@ export default function AdminSettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* 4. Alerts & Notifications */}
-        <TabsContent value="notifications">
-          <Card className="shadow-xs">
-            <CardHeader>
-              <CardTitle className="text-base font-bold">Email & SMS Alert Notifications</CardTitle>
-              <CardDescription>Control when you receive alerts for new orders and low stock</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSaveNotifications} className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
-                    <div>
-                      <p className="text-xs font-bold text-[#422006]">Email on New Order</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Receive instant email notification when a devotee places an order.
-                      </p>
-                    </div>
-                    <Switch
-                      checked={notifications.emailOnNewOrder}
-                      onCheckedChange={(c) => setNotifications({ ...notifications, emailOnNewOrder: c })}
-                    />
-                  </div>
+        {/* =======================================================
+            4. PAYMENT GATEWAYS
+            ======================================================= */}
 
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
-                    <div>
-                      <p className="text-xs font-bold text-[#422006]">Low Stock Alerts</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Notify admin when any Mukhi grade inventory drops below 4 units.
-                      </p>
-                    </div>
-                    <Switch
-                      checked={notifications.emailOnLowStock}
-                      onCheckedChange={(c) => setNotifications({ ...notifications, emailOnLowStock: c })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
-                    <div>
-                      <p className="text-xs font-bold text-[#422006]">Daily Business Digest</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Morning email summary of previous day sales and upcoming consecrations.
-                      </p>
-                    </div>
-                    <Switch
-                      checked={notifications.dailyDigest}
-                      onCheckedChange={(c) => setNotifications({ ...notifications, dailyDigest: c })}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
-                    Save Notification Rules
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* 5. Payment Gateways */}
         <TabsContent value="payments">
           <Card className="shadow-xs">
             <CardHeader>
-              <CardTitle className="text-base font-bold">Payment Gateway Configurations</CardTitle>
-              <CardDescription>Enable or disable active checkout payment methods</CardDescription>
+              <CardTitle className="text-base font-bold">
+                Payment Gateway Configurations
+              </CardTitle>
+
+              <CardDescription>
+                Enable or disable active checkout payment methods
+              </CardDescription>
             </CardHeader>
+
             <CardContent>
-              <form onSubmit={handleSaveGateways} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
+              <form
+                onSubmit={gatewaysFormik.handleSubmit}
+                className="space-y-4"
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {/* eSewa */}
+
+                  <div className="flex items-center justify-between rounded-xl border border-amber-900/10 bg-amber-50/70 p-3.5">
                     <div>
-                      <p className="text-xs font-bold text-[#422006]">eSewa Digital Wallet (Nepal)</p>
-                      <p className="text-[11px] text-muted-foreground">QR & Direct Wallet Integration</p>
+                      <p className="text-xs font-bold text-[#422006]">
+                        eSewa Digital Wallet (Nepal)
+                      </p>
+
+                      <p className="text-[11px] text-muted-foreground">
+                        QR & Direct Wallet Integration
+                      </p>
                     </div>
+
                     <Switch
-                      checked={gateways.esewa}
-                      onCheckedChange={(c) => setGateways({ ...gateways, esewa: c })}
+                      checked={gatewaysFormik.values.esewa}
+                      onCheckedChange={(checked) =>
+                        gatewaysFormik.setFieldValue("esewa", checked)
+                      }
+                      disabled={gatewaysFormik.isSubmitting}
                     />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
+                  {/* Khalti */}
+
+                  <div className="flex items-center justify-between rounded-xl border border-amber-900/10 bg-amber-50/70 p-3.5">
                     <div>
-                      <p className="text-xs font-bold text-[#422006]">Khalti Digital Wallet (Nepal)</p>
-                      <p className="text-[11px] text-muted-foreground">Instant SDK Payments</p>
+                      <p className="text-xs font-bold text-[#422006]">
+                        Khalti Digital Wallet (Nepal)
+                      </p>
+
+                      <p className="text-[11px] text-muted-foreground">
+                        Instant SDK Payments
+                      </p>
                     </div>
+
                     <Switch
-                      checked={gateways.khalti}
-                      onCheckedChange={(c) => setGateways({ ...gateways, khalti: c })}
+                      checked={gatewaysFormik.values.khalti}
+                      onCheckedChange={(checked) =>
+                        gatewaysFormik.setFieldValue("khalti", checked)
+                      }
+                      disabled={gatewaysFormik.isSubmitting}
                     />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
+                  {/* Stripe */}
+
+                  <div className="flex items-center justify-between rounded-xl border border-amber-900/10 bg-amber-50/70 p-3.5">
                     <div>
-                      <p className="text-xs font-bold text-[#422006]">Stripe / Global Cards</p>
-                      <p className="text-[11px] text-muted-foreground">Visa, MasterCard, Amex (USD)</p>
+                      <p className="text-xs font-bold text-[#422006]">
+                        Stripe / Global Cards
+                      </p>
+
+                      <p className="text-[11px] text-muted-foreground">
+                        Visa, MasterCard, Amex (USD)
+                      </p>
                     </div>
+
                     <Switch
-                      checked={gateways.stripe}
-                      onCheckedChange={(c) => setGateways({ ...gateways, stripe: c })}
+                      checked={gatewaysFormik.values.stripe}
+                      onCheckedChange={(checked) =>
+                        gatewaysFormik.setFieldValue("stripe", checked)
+                      }
+                      disabled={gatewaysFormik.isSubmitting}
                     />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3.5 border border-amber-900/10">
+                  {/* COD */}
+
+                  <div className="flex items-center justify-between rounded-xl border border-amber-900/10 bg-amber-50/70 p-3.5">
                     <div>
-                      <p className="text-xs font-bold text-[#422006]">Cash on Delivery (Nepal)</p>
-                      <p className="text-[11px] text-muted-foreground">Pay upon hand delivery</p>
+                      <p className="text-xs font-bold text-[#422006]">
+                        Cash on Delivery (Nepal)
+                      </p>
+
+                      <p className="text-[11px] text-muted-foreground">
+                        Pay upon hand delivery
+                      </p>
                     </div>
+
                     <Switch
-                      checked={gateways.cod}
-                      onCheckedChange={(c) => setGateways({ ...gateways, cod: c })}
+                      checked={gatewaysFormik.values.cod}
+                      onCheckedChange={(checked) =>
+                        gatewaysFormik.setFieldValue("cod", checked)
+                      }
+                      disabled={gatewaysFormik.isSubmitting}
                     />
                   </div>
                 </div>
 
                 <div className="flex justify-end pt-2">
-                  <Button type="submit" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
-                    Save Payment Settings
+                  <Button
+                    type="submit"
+                    disabled={
+                      gatewaysFormik.isSubmitting || !gatewaysFormik.dirty
+                    }
+                    className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#713f12]"
+                  >
+                    {gatewaysFormik.isSubmitting
+                      ? "Saving..."
+                      : "Save Payment Settings"}
                   </Button>
                 </div>
               </form>

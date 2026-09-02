@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "contract:emit": "prisma contract emit",
-    "seed:admin": "bun run scripts/seed-admin.ts"
+    "seed:admin": "bun run scripts/seed-admin.ts",
+    "seed:payment-gateway": "bun run scripts/seed-payment-gateway.ts",
+    "seed:store-setting": "bun run scripts/seed-store-setting.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

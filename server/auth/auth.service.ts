@@ -2,9 +2,9 @@ import bcrypt from "bcryptjs";
 import { db } from "../../src/prisma/db";
 import { sendEmail } from "../helpers/emailHelper";
 import { generateOtp } from "../user/user.service";
-import type { ForgotPasswordInput, LoginInput, ResetPasswordInput } from "./auth.schema";
+import type { ChangePasswordInput, ForgotPasswordInput, LoginInput, ResetPasswordInput } from "./auth.schema";
 import { issueTokens } from "./token.service";
-import { UnauthorizedError } from "@/lib/error";
+import { NotFoundError, UnauthorizedError } from "@/lib/error";
 
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 5;
@@ -190,4 +190,24 @@ export async function resetUserPassword(input: ResetPasswordInput) {
     });
 
     return { message: "Password reset successfully." };
+}
+
+export async function changeUserPassword(userId: number,input: ChangePasswordInput) {
+    const user = await db.orm.public.User
+        .where({ id: userId })
+        .first();
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+    const isPasswordValid = await bcrypt.compare(input.oldPassword, user.password);
+    if (!isPasswordValid) {
+         throw new UnauthorizedError("Invalid email or password");
+    }
+    const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+    await db.orm.public.User
+        .where({ id: user.id })
+        .update({ password: hashedPassword });
+
+
+    return { message: "Password changed successfully." };
 }

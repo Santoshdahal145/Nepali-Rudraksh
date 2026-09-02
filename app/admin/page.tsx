@@ -2,19 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { requestAPI } from "@/lib/requestAPI";
 import { useFormik } from "formik";
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { loginApi } from "../api/auth/login/api";
 import { adminLoginSchema } from "./validation";
+import { useAdmin } from "./data/AdminContext";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-
+  const { login } = useAdmin();
   const formik = useFormik({
     initialValues: {
       email: "admin@nepalirudraksh.com",
@@ -23,13 +22,11 @@ export default function AdminLoginPage() {
     validationSchema: adminLoginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        await requestAPI(
-          loginApi({
-            email: values.email,
-            password: values.password,
-          })
-        );
-        router.push("/admin/dashboard");
+        await login(values.email, values.password);
+        if (true) {
+          console.log("navigated from login page !");
+          router.push("/admin/dashboard");
+        }
       } catch (err) {
         console.error(err);
       } finally {

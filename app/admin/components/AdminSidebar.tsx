@@ -1,21 +1,19 @@
 "use client";
 
-import React from "react";
+import {
+  ChevronRight,
+  ExternalLink,
+  LayoutDashboard,
+  LogOut,
+  Package,
+  Settings,
+  ShieldCheck,
+  ShoppingCart,
+  Sliders,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Users,
-  Sliders,
-  Settings,
-  ExternalLink,
-  LogOut,
-  ShieldCheck,
-  Sparkles,
-  ChevronRight,
-} from "lucide-react";
 import { useAdmin } from "../data/AdminContext";
 
 const navItems = [
@@ -63,12 +61,8 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
   const pathname = usePathname();
-  const { orders, settings, logout } = useAdmin();
-
-  const pendingOrdersCount = orders.filter(
-    (o) => o.status === "Pending" || o.status === "Processing"
-  ).length;
-
+  const { logout, user } = useAdmin();
+  const pendingOrdersCount = 5;
   return (
     <aside className="flex h-full w-72 flex-col justify-between border-r border-amber-900/10 bg-[#fdfbf7] p-5 shadow-xs">
       {/* Top Section */}
@@ -80,7 +74,7 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
             onClick={onCloseMobile}
             className="group flex items-center gap-3"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#713f12] via-[#8b4513] to-[#422006] text-xl shadow-md shadow-amber-950/20 transition group-hover:scale-105">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-[#713f12] via-[#8b4513] to-[#422006] text-xl shadow-md shadow-amber-950/20 transition group-hover:scale-105">
               🌿
             </span>
             <div className="flex flex-col">
@@ -104,7 +98,8 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
             const Icon = item.icon;
             const isActive =
               pathname === item.href ||
-              (item.href !== "/admin/dashboard" && pathname.startsWith(item.href));
+              (item.href !== "/admin/dashboard" &&
+                pathname.startsWith(item.href));
 
             return (
               <Link
@@ -161,17 +156,6 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
             );
           })}
         </nav>
-
-        {/* Sacred Consecration Guarantee Card */}
-        <div className="rounded-xl border border-amber-900/10 bg-gradient-to-br from-amber-50 to-orange-50/60 p-3.5">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#713f12] mb-1">
-            <Sparkles className="h-3.5 w-3.5 text-amber-700" />
-            <span>Pashupatinath Consecration</span>
-          </div>
-          <p className="text-[11px] leading-relaxed text-[#5c3a1e]/80">
-            Vedic rituals active for 4 new orders awaiting temple blessings.
-          </p>
-        </div>
       </div>
 
       {/* Bottom Section: Store link & Admin user info */}
@@ -193,14 +177,15 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
         <div className="flex items-center justify-between rounded-xl bg-amber-100/40 p-2.5">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#713f12] text-xs font-bold text-white shadow-xs">
-              {settings.adminProfile.avatar}
+              {user?.firstName[0]}
+              {user?.lastName[0]}
             </div>
             <div className="min-w-0 truncate">
               <p className="truncate text-xs font-bold text-[#422006]">
-                {settings.adminProfile.name}
+                {user?.firstName} {user?.lastName}
               </p>
               <p className="truncate text-[10px] text-muted-foreground">
-                {settings.adminProfile.email}
+                {user?.email}
               </p>
             </div>
           </div>
