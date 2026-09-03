@@ -14,8 +14,11 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { useAuth } from "@/providers/AuthContext";
+import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import { loginSchema } from "./validation";
 
 const features = [
   {
@@ -59,6 +62,27 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: loginSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await login(values.email, values.password);
+        router.push("/");
+      } catch (err) {
+        console.error("Login submission error:", err);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-[#faf7f2]">
       {/* ───── LEFT: Login Card ───── */}
@@ -86,9 +110,9 @@ export default function LoginPage() {
 
           {/* Card */}
           <div className="rounded-2xl border border-amber-900/10 bg-white/90 p-6 shadow-xl shadow-amber-950/5 backdrop-blur sm:p-8">
-            <form className="space-y-5">
+            <form onSubmit={formik.handleSubmit} className="space-y-5" noValidate>
               {/* Email */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label
                   htmlFor="email"
                   className="text-sm font-medium text-[#422006]"
@@ -99,15 +123,25 @@ export default function LoginPage() {
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="email"
+                    name="email"
                     type="email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     placeholder="you@example.com"
                     className="h-11 pl-10 focus-visible:ring-amber-700"
+                    aria-invalid={formik.touched.email && !!formik.errors.email}
                   />
                 </div>
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-xs font-semibold text-red-600">
+                    {formik.errors.email}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
@@ -126,9 +160,16 @@ export default function LoginPage() {
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="password"
+                    name="password"
                     type={showPassword ? "text" : "password"}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     placeholder="Enter your password"
                     className="h-11 pl-10 pr-10 focus-visible:ring-amber-700"
+                    aria-invalid={
+                      formik.touched.password && !!formik.errors.password
+                    }
                   />
                   <button
                     type="button"
@@ -145,15 +186,30 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
+                {formik.touched.password && formik.errors.password && (
+                  <p className="text-xs font-semibold text-red-600">
+                    {formik.errors.password}
+                  </p>
+                )}
               </div>
 
               {/* Submit */}
               <Button
                 type="submit"
-                className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e]"
+                disabled={formik.isSubmitting}
+                className="h-11 w-full bg-[#713f12] font-medium text-white hover:bg-[#5c330e]"
               >
-                Sign in
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {formik.isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span>Signing in...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <span>Sign in</span>
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </div>
+                )}
               </Button>
             </form>
 
