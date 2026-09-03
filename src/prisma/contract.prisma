@@ -47,13 +47,24 @@ model User {
   firstName          String
   lastName           String
   hashedRefreshToken String?
-  isEmailVerified    Boolean?
-  password           String
-  phoneNumber        String
+  isEmailVerified    Boolean?  @default(false)
+  password           String?
+  phoneNumber        String?
+  accounts           Account[]
   cart               Cart?
   otps               Otp[]
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @default(now())
+}
+
+model Account {
+  id                Int    @id @default(autoincrement())
+  userId            Int
+  provider          String
+  providerAccountId String
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Otp {

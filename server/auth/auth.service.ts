@@ -29,7 +29,7 @@ export async function login(input: LoginInput) {
   throw new UnauthorizedError("Invalid email or password");
     }
 
-    const isPasswordValid = await bcrypt.compare(input.password, existing.password);
+    const isPasswordValid = existing.password && await bcrypt.compare(input.password, existing.password);
     if (!isPasswordValid) {
          throw new UnauthorizedError("Invalid email or password");
     }
@@ -216,7 +216,7 @@ export async function changeUserPassword(userId: number,input: ChangePasswordInp
     if (!user) {
         throw new NotFoundError("User not found");
     }
-    const isPasswordValid = await bcrypt.compare(input.oldPassword, user.password);
+    const isPasswordValid = user.password && await bcrypt.compare(input.oldPassword, user.password);
     if (!isPasswordValid) {
          throw new UnauthorizedError("Invalid email or password");
     }
@@ -227,4 +227,103 @@ export async function changeUserPassword(userId: number,input: ChangePasswordInp
 
 
     return { message: "Password changed successfully." };
+}
+
+export async function googleLogin(input: {
+    email: string;
+    providerAccountId: string;
+    emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
+}) {
+    const {
+        email,
+        providerAccountId,
+        emailVerified,
+        firstName,
+        lastName,
+    } = input;
+
+    if (!emailVerified) {
+        throw new UnauthorizedError("Google email is not verified");
+    }
+
+    // 1. First find the Google account by Google's stable `sub`
+    const existingAccount = await db.orm.public.Account
+        .where({
+            provider: "google",
+            providerAccountId,
+        })
+        .first();
+
+    let user;
+
+    // 2. Google account is already linked
+    if (existingAccount) {
+        user = await db.orm.public.User
+            .where({ id: existingAccount.userId })
+            .first();
+
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+    } else {
+        // 3. No Google account yet.
+        // Find an existing user with this verified Google email.
+        user = await db.orm.public.User
+            .where({ email })
+            .first();
+
+        if (!user) {
+            // 4. Create a completely new user
+            user = await db.orm.public.User.create({
+                email,
+                firstName: firstName ?? "",
+                lastName: lastName ?? "",
+                isEmailVerified: true,
+                // Add other required fields here if your schema
+                // still requires them.
+            });
+
+            // Link Google account to the new user
+            await db.orm.public.Account.create({
+                userId: user.id,
+                provider: "google",
+                providerAccountId,
+            });
+        } else {
+            // 5. Existing email/password user.
+            // Since Google has verified this email, link Google
+            // to the existing account.
+            await db.orm.public.Account.create({
+                userId: user.id,
+                provider: "google",
+                providerAccountId,
+            });
+
+            // Optional: Google has verified the email,
+            // so make sure our user is also marked verified.
+            if (!user.isEmailVerified) {
+                await db.orm.public.User
+                    .where({ id: user.id })
+                    .update({
+                        isEmailVerified: true,
+                    });
+            }
+        }
+    }
+
+    // 6. Remove sensitive fields before returning the user
+    const safeUser = getSafeUserFromDB(user);
+
+    // 7. Use your EXISTING JWT system
+    const tokens = await issueTokens(
+        user.id,
+        user.role ?? "USER"
+    );
+
+    return {
+        user: safeUser,
+        tokens,
+    };
 }

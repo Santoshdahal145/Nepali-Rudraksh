@@ -20,6 +20,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<void>;
   logout: () => void;
   changePassword: (currentPass: string, newPass: string) => Promise<void>;
+  setUserToSessionStorage: (user: UserType) => void;
   updateProfile: (data: {
     firstName: string;
     lastName: string;
@@ -231,6 +232,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
   };
+  const setUserToSessionStorage = (user: UserType) => {
+    try {
+      setUser(user);
+      setIsAuthenticated(true);
+      sessionStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+      sessionStorage.setItem(STORAGE_KEYS.isAuthenticated, "true");
+    } catch (error) {
+      console.error("Failed to set user:", error);
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -246,6 +257,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyEmailOtp,
         resendOtp,
         registerUser,
+        setUserToSessionStorage,
       }}
     >
       {children}

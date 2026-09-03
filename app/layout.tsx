@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/providers/AuthContext";
+import Script from "next/script";
 
 const publicSansHeading = Public_Sans({
   subsets: ["latin"],
@@ -42,8 +43,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="min-h-full flex flex-col">
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="lazyOnload"
+        />
         <AuthProvider>
           {children}
+
           <Toaster position="top-right" richColors />
         </AuthProvider>
       </body>
