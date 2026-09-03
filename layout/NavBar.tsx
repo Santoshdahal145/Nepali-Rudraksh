@@ -4,13 +4,23 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, Search, ShoppingBag, User, X, ArrowRight, Sparkles, Star } from "lucide-react";
+import {
+  Menu,
+  Search,
+  ShoppingBag,
+  User,
+  X,
+  ArrowRight,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAuth } from "@/providers/AuthContext";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -109,7 +119,22 @@ export default function NavBar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const { isAuthenticated, user } = useAuth();
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const userDisplayName =
+    user?.firstName || user?.lastName
+      ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
+      : user?.email
+        ? user.email.split("@")[0]
+        : "Account";
+
+  const userInitials =
+    user?.firstName && user?.lastName
+      ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
+      : userDisplayName
+        ? userDisplayName.charAt(0).toUpperCase()
+        : "U";
 
   // Auto focus input when search modal opens
   useEffect(() => {
@@ -207,16 +232,31 @@ export default function NavBar() {
             </Link>
           </Button>
 
-          {/* Login */}
-          <Link href="/login">
-            <Button
-              variant="outline"
-              className="h-9 gap-1.5 border-amber-900/20 px-4 text-sm font-medium text-[#713f12] hover:border-amber-900/40 hover:bg-amber-50"
+          {/* Auth: Login or User Avatar */}
+          {isAuthenticated ? (
+            <Link
+              href="/user-settings"
+              className="group flex h-9 items-center gap-2 rounded-full border border-amber-900/20 bg-amber-50/60 pl-1 pr-3.5 transition-all duration-200 hover:border-amber-900/40 hover:bg-amber-100/70 hover:shadow-xs"
+              title="User Settings"
             >
-              <User className="size-3.5" />
-              Login
-            </Button>
-          </Link>
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#713f12] text-xs font-bold text-white shadow-xs transition-transform duration-200 group-hover:scale-105">
+                {userInitials}
+              </div>
+              <span className="max-w-[130px] truncate text-xs font-semibold text-[#422006] transition-colors group-hover:text-[#713f12]">
+                {userDisplayName}
+              </span>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <Button
+                variant="outline"
+                className="h-9 gap-1.5 border-amber-900/20 px-4 text-sm font-medium text-[#713f12] hover:border-amber-900/40 hover:bg-amber-50"
+              >
+                <User className="size-3.5" />
+                Login
+              </Button>
+            </Link>
+          )}
 
           {/* Shop CTA */}
           <Link href="/all-products">
@@ -322,15 +362,35 @@ export default function NavBar() {
 
               {/* Auth + CTA */}
               <div className="flex flex-col gap-3 px-5 py-5">
-                <Link href="/login" onClick={() => setSheetOpen(false)}>
-                  <Button
-                    variant="outline"
-                    className="h-10 w-full gap-2 border-amber-900/20 text-[#713f12] hover:border-amber-900/40 hover:bg-amber-50"
+                {isAuthenticated ? (
+                  <Link
+                    href="/user-settings"
+                    onClick={() => setSheetOpen(false)}
+                    className="group flex items-center gap-3 rounded-2xl border border-amber-900/20 bg-white p-3 shadow-xs transition-all duration-200 hover:border-amber-900/40 hover:bg-amber-50/70"
                   >
-                    <User className="size-4" />
-                    Login / Register
-                  </Button>
-                </Link>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#713f12] text-xs font-bold text-white shadow-xs">
+                      {userInitials}
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-sm font-semibold text-[#422006]">
+                        {userDisplayName}
+                      </span>
+                      <span className="text-[11px] font-medium text-[#713f12]/80 group-hover:underline">
+                        User Settings & Profile →
+                      </span>
+                    </div>
+                  </Link>
+                ) : (
+                  <Link href="/login" onClick={() => setSheetOpen(false)}>
+                    <Button
+                      variant="outline"
+                      className="h-10 w-full gap-2 border-amber-900/20 text-[#713f12] hover:border-amber-900/40 hover:bg-amber-50"
+                    >
+                      <User className="size-4" />
+                      Login / Register
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/all-products" onClick={() => setSheetOpen(false)}>
                   <Button className="h-10 w-full bg-[#713f12] text-white shadow-sm shadow-amber-900/20 hover:bg-[#5c330e]">
                     Shop Now
@@ -354,7 +414,10 @@ export default function NavBar() {
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-16 sm:pt-24 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-amber-900/15 bg-[#faf7f2] shadow-2xl animate-in zoom-in-95 duration-200">
             {/* Search Input Box */}
-            <form onSubmit={handleSearchSubmit} className="relative border-b border-amber-900/10 bg-white p-4">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="relative border-b border-amber-900/10 bg-white p-4"
+            >
               <div className="flex items-center gap-3">
                 <Search className="h-5 w-5 text-[#713f12] shrink-0" />
                 <input
@@ -398,9 +461,12 @@ export default function NavBar() {
                   {filteredResults.length === 0 ? (
                     <div className="py-8 text-center">
                       <span className="text-4xl mb-2 inline-block">🔍</span>
-                      <p className="text-sm font-bold text-[#422006]">No matching sacred beads found</p>
+                      <p className="text-sm font-bold text-[#422006]">
+                        No matching sacred beads found
+                      </p>
                       <p className="text-xs text-[#5c3a1e]/70 mt-1">
-                        Try searching for &quot;5 Mukhi&quot;, &quot;Siddh Mala&quot;, or &quot;Gauri Shankar&quot;.
+                        Try searching for &quot;5 Mukhi&quot;, &quot;Siddh
+                        Mala&quot;, or &quot;Gauri Shankar&quot;.
                       </p>
                     </div>
                   ) : (
@@ -469,8 +535,12 @@ export default function NavBar() {
                       >
                         <span className="text-xl">📿</span>
                         <div>
-                          <p className="text-xs font-bold text-[#422006]">Nepal Siddh Malas</p>
-                          <p className="text-[10px] text-muted-foreground">108+1 Blessed Beads</p>
+                          <p className="text-xs font-bold text-[#422006]">
+                            Nepal Siddh Malas
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            108+1 Blessed Beads
+                          </p>
                         </div>
                       </Link>
 
@@ -481,8 +551,12 @@ export default function NavBar() {
                       >
                         <span className="text-xl">🌙</span>
                         <div>
-                          <p className="text-xs font-bold text-[#422006]">1 to 21 Mukhi Beads</p>
-                          <p className="text-[10px] text-muted-foreground">Rare Collector Grades</p>
+                          <p className="text-xs font-bold text-[#422006]">
+                            1 to 21 Mukhi Beads
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            Rare Collector Grades
+                          </p>
                         </div>
                       </Link>
                     </div>
@@ -494,7 +568,11 @@ export default function NavBar() {
             {/* Modal Footer CTA */}
             <div className="border-t border-amber-900/10 bg-white p-3.5 text-center sm:flex sm:items-center sm:justify-between px-5">
               <span className="text-[11px] text-[#5c3a1e]/60 hidden sm:inline">
-                Press <kbd className="rounded border bg-amber-50 px-1 py-0.5 font-mono text-[10px]">Enter</kbd> to search full catalog
+                Press{" "}
+                <kbd className="rounded border bg-amber-50 px-1 py-0.5 font-mono text-[10px]">
+                  Enter
+                </kbd>{" "}
+                to search full catalog
               </span>
               <Link
                 href="/all-products"
