@@ -53,7 +53,9 @@ export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
 
   const paramsEmail = searchParams.get("email");
-
+  console.log("🚀 ~ VerifyOtpPage ~ paramsEmail:", paramsEmail);
+  const ddemail = decodeURIComponent("email");
+  console.log("🚀 ~ VerifyOtpPage ~ ddemail:", ddemail);
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -76,7 +78,7 @@ export default function VerifyOtpPage() {
     setOtp(Array(OTP_LENGTH).fill(""));
     inputRefs.current[0]?.focus();
     try {
-      await resendOtp(paramsEmail || "");
+      await resendOtp(paramsEmail || "", "EMAIL_VERIFICATION");
     } catch (error) {
       console.log("resend error", error);
     }

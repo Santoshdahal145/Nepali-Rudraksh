@@ -20,13 +20,12 @@ export const resetPasswordSchema = z.object({
 });
 export const validateOtpSchema = z.object({
     email: z.email(),
-    otp: z.string(),
+    otp: z.string().min(6, "OTP must be at least 6 characters long"),
 
 });
 export const resendOtpSchema = z.object({
     email: z.email(),
-
-
+    otpType:z.enum(["PASSWORD_RESET", "EMAIL_VERIFICATION"]),
 });
 
 export const changePasswordSchema = z.object({

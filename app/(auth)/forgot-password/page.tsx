@@ -42,12 +42,17 @@ const tips = [
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const { forgotPassword } = useAuth();
+  const [isSubmitting, setIsSubmittting] = useState(false);
+  console.log("🚀 ~ ForgotPasswordPage ~ isSubmitting:", isSubmitting);
 
   const handleSubmitEmail = async (email: string) => {
+    setIsSubmittting(true);
     try {
       await forgotPassword(email);
     } catch (err) {
       console.log("Error " + err);
+    } finally {
+      setIsSubmittting(false);
     }
   };
 
@@ -104,9 +109,10 @@ export default function ForgotPasswordPage() {
 
               <Button
                 type="submit"
-                className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e]"
+                disabled={isSubmitting}
+                className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e]  disabled:cursor-not-allowed"
               >
-                Send OTP
+                {isSubmitting ? "Sending OTP..." : "Send OTP"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </form>

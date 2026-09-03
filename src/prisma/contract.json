@@ -1294,10 +1294,6 @@
                 },
                 "consumedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
@@ -1382,7 +1378,8 @@
                 {
                   "columns": [
                     "userId",
-                    "type"
+                    "type",
+                    "createdAt"
                   ]
                 }
               ]
@@ -1791,7 +1788,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8ec9818a898cad5187b0cce2f0b3250d14b797c7ba5d2fd6c3c23ee47af74e44"
+    "storageHash": "3da08f6fd29ce447cc631401d5a445321b1b3c46f30579e779a3717945c9c0b1"
   },
   "capabilities": {
     "postgres": {

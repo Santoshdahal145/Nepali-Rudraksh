@@ -63,11 +63,11 @@ model Otp {
   codeHash   String
   type       OtpType
   expiresAt  DateTime  @default(now())
-  consumedAt DateTime? @default(now())
+  consumedAt DateTime?
   attempts   Int       @default(0)
   createdAt  DateTime  @default(now())
 
-  @@unique([userId, type])
+  @@unique([userId, type, createdAt])
 }
 
 model Category {

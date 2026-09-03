@@ -3,7 +3,7 @@ import { ApiRequestType } from "@/lib/requestAPI";
 type ResetPasswordDataPayload = {
     email: string;
     otp: string;
-    newPassword: string;
+    password: string;
 }
 
 export const resetPasswordWithOtpApi = (data: ResetPasswordDataPayload): ApiRequestType => {

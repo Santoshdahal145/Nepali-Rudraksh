@@ -60,6 +60,7 @@ export default function RegisterPage() {
     },
     validationSchema: registerSchema,
     onSubmit: async (values, { setSubmitting }) => {
+      console.log("🚀 ~ RegisterPage ~ values:", values);
       try {
         await registerUser(values);
       } catch (err) {

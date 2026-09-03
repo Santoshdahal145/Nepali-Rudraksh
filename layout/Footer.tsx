@@ -32,7 +32,8 @@ export default function Footer() {
                 Receive Vedic Blessings &amp; Rare Bead Alerts
               </h3>
               <p className="mt-1 text-xs text-amber-200/70 sm:text-sm">
-                Get notified when rare 1-21 Mukhi harvests arrive from Eastern Nepal.
+                Get notified when rare 1-21 Mukhi harvests arrive from Eastern
+                Nepal.
               </p>
             </div>
 
@@ -43,7 +44,7 @@ export default function Footer() {
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="h-10 sm:h-11 border-white/15 bg-white/10 text-white placeholder:text-amber-200/40 focus-visible:ring-amber-400 text-xs sm:text-sm"
+                className="h-10 sm:h-11 border-white/15 bg-white/10  placeholder:text-amber-200/40 focus-visible:ring-amber-400 text-xs sm:text-sm"
               />
               <Button className="h-10 sm:h-11 shrink-0 bg-amber-400 text-xs sm:text-sm font-bold text-[#422006] hover:bg-amber-300">
                 Subscribe
@@ -218,28 +219,13 @@ export default function Footer() {
                   Create New Account
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/cart"
-                  className="transition-colors hover:text-amber-300"
-                >
-                  View Sacred Cart
-                </Link>
-              </li>
+
               <li>
                 <Link
                   href="/forgot-password"
                   className="transition-colors hover:text-amber-300"
                 >
                   Forgot Password
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/verify-otp"
-                  className="transition-colors hover:text-amber-300"
-                >
-                  Verify Order / OTP
                 </Link>
               </li>
             </ul>
@@ -272,15 +258,12 @@ export default function Footer() {
           </p>
           <p className="flex items-center justify-center gap-1">
             Handcrafted with devotion{" "}
-            <Heart className="h-3 w-3 fill-amber-400 text-amber-400 shrink-0" /> in
-            Kathmandu, Nepal.
+            <Heart className="h-3 w-3 fill-amber-400 text-amber-400 shrink-0" />{" "}
+            in Kathmandu, Nepal.
           </p>
           <div className="flex gap-4 sm:gap-6">
-            <Link href="/terms" className="hover:text-white">
-              Terms
-            </Link>
-            <Link href="/privacy" className="hover:text-white">
-              Privacy
+            <Link href="/terms-and-privacy-policy" className="hover:text-white">
+              Terms And Privacy Policy
             </Link>
           </div>
         </div>

@@ -33,7 +33,10 @@ interface AuthContextType {
     newPassword: string
   ) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
-  resendOtp: (email: string) => Promise<void>;
+  resendOtp: (
+    email: string,
+    otpType: "PASSWORD_RESET" | "EMAIL_VERIFICATION"
+  ) => Promise<void>;
   registerUser: (data: {
     firstName: string;
     lastName: string;
@@ -174,10 +177,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPasswordWithOtp = async (
     email: string,
     otp: string,
-    newPassword: string
+    password: string
   ) => {
     try {
-      await requestAPI(resetPasswordWithOtpApi({ email, otp, newPassword }));
+      await requestAPI(resetPasswordWithOtpApi({ email, otp, password }));
     } catch (error) {
       console.error("Reset password with OTP error:", error);
       throw error;
@@ -202,9 +205,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resendOtp = async (email: string) => {
+  const resendOtp = async (
+    email: string,
+    otpType: "PASSWORD_RESET" | "EMAIL_VERIFICATION"
+  ) => {
     try {
-      await requestAPI(resendOtpApi({ email }));
+      await requestAPI(resendOtpApi({ email, otpType }));
     } catch (error) {
       console.error("Resend OTP error:", error);
       throw error;
@@ -219,7 +225,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }) => {
     try {
       await requestAPI(registerApi(data));
-      router.push(`/verify-otp?email=${data.email}`);
+      router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
     } catch (error) {
       console.error("Register user error:", error);
       throw error;

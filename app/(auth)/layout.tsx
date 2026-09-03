@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { AuthProvider } from "@/providers/AuthContext";
+import Link from "next/link";
 
 export default function Authlayout({
   children,
@@ -17,7 +16,7 @@ export default function Authlayout({
         <span className="hidden sm:inline">Back to Home</span>
         <span className="sm:hidden">Home</span>
       </Link>
-      <AuthProvider>{children}</AuthProvider>
+      {children}
     </main>
   );
 }

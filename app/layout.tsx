@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter, Public_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/providers/AuthContext";
 
 const publicSansHeading = Public_Sans({
   subsets: ["latin"],
@@ -41,8 +42,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <Toaster position="top-right" richColors />
+        <AuthProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+        </AuthProvider>
       </body>
     </html>
   );

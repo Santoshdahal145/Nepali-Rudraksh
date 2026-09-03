@@ -52,9 +52,13 @@ export async function validateUserEmailVerificationOtp(input: ValidateOtpInput) 
         throw new Error("User not found");
     }
 
-    const otp = await db.orm.public.Otp
-        .where({ userId: user.id, type: "EMAIL_VERIFICATION" })
-        .first();
+const otp = await db.orm.public.Otp
+  .where({
+    userId: user.id,
+    type: "EMAIL_VERIFICATION",
+  })
+  .orderBy((otp) => otp.createdAt.desc())
+  .first();
 
     if (!otp) {
         throw new Error("No verification OTP found. Please request a new one.");
@@ -115,7 +119,9 @@ export async function forgotUserPassword(input: ForgotPasswordInput) {
 
     const code = generateOtp();
     const codeHash = await bcrypt.hash(code, 10);
-    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60_000);
+ const expiresAt = Temporal.Now.instant().add({
+    minutes: OTP_EXPIRY_MINUTES,
+});
 
     // Delete any existing PASSWORD_RESET OTP for this user then create a fresh one
     await db.transaction(async (tx) => {
@@ -169,9 +175,9 @@ export async function resetUserPassword(input: ResetPasswordInput) {
         throw new Error("OTP has already been used.");
     }
 
-    if (new Date() > otp.expiresAt) {
-        throw new Error("OTP has expired. Please request a new one.");
-    }
+  if (Temporal.Instant.compare(Temporal.Now.instant(), otp.expiresAt) >= 0) {
+    throw new Error("OTP has expired. Please request a new one.");
+}
 
     if (otp.attempts >= MAX_OTP_ATTEMPTS) {
         throw new Error("Too many failed attempts. Please request a new OTP.");
@@ -192,7 +198,7 @@ export async function resetUserPassword(input: ResetPasswordInput) {
         // Consume the OTP
         await tx.orm.public.Otp
             .where({ id: otp.id })
-            .update({ consumedAt: new Date() });
+         .update({ consumedAt: Temporal.Now.instant()});
 
         // Update the user's password
         await tx.orm.public.User

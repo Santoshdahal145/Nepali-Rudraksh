@@ -87,29 +87,49 @@ const expiresAt = Temporal.Now.instant().add({
 // resend otp
 const RESEND_COOLDOWN_MINUTES = 1;
 
-export async function resendOtp(input:ResendOtpInput) {
+export async function resendOtp(input: ResendOtpInput) {
     const existing = await db.orm.public.User
-        .where({ email :input.email}).first();
+        .where({ email: input.email })
+        .first();
 
     if (!existing) {
         throw new Error("User not found");
     }
 
-    if (existing.isEmailVerified) {
-        throw new Error("Email is already verified");
+    // EMAIL_VERIFICATION
+    if (input.otpType === "EMAIL_VERIFICATION") {
+        if (existing.isEmailVerified) {
+            throw new Error("Email is already verified");
+        }
+    }
+
+    // PASSWORD_RESET
+    if (input.otpType === "PASSWORD_RESET") {
+        // You can optionally check whether the user exists only.
+        // Do NOT reveal whether an email is registered in the API response
+        // if this endpoint is publicly accessible.
     }
 
     const lastOtp = await db.orm.public.Otp
-        .where({ userId: existing.id, type: "EMAIL_VERIFICATION" })
+        .where({
+            userId: existing.id,
+            type: input.otpType,
+        })
+        .orderBy((otp) => otp.createdAt.desc())
         .first();
 
     if (lastOtp) {
-        const cooldownEnds = Temporal.Instant
-            .fromEpochMilliseconds(lastOtp.createdAt.getTime())
-            .add({ minutes: RESEND_COOLDOWN_MINUTES });
+        const cooldownEnds = lastOtp.createdAt.add({
+            minutes: RESEND_COOLDOWN_MINUTES,
+        });
 
-        if (Temporal.Instant.compare(Temporal.Now.instant(), cooldownEnds) < 0) {
-            const secondsLeft = Temporal.Now.instant().until(cooldownEnds).total("seconds");
+        const now = Temporal.Now.instant();
+
+        if (Temporal.Instant.compare(now, cooldownEnds) < 0) {
+            const secondsLeft = now
+                .until(cooldownEnds)
+                .total("seconds");
+
             throw new Error(
                 `Please wait ${Math.ceil(secondsLeft)} seconds before requesting a new code`
             );
@@ -117,30 +137,63 @@ export async function resendOtp(input:ResendOtpInput) {
     }
 
     const code = generateOtp();
+
     const codeHash = await bcrypt.hash(code, 10);
+
     const expiresAt = Temporal.Now.instant().add({
         minutes: OTP_EXPIRY_MINUTES,
     });
 
-   await db.transaction(async (tx) => {
+    await db.transaction(async (tx) => {
         await tx.orm.public.Otp.create({
             userId: existing.id,
             codeHash,
-            type: "EMAIL_VERIFICATION",
+            type: input.otpType,
             expiresAt,
         });
     });
 
-    // send the raw code by email — AFTER the transaction commits
-    await sendEmail({
-        to: existing.email,
-        subject: "Verify your email",
-        html: `<p>Your verification code is <strong>${code}</strong>. It expires in ${OTP_EXPIRY_MINUTES} minutes.</p>`,
-    });
+    if (input.otpType === "EMAIL_VERIFICATION") {
+        await sendEmail({
+            to: existing.email,
+            subject: "Verify your email",
+            html: `
+                <p>
+                    Your verification code is
+                    <strong>${code}</strong>.
+                </p>
+                <p>
+                    It expires in ${OTP_EXPIRY_MINUTES} minutes.
+                </p>
+            `,
+        });
+    }
 
-    // never return the password hash to the caller
-    const { password, ...safeUser } = existing;
-    return safeUser;
+    if (input.otpType === "PASSWORD_RESET") {
+        await sendEmail({
+            to: existing.email,
+            subject: "Reset your password",
+            html: `
+                <p>
+                    Your password reset code is
+                    <strong>${code}</strong>.
+                </p>
+                <p>
+                    It expires in ${OTP_EXPIRY_MINUTES} minutes.
+                </p>
+                <p>
+                    If you did not request this, please ignore this email.
+                </p>
+            `,
+        });
+    }
+
+    return {
+        message:
+            input.otpType === "PASSWORD_RESET"
+                ? "If that email is registered you will receive a reset code shortly."
+                : "A new verification code has been sent to your email.",
+    };
 }
 //create admin
 export async function createAdmin(input: CreateUserInput) {

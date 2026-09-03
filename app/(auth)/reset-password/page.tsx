@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  ClipboardEvent,
+} from "react";
 import {
   Lock,
   Mail,
@@ -100,13 +106,16 @@ export default function ResetPasswordPage() {
     setCountdown(60);
     setCanResend(false);
     try {
-      await resendOtp(formik.values.email);
+      await resendOtp(formik.values.email, "PASSWORD_RESET");
     } catch (err) {
       console.error("Resend OTP error:", err);
     }
   };
 
-  const otpArray = Array.from({ length: OTP_LENGTH }, (_, i) => formik.values.otp[i] || "");
+  const otpArray = Array.from(
+    { length: OTP_LENGTH },
+    (_, i) => formik.values.otp[i] || ""
+  );
 
   const handleOtpDigitChange = (index: number, value: string) => {
     const digit = value.replace(/\D/g, "").slice(-1);
@@ -121,7 +130,10 @@ export default function ResetPasswordPage() {
     }
   };
 
-  const handleOtpKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+  const handleOtpKeyDown = (
+    index: number,
+    e: KeyboardEvent<HTMLInputElement>
+  ) => {
     if (e.key === "Backspace" && !otpArray[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -161,10 +173,17 @@ export default function ResetPasswordPage() {
 
           {/* Card */}
           <div className="rounded-2xl border border-amber-900/10 bg-white/90 p-6 shadow-xl shadow-amber-950/5 backdrop-blur sm:p-8">
-            <form onSubmit={formik.handleSubmit} className="space-y-4" noValidate>
+            <form
+              onSubmit={formik.handleSubmit}
+              className="space-y-4"
+              noValidate
+            >
               {/* Email Address */}
               <div className="space-y-1.5">
-                <label htmlFor="email" className="text-sm font-medium text-[#422006]">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-[#422006]"
+                >
                   Email address
                 </label>
                 <div className="relative">
@@ -246,7 +265,10 @@ export default function ResetPasswordPage() {
 
               {/* New Password */}
               <div className="space-y-1.5 pt-1">
-                <label htmlFor="password" className="text-sm font-medium text-[#422006]">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium text-[#422006]"
+                >
                   New Password
                 </label>
                 <div className="relative">
@@ -260,13 +282,17 @@ export default function ResetPasswordPage() {
                     onBlur={formik.handleBlur}
                     placeholder="Enter new strong password"
                     className="h-11 pl-10 pr-10 focus-visible:ring-amber-700"
-                    aria-invalid={formik.touched.password && !!formik.errors.password}
+                    aria-invalid={
+                      formik.touched.password && !!formik.errors.password
+                    }
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -284,7 +310,10 @@ export default function ResetPasswordPage() {
 
               {/* Confirm Password */}
               <div className="space-y-1.5">
-                <label htmlFor="confirmPassword" className="text-sm font-medium text-[#422006]">
+                <label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium text-[#422006]"
+                >
                   Confirm New Password
                 </label>
                 <div className="relative">
@@ -299,7 +328,8 @@ export default function ResetPasswordPage() {
                     placeholder="Re-enter your new password"
                     className="h-11 pl-10 pr-10 focus-visible:ring-amber-700"
                     aria-invalid={
-                      formik.touched.confirmPassword && !!formik.errors.confirmPassword
+                      formik.touched.confirmPassword &&
+                      !!formik.errors.confirmPassword
                     }
                   />
                   <button
@@ -315,11 +345,12 @@ export default function ResetPasswordPage() {
                     )}
                   </button>
                 </div>
-                {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                  <p className="text-xs font-semibold text-red-600">
-                    {formik.errors.confirmPassword}
-                  </p>
-                )}
+                {formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword && (
+                    <p className="text-xs font-semibold text-red-600">
+                      {formik.errors.confirmPassword}
+                    </p>
+                  )}
               </div>
 
               {/* Submit */}
@@ -379,7 +410,8 @@ export default function ResetPasswordPage() {
             <span className="text-amber-300">Peace of Mind</span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-amber-100/80">
-            Set your new credentials to protect your sacred Rudraksha collection and personal order details.
+            Set your new credentials to protect your sacred Rudraksha collection
+            and personal order details.
           </p>
         </div>
 
@@ -410,7 +442,8 @@ export default function ResetPasswordPage() {
               Need extra assistance?
             </p>
             <p className="mt-1 text-xs leading-relaxed text-amber-100/70">
-              If you did not request this OTP or are experiencing problems resetting your password, contact support immediately.
+              If you did not request this OTP or are experiencing problems
+              resetting your password, contact support immediately.
             </p>
             <div className="mt-4 flex gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-200">
