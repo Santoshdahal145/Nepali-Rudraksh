@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { AuthProvider } from "@/providers/AuthContext";
 
-export default function layout({ children }: { children: React.ReactNode }) {
+export default function Authlayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <main className="relative min-h-screen">
       <Link
@@ -12,8 +17,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
         <span className="hidden sm:inline">Back to Home</span>
         <span className="sm:hidden">Home</span>
       </Link>
-
-      {children}
+      <AuthProvider>{children}</AuthProvider>
     </main>
   );
 }

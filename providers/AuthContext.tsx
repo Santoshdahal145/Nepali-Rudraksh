@@ -4,12 +4,14 @@ import { changePasswordApi } from "@/app/api/auth/change-password/api";
 import { forgotPasswordApi } from "@/app/api/auth/forgot-password/api";
 import { loginApi } from "@/app/api/auth/login/api";
 import { logoutApi } from "@/app/api/auth/logout/api";
+import { registerApi } from "@/app/api/auth/register/api";
 import { resendOtpApi } from "@/app/api/auth/resend-otp/api";
 import { resetPasswordWithOtpApi } from "@/app/api/auth/reset-password/api";
 import { verifyOtpRegisterApi } from "@/app/api/auth/verify-otp/api";
 import { updateUserApi } from "@/app/api/users/me/api";
 import { UserType } from "@/app/types";
 import { requestAPI } from "@/lib/requestAPI";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
@@ -32,6 +34,13 @@ interface AuthContextType {
   ) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resendOtp: (email: string) => Promise<void>;
+  registerUser: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    phoneNumber: string;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,6 +55,7 @@ const STORAGE_KEYS = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -154,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const forgotPassword = async (email: string) => {
     try {
       await requestAPI(forgotPasswordApi({ email }));
+      router.push(`/reset-password?email=${email}`);
     } catch (error) {
       console.error("Forgot password error:", error);
       throw error;
@@ -175,9 +186,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const verifyEmailOtp = async (email: string, otp: string) => {
     try {
-      await requestAPI(verifyOtpRegisterApi({ email, otp }));
+      const response = await requestAPI<UserType>(
+        verifyOtpRegisterApi({ email, otp })
+      );
+      if (!response?.data) {
+        throw new Error("verification failed");
+      }
+      setUser(response.data);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error("Verify email OTP error:", error);
+      setUser(null);
+      setIsAuthenticated(false);
       throw error;
     }
   };
@@ -187,6 +207,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await requestAPI(resendOtpApi({ email }));
     } catch (error) {
       console.error("Resend OTP error:", error);
+      throw error;
+    }
+  };
+  const registerUser = async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    phoneNumber: string;
+  }) => {
+    try {
+      await requestAPI(registerApi(data));
+      router.push(`/verify-otp?email=${data.email}`);
+    } catch (error) {
+      console.error("Register user error:", error);
       throw error;
     }
   };
@@ -204,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         resetPasswordWithOtp,
         verifyEmailOtp,
         resendOtp,
+        registerUser,
       }}
     >
       {children}

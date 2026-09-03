@@ -1,10 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, Leaf, Gem, Star } from "lucide-react";
+import {
+  Mail,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  ShieldCheck,
+  Leaf,
+  Gem,
+  Star,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useAuth } from "@/providers/AuthContext";
 
 const tips = [
   {
@@ -30,8 +40,16 @@ const tips = [
 ];
 
 export default function ForgotPasswordPage() {
-  const [submitted, setSubmitted] = useState(false);
   const [email, setEmail] = useState("");
+  const { forgotPassword } = useAuth();
+
+  const handleSubmitEmail = async (email: string) => {
+    try {
+      await forgotPassword(email);
+    } catch (err) {
+      console.log("Error " + err);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-[#faf7f2]">
@@ -47,78 +65,51 @@ export default function ForgotPasswordPage() {
               🌿
             </span>
             <h1 className="text-3xl font-bold tracking-tight text-[#422006]">
-              {submitted ? "Check your inbox" : "Forgot Password?"}
+              Forgot Password ?
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {submitted
-                ? `We've sent a reset link to ${email}`
-                : "No worries! Enter your email and we'll send you a reset link."}
+              No worries! Enter your email and we'll send you a otp.
             </p>
           </div>
 
           {/* Card */}
           <div className="rounded-2xl border border-amber-900/10 bg-white/90 p-6 shadow-xl shadow-amber-950/5 backdrop-blur sm:p-8">
-            {submitted ? (
-              /* Success state */
-              <div className="flex flex-col items-center gap-5 py-4 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 ring-4 ring-amber-100">
-                  <CheckCircle2 className="h-8 w-8 text-[#713f12]" />
-                </div>
-                <div className="space-y-1">
-                  <p className="font-semibold text-[#422006]">Reset link sent!</p>
-                  <p className="text-sm text-muted-foreground">
-                    Didn&apos;t receive the email? Check your spam folder or{" "}
-                    <button
-                      onClick={() => setSubmitted(false)}
-                      className="font-semibold text-amber-800 hover:underline"
-                    >
-                      try again
-                    </button>
-                    .
-                  </p>
-                </div>
-                <Link href="/login">
-                  <Button className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e]">
-                    Back to Sign in
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              /* Form state */
-              <form
-                className="space-y-5"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (email) setSubmitted(true);
-                }}
-              >
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-[#422006]">
-                    Email address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="h-11 pl-10 focus-visible:ring-amber-700"
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e]"
+            <form
+              className="space-y-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (email) handleSubmitEmail(email);
+              }}
+            >
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-[#422006]"
                 >
-                  Send reset link
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </form>
-            )}
+                  Email address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="h-11 pl-10 focus-visible:ring-amber-700"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="h-11 w-full bg-[#713f12] text-white hover:bg-[#5c330e]"
+              >
+                Send OTP
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </form>
 
             <div className="mt-6 flex items-center justify-center">
               <Link
@@ -157,7 +148,9 @@ export default function ForgotPasswordPage() {
               <p className="text-xs font-semibold uppercase tracking-widest text-amber-300/80">
                 Nepali Rudraksh
               </p>
-              <p className="text-lg font-bold text-white">Sacred. Authentic. Pure.</p>
+              <p className="text-lg font-bold text-white">
+                Sacred. Authentic. Pure.
+              </p>
             </div>
           </div>
           <h2 className="text-4xl font-extrabold leading-snug text-white">
@@ -165,8 +158,9 @@ export default function ForgotPasswordPage() {
             <span className="text-amber-300">Made Simple</span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-amber-100/80">
-            We&apos;ll get you back on your spiritual journey in just a few moments.
-            Your account and order history will be right where you left them.
+            We&apos;ll get you back on your spiritual journey in just a few
+            moments. Your account and order history will be right where you left
+            them.
           </p>
         </div>
 
@@ -182,7 +176,9 @@ export default function ForgotPasswordPage() {
                   <Icon className="h-4 w-4 text-amber-300" />
                 </div>
                 <p className="text-sm font-semibold text-white">{title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-amber-100/70">{desc}</p>
+                <p className="mt-1 text-xs leading-relaxed text-amber-100/70">
+                  {desc}
+                </p>
               </div>
             ))}
           </div>
@@ -191,10 +187,12 @@ export default function ForgotPasswordPage() {
         {/* Help callout */}
         <div className="relative px-12 pb-10">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-            <p className="text-sm font-semibold text-white">Still having trouble?</p>
+            <p className="text-sm font-semibold text-white">
+              Still having trouble?
+            </p>
             <p className="mt-1 text-xs leading-relaxed text-amber-100/70">
-              Our customer support team is available around the clock to help you
-              regain access to your sacred Rudraksha collection.
+              Our customer support team is available around the clock to help
+              you regain access to your sacred Rudraksha collection.
             </p>
             <div className="mt-4 flex gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-200">

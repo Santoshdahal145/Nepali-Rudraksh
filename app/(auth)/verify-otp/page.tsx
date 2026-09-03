@@ -22,6 +22,7 @@ import { requestAPI } from "@/lib/requestAPI";
 import { resendOtpApi } from "@/app/api/auth/resend-otp/api";
 import { verifyOtpRegisterApi } from "@/app/api/auth/verify-otp/api";
 import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/providers/AuthContext";
 
 const OTP_LENGTH = 6;
 
@@ -57,6 +58,7 @@ export default function VerifyOtpPage() {
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const { verifyEmailOtp, resendOtp } = useAuth();
 
   // Countdown timer
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function VerifyOtpPage() {
     setOtp(Array(OTP_LENGTH).fill(""));
     inputRefs.current[0]?.focus();
     try {
-      await requestAPI(resendOtpApi({ email: paramsEmail || "" }));
+      await resendOtp(paramsEmail || "");
     } catch (error) {
       console.log("resend error", error);
     }
@@ -82,7 +84,7 @@ export default function VerifyOtpPage() {
 
   const handleVerifyOtpAndEmail = async (otp: string) => {
     try {
-      await requestAPI(verifyOtpRegisterApi({ email: paramsEmail || "", otp }));
+      await verifyEmailOtp(paramsEmail || "", otp);
     } catch (error) {
       console.log("verify error", error);
     }

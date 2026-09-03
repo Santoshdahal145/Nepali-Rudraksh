@@ -1,28 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { getInitialValuesRegister } from "@/lib/test";
+import { useAuth } from "@/providers/AuthContext";
 import { useFormik } from "formik";
 import {
+  ArrowRight,
   Eye,
   EyeOff,
+  Gem,
+  Leaf,
   Lock,
   Mail,
-  User,
   Phone,
-  ArrowRight,
-  Star,
   ShieldCheck,
-  Leaf,
-  Gem,
+  Star,
+  User,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useState } from "react";
 import { registerSchema } from "./validation";
-import { requestAPI } from "@/lib/requestAPI";
-import { registerApi } from "@/app/api/auth/register/api";
-import { useRouter } from "next/navigation";
-import { getInitialValuesRegister } from "@/lib/test";
 
 const benefits = [
   {
@@ -50,8 +48,7 @@ const benefits = [
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const router = useRouter();
+  const { registerUser } = useAuth();
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -64,8 +61,7 @@ export default function RegisterPage() {
     validationSchema: registerSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        await requestAPI(registerApi({ ...values }));
-        router.push(`/verify-otp?email=${values.email}`);
+        await registerUser(values);
       } catch (err) {
         console.error("Registration error:", err);
       } finally {
