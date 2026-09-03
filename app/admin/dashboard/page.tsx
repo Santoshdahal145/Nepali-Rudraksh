@@ -38,7 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 import { initialOrders, initialProducts, initialUsers } from "../data/mockData";
 
 export default function AdminDashboardPage() {

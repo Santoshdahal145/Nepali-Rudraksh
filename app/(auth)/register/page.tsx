@@ -22,6 +22,7 @@ import { registerSchema } from "./validation";
 import { requestAPI } from "@/lib/requestAPI";
 import { registerApi } from "@/app/api/auth/register/api";
 import { useRouter } from "next/navigation";
+import { getInitialValuesRegister } from "@/lib/test";
 
 const benefits = [
   {
@@ -97,7 +98,16 @@ export default function RegisterPage() {
               and begin your spiritual journey
             </p>
           </div>
-
+          <Button
+            type="button"
+            disabled={formik.isSubmitting}
+            onClick={() => {
+              formik.setValues(getInitialValuesRegister());
+            }}
+            className="h-11 w-full bg-green-400 font-medium"
+          >
+            <span>Test Data</span>
+          </Button>
           {/* Card */}
           <div className="rounded-2xl border border-amber-900/10 bg-white/90 p-6 shadow-xl shadow-amber-950/5 backdrop-blur sm:p-8">
             <form

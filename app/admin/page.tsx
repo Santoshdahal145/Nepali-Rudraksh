@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { adminLoginSchema } from "./validation";
-import { useAdmin } from "./data/AdminContext";
+import { useAdmin } from "../../providers/AdminContext";
 
 export default function AdminLoginPage() {
   const router = useRouter();

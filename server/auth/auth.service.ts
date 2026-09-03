@@ -6,11 +6,17 @@ import type { ChangePasswordInput, ForgotPasswordInput, LoginInput, ResetPasswor
 import { issueTokens } from "./token.service";
 import { NotFoundError, UnauthorizedError } from "@/lib/error";
 import { Temporal } from "@js-temporal/polyfill";
+import { FieldOutputTypes } from "@/src/prisma/contract";
 
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 5;
 
 
+
+const getSafeUserFromDB=(user: FieldOutputTypes["public"]["User"])=>{
+    const { password,hashedRefreshToken,createdAt,updatedAt, ...safeUser } = user;
+    return safeUser;
+}
 
 // ── services ─────────────────────────────────────────────────────────────────
 
@@ -27,7 +33,7 @@ export async function login(input: LoginInput) {
     if (!isPasswordValid) {
          throw new UnauthorizedError("Invalid email or password");
     }
-    const { password, ...safeUser } = existing;
+    const safeUser=getSafeUserFromDB(existing);
     const tokens = await issueTokens(existing.id, existing.role ?? "USER");
 
     return { user:safeUser, tokens };
@@ -88,7 +94,10 @@ export async function validateUserEmailVerificationOtp(input: ValidateOtpInput) 
             .update({ isEmailVerified: true });
     });
 
-    return { message: "Email verified successfully." };
+    const safeUser=getSafeUserFromDB(user);
+    const tokens = await issueTokens(user.id, user.role ?? "USER");
+
+    return { user:safeUser, tokens };
 }
 /**
  * Issues a PASSWORD_RESET OTP for the given email and mails it to the user.

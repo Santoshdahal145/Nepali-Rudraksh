@@ -18,9 +18,30 @@ export async function POST(request: Request) {
             );
         }
 
-        const user = await validateUserEmailVerificationOtp(result.data);
+        const {tokens,user}= await validateUserEmailVerificationOtp(result.data);
 
-        return NextResponse.json(user, { status: 201 });
+           const response = NextResponse.json(user, {
+      status: 200,
+    });
+       // Access token
+    response.cookies.set("accessToken", tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 15, 
+    });
+
+
+    response.cookies.set("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, 
+    });
+
+    return response;
     } catch (error) {
         if (error instanceof Error && error.message === "Email already in use") {
             return NextResponse.json(

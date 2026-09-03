@@ -19,12 +19,18 @@ import {
   Eye,
   ExternalLink,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { useAdmin } from "../../data/AdminContext";
+import { useAdmin } from "../../../../providers/AdminContext";
 
 export default function AdminProductDetailPage({
   params,
@@ -36,7 +42,8 @@ export default function AdminProductDetailPage({
   const { products, updateProduct, deleteProduct } = useAdmin();
 
   // Find product by id
-  const product = products.find((p) => p.id === resolvedParams.productId) || products[0];
+  const product =
+    products.find((p) => p.id === resolvedParams.productId) || products[0];
 
   const [formData, setFormData] = useState({
     name: product?.name || "",
@@ -67,7 +74,9 @@ export default function AdminProductDetailPage({
       <div className="p-8 text-center">
         <p className="text-base font-bold text-[#422006]">Product not found</p>
         <Link href="/admin/all-products">
-          <Button className="mt-4 bg-[#713f12] text-white">Back to Inventory</Button>
+          <Button className="mt-4 bg-[#713f12] text-white">
+            Back to Inventory
+          </Button>
         </Link>
       </div>
     );
@@ -133,7 +142,9 @@ export default function AdminProductDetailPage({
                 {product.mukhiType}
               </Badge>
             </div>
-            <h1 className="text-2xl font-extrabold text-[#422006]">{product.name}</h1>
+            <h1 className="text-2xl font-extrabold text-[#422006]">
+              {product.name}
+            </h1>
           </div>
         </div>
 
@@ -170,12 +181,20 @@ export default function AdminProductDetailPage({
                 <span className="text-6xl">{product.emoji}</span>
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[#422006]">{formData.name}</h2>
-                <p className="text-xs text-amber-800 font-semibold">{formData.mukhiType} • {product.category}</p>
+                <h2 className="text-lg font-bold text-[#422006]">
+                  {formData.name}
+                </h2>
+                <p className="text-xs text-amber-800 font-semibold">
+                  {formData.mukhiType} • {product.category}
+                </p>
                 <div className="mt-2 flex items-center justify-center gap-1 text-xs">
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  <span className="font-bold text-[#422006]">{product.rating}</span>
-                  <span className="text-muted-foreground">({product.reviewsCount} devotee reviews)</span>
+                  <span className="font-bold text-[#422006]">
+                    {product.rating}
+                  </span>
+                  <span className="text-muted-foreground">
+                    ({product.reviewsCount} devotee reviews)
+                  </span>
                 </div>
               </div>
 
@@ -186,20 +205,35 @@ export default function AdminProductDetailPage({
                   <span>Lab Authenticity Verified</span>
                 </div>
                 <div className="text-[11px] text-[#5c3a1e]/80 space-y-1">
-                  <p>Certificate: <strong className="font-mono text-[#422006]">{product.certNumber}</strong></p>
-                  <p>Origin: <strong>{product.origin}</strong></p>
-                  <p>Consecration: <strong>Pashupatinath Temple Puja</strong></p>
+                  <p>
+                    Certificate:{" "}
+                    <strong className="font-mono text-[#422006]">
+                      {product.certNumber}
+                    </strong>
+                  </p>
+                  <p>
+                    Origin: <strong>{product.origin}</strong>
+                  </p>
+                  <p>
+                    Consecration: <strong>Pashupatinath Temple Puja</strong>
+                  </p>
                 </div>
               </div>
 
               {/* Sales Metrics */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="rounded-xl bg-amber-100/50 p-3 text-center border border-amber-900/10">
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground">Units Sold</p>
-                  <p className="text-lg font-black text-[#422006]">{product.salesCount}</p>
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                    Units Sold
+                  </p>
+                  <p className="text-lg font-black text-[#422006]">
+                    {product.salesCount}
+                  </p>
                 </div>
                 <div className="rounded-xl bg-amber-100/50 p-3 text-center border border-amber-900/10">
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground">Gross Sales</p>
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                    Gross Sales
+                  </p>
                   <p className="text-lg font-black text-[#713f12]">
                     ${product.salesCount * product.price}
                   </p>
@@ -213,18 +247,27 @@ export default function AdminProductDetailPage({
             {/* General & Pricing Info */}
             <Card className="shadow-xs">
               <CardHeader>
-                <CardTitle className="text-base font-bold">Pricing & Inventory Health</CardTitle>
-                <CardDescription>Update active selling price, stock quantities, and feature tags</CardDescription>
+                <CardTitle className="text-base font-bold">
+                  Pricing & Inventory Health
+                </CardTitle>
+                <CardDescription>
+                  Update active selling price, stock quantities, and feature
+                  tags
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Name */}
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-xs font-bold text-[#422006]">Product Name</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Product Name
+                    </label>
                     <Input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className="h-10"
                       required
                     />
@@ -232,11 +275,18 @@ export default function AdminProductDetailPage({
 
                   {/* Selling Price */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Selling Price ($ USD)</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Selling Price ($ USD)
+                    </label>
                     <Input
                       type="number"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          price: Number(e.target.value),
+                        })
+                      }
                       className="h-10 font-bold text-[#713f12]"
                       required
                     />
@@ -244,23 +294,37 @@ export default function AdminProductDetailPage({
 
                   {/* Original Price */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Compare-At Price ($ USD)</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Compare-At Price ($ USD)
+                    </label>
                     <Input
                       type="number"
                       value={formData.originalPrice}
-                      onChange={(e) => setFormData({ ...formData, originalPrice: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          originalPrice: Number(e.target.value),
+                        })
+                      }
                       className="h-10"
                     />
                   </div>
 
                   {/* Stock Quantity */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Current Stock Quantity</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Current Stock Quantity
+                    </label>
                     <Input
                       type="number"
                       min="0"
                       value={formData.stock}
-                      onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stock: Number(e.target.value),
+                        })
+                      }
                       className="h-10 font-bold"
                       required
                     />
@@ -268,12 +332,16 @@ export default function AdminProductDetailPage({
 
                   {/* Badge Text */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Badge / Tag</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Badge / Tag
+                    </label>
                     <Input
                       type="text"
                       value={formData.badge}
                       placeholder="e.g. Rare & Sacred, Bestseller"
-                      onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, badge: e.target.value })
+                      }
                       className="h-10"
                     />
                   </div>
@@ -282,14 +350,19 @@ export default function AdminProductDetailPage({
                 {/* Featured on Homepage Switch */}
                 <div className="flex items-center justify-between rounded-xl bg-amber-50/60 p-3.5 border border-amber-900/10 mt-2">
                   <div>
-                    <p className="text-xs font-bold text-[#422006]">Feature on Public Storefront</p>
+                    <p className="text-xs font-bold text-[#422006]">
+                      Feature on Public Storefront
+                    </p>
                     <p className="text-[11px] text-muted-foreground">
-                      Display this sacred Rudraksha in the homepage featured collection.
+                      Display this sacred Rudraksha in the homepage featured
+                      collection.
                     </p>
                   </div>
                   <Switch
                     checked={formData.isFeatured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, isFeatured: checked })
+                    }
                   />
                 </div>
               </CardContent>
@@ -298,53 +371,80 @@ export default function AdminProductDetailPage({
             {/* Vedic & Astrological Specs */}
             <Card className="shadow-xs">
               <CardHeader>
-                <CardTitle className="text-base font-bold">Vedic & Astrological Specifications</CardTitle>
-                <CardDescription>Deity alignment, governing planet, origin, and chakra energy</CardDescription>
+                <CardTitle className="text-base font-bold">
+                  Vedic & Astrological Specifications
+                </CardTitle>
+                <CardDescription>
+                  Deity alignment, governing planet, origin, and chakra energy
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Governing Deity</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Governing Deity
+                    </label>
                     <Input
                       type="text"
                       value={formData.deity}
-                      onChange={(e) => setFormData({ ...formData, deity: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, deity: e.target.value })
+                      }
                       className="h-10"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Governing Planet</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Governing Planet
+                    </label>
                     <Input
                       type="text"
                       value={formData.planet}
-                      onChange={(e) => setFormData({ ...formData, planet: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, planet: e.target.value })
+                      }
                       className="h-10"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Himalayan Origin</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Himalayan Origin
+                    </label>
                     <Input
                       type="text"
                       value={formData.origin}
-                      onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, origin: e.target.value })
+                      }
                       className="h-10"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Governing Chakra</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Governing Chakra
+                    </label>
                     <Input
                       type="text"
                       value={formData.chakra}
-                      onChange={(e) => setFormData({ ...formData, chakra: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, chakra: e.target.value })
+                      }
                       className="h-10"
                     />
                   </div>
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-xs font-bold text-[#422006]">Product Description</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Product Description
+                    </label>
                     <textarea
                       rows={3}
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       className="w-full rounded-xl border border-amber-900/15 bg-amber-50/20 p-3 text-xs text-[#422006] outline-none focus:border-amber-700 focus:ring-1 focus:ring-amber-700"
                     />
                   </div>
@@ -352,7 +452,9 @@ export default function AdminProductDetailPage({
 
                 {/* Benefits List */}
                 <div className="pt-2">
-                  <p className="text-xs font-bold text-[#422006] mb-2">Sacred Benefits Highlighted:</p>
+                  <p className="text-xs font-bold text-[#422006] mb-2">
+                    Sacred Benefits Highlighted:
+                  </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {product.benefits?.map((benefit, i) => (
                       <div

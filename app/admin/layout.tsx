@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-import { AdminProvider } from "./data/AdminContext";
+import { AdminProvider } from "../../providers/AdminContext";
 import { AdminSidebar } from "./components/AdminSidebar";
 import { AdminHeader } from "./components/AdminHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";

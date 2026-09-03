@@ -16,7 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { initialOrders, initialProducts } from "../data/mockData";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 
 interface AdminHeaderProps {
   onOpenMobileMenu: () => void;

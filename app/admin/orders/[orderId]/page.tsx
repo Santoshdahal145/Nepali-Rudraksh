@@ -22,7 +22,13 @@ import {
   DollarSign,
   Save,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -34,9 +40,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAdmin } from "../../data/AdminContext";
+import { useAdmin } from "../../../../providers/AdminContext";
 
-const STATUS_STEPS = ["Pending", "Processing", "Blessed", "Shipped", "Delivered"];
+const STATUS_STEPS = [
+  "Pending",
+  "Processing",
+  "Blessed",
+  "Shipped",
+  "Delivered",
+];
 
 export default function AdminOrderDetailPage({
   params,
@@ -50,11 +62,17 @@ export default function AdminOrderDetailPage({
   // Find order by ID or orderNumber
   const order =
     orders.find(
-      (o) => o.id === resolvedParams.orderId || o.orderNumber === resolvedParams.orderId
+      (o) =>
+        o.id === resolvedParams.orderId ||
+        o.orderNumber === resolvedParams.orderId
     ) || orders[0];
 
-  const [currentStatus, setCurrentStatus] = useState<any>(order?.status || "Pending");
-  const [carrier, setCarrier] = useState(order?.tracking?.carrier || "Nepal Express Logistics");
+  const [currentStatus, setCurrentStatus] = useState<any>(
+    order?.status || "Pending"
+  );
+  const [carrier, setCarrier] = useState(
+    order?.tracking?.carrier || "Nepal Express Logistics"
+  );
   const [trackingNumber, setTrackingNumber] = useState(
     order?.tracking?.trackingNumber || "NEX-891044"
   );
@@ -71,7 +89,9 @@ export default function AdminOrderDetailPage({
       <div className="p-8 text-center">
         <p className="text-base font-bold text-[#422006]">Order not found</p>
         <Link href="/admin/orders">
-          <Button className="mt-4 bg-[#713f12] text-white">Back to Orders</Button>
+          <Button className="mt-4 bg-[#713f12] text-white">
+            Back to Orders
+          </Button>
         </Link>
       </div>
     );
@@ -123,7 +143,9 @@ export default function AdminOrderDetailPage({
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#5c3a1e]/70">Order Reference:</span>
+              <span className="text-xs font-bold text-[#5c3a1e]/70">
+                Order Reference:
+              </span>
               <code className="text-xs font-mono bg-amber-100/70 px-1.5 py-0.5 rounded text-[#422006]">
                 #{order.orderNumber}
               </code>
@@ -154,9 +176,12 @@ export default function AdminOrderDetailPage({
       <Card className="shadow-xs p-6">
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h3 className="text-sm font-bold text-[#422006]">Fulfillment & Consecration Progress</h3>
+            <h3 className="text-sm font-bold text-[#422006]">
+              Fulfillment & Consecration Progress
+            </h3>
             <p className="text-xs text-muted-foreground">
-              Current Phase: <strong className="text-[#713f12]">{currentStatus}</strong>
+              Current Phase:{" "}
+              <strong className="text-[#713f12]">{currentStatus}</strong>
             </p>
           </div>
 
@@ -185,7 +210,9 @@ export default function AdminOrderDetailPage({
           <div className="absolute top-1/2 left-0 right-0 h-1 bg-amber-200 -translate-y-1/2 z-0" />
           <div
             className="absolute top-1/2 left-0 h-1 bg-[#713f12] -translate-y-1/2 z-0 transition-all duration-300"
-            style={{ width: `${(activeIndex / (STATUS_STEPS.length - 1)) * 100}%` }}
+            style={{
+              width: `${(activeIndex / (STATUS_STEPS.length - 1)) * 100}%`,
+            }}
           />
 
           {STATUS_STEPS.map((step, idx) => {
@@ -250,14 +277,18 @@ export default function AdminOrderDetailPage({
                           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100/70 text-lg">
                             {item.emoji}
                           </span>
-                          <span className="font-bold text-xs text-[#422006]">{item.name}</span>
+                          <span className="font-bold text-xs text-[#422006]">
+                            {item.name}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-xs font-semibold text-amber-800">
                         {item.mukhiType}
                       </TableCell>
                       <TableCell className="text-xs">${item.price}</TableCell>
-                      <TableCell className="text-xs font-bold">{item.quantity}</TableCell>
+                      <TableCell className="text-xs font-bold">
+                        {item.quantity}
+                      </TableCell>
                       <TableCell className="text-right font-black text-xs text-[#713f12]">
                         ${item.total}
                       </TableCell>
@@ -331,7 +362,9 @@ export default function AdminOrderDetailPage({
               <form onSubmit={handleSaveTracking} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Courier Carrier</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Courier Carrier
+                    </label>
                     <Input
                       type="text"
                       value={carrier}
@@ -340,7 +373,9 @@ export default function AdminOrderDetailPage({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#422006]">Tracking Number</label>
+                    <label className="text-xs font-bold text-[#422006]">
+                      Tracking Number
+                    </label>
                     <Input
                       type="text"
                       value={trackingNumber}
@@ -368,23 +403,31 @@ export default function AdminOrderDetailPage({
           {/* Pricing Breakdown */}
           <Card className="shadow-xs">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold">Payment Summary</CardTitle>
+              <CardTitle className="text-base font-bold">
+                Payment Summary
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2.5 text-xs">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal ({order.items.length} items)</span>
-                <span className="font-semibold text-[#422006]">${order.subtotal}</span>
+                <span className="font-semibold text-[#422006]">
+                  ${order.subtotal}
+                </span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Consecration & Energization</span>
                 <span className="font-semibold text-[#422006]">
-                  {order.consecrationFee > 0 ? `$${order.consecrationFee}` : "Free Temple Blessing"}
+                  {order.consecrationFee > 0
+                    ? `$${order.consecrationFee}`
+                    : "Free Temple Blessing"}
                 </span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Himalayan Shipping Fee</span>
                 <span className="font-semibold text-[#422006]">
-                  {order.shippingFee > 0 ? `$${order.shippingFee}` : "Free Express Shipping"}
+                  {order.shippingFee > 0
+                    ? `$${order.shippingFee}`
+                    : "Free Express Shipping"}
                 </span>
               </div>
               {order.discount > 0 && (
@@ -394,8 +437,12 @@ export default function AdminOrderDetailPage({
                 </div>
               )}
               <div className="pt-3 border-t border-amber-900/10 flex justify-between items-baseline">
-                <span className="text-sm font-bold text-[#422006]">Total Amount</span>
-                <span className="text-xl font-black text-[#713f12]">${order.total}</span>
+                <span className="text-sm font-bold text-[#422006]">
+                  Total Amount
+                </span>
+                <span className="text-xl font-black text-[#713f12]">
+                  ${order.total}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -410,7 +457,9 @@ export default function AdminOrderDetailPage({
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               <div>
-                <p className="font-bold text-sm text-[#422006]">{order.customerName}</p>
+                <p className="font-bold text-sm text-[#422006]">
+                  {order.customerName}
+                </p>
                 <Link
                   href={`/admin/all-users/${order.userId}`}
                   className="text-[11px] text-[#713f12] font-semibold hover:underline"
@@ -422,11 +471,15 @@ export default function AdminOrderDetailPage({
               <div className="space-y-1.5 pt-2 border-t border-amber-900/10">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Mail className="h-3.5 w-3.5" />
-                  <span className="text-[#422006] font-medium">{order.customerEmail}</span>
+                  <span className="text-[#422006] font-medium">
+                    {order.customerEmail}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-3.5 w-3.5" />
-                  <span className="text-[#422006] font-medium">{order.customerPhone}</span>
+                  <span className="text-[#422006] font-medium">
+                    {order.customerPhone}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -441,9 +494,16 @@ export default function AdminOrderDetailPage({
               </CardTitle>
             </CardHeader>
             <CardContent className="text-xs space-y-1 text-[#5c3a1e]">
-              <p className="font-bold text-[#422006]">{order.shippingAddress.street}</p>
-              <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}</p>
-              <p className="font-bold text-amber-900">{order.shippingAddress.country}</p>
+              <p className="font-bold text-[#422006]">
+                {order.shippingAddress.street}
+              </p>
+              <p>
+                {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                {order.shippingAddress.postalCode}
+              </p>
+              <p className="font-bold text-amber-900">
+                {order.shippingAddress.country}
+              </p>
             </CardContent>
           </Card>
         </div>

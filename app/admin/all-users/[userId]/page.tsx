@@ -22,7 +22,13 @@ import {
   FileText,
   Clock,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -33,7 +39,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAdmin } from "../../data/AdminContext";
+import { useAdmin } from "../../../../providers/AdminContext";
 
 export default function AdminUserDetailsPage({
   params,
@@ -42,7 +48,8 @@ export default function AdminUserDetailsPage({
 }) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const { users, orders, toggleBlockUser, updateUserStatus, deleteUser } = useAdmin();
+  const { users, orders, toggleBlockUser, updateUserStatus, deleteUser } =
+    useAdmin();
 
   // Find user by id or fallback
   const user = users.find((u) => u.id === resolvedParams.userId) || users[0];
@@ -61,7 +68,9 @@ export default function AdminUserDetailsPage({
       <div className="p-8 text-center">
         <p className="text-base font-bold text-[#422006]">User not found</p>
         <Link href="/admin/all-users">
-          <Button className="mt-4 bg-[#713f12] text-white">Back to Users</Button>
+          <Button className="mt-4 bg-[#713f12] text-white">
+            Back to Users
+          </Button>
         </Link>
       </div>
     );
@@ -79,7 +88,9 @@ export default function AdminUserDetailsPage({
   };
 
   const handleDeleteUser = () => {
-    if (window.confirm(`Are you sure you want to remove ${user.name}'s account?`)) {
+    if (
+      window.confirm(`Are you sure you want to remove ${user.name}'s account?`)
+    ) {
       deleteUser(user.id);
       router.push("/admin/all-users");
     }
@@ -109,12 +120,16 @@ export default function AdminUserDetailsPage({
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#5c3a1e]/70">Devotee ID:</span>
+              <span className="text-xs font-bold text-[#5c3a1e]/70">
+                Devotee ID:
+              </span>
               <code className="text-xs font-mono bg-amber-100/70 px-1.5 py-0.5 rounded text-[#422006]">
                 {user.id}
               </code>
             </div>
-            <h1 className="text-2xl font-extrabold text-[#422006]">{user.name}</h1>
+            <h1 className="text-2xl font-extrabold text-[#422006]">
+              {user.name}
+            </h1>
           </div>
         </div>
 
@@ -127,7 +142,11 @@ export default function AdminUserDetailsPage({
             onClick={() => {
               const newStatus = isVIP ? "Active" : "VIP";
               updateUserStatus(user.id, newStatus);
-              showToast(isVIP ? "Removed from VIP status." : "Granted VIP Devotee status!");
+              showToast(
+                isVIP
+                  ? "Removed from VIP status."
+                  : "Granted VIP Devotee status!"
+              );
             }}
             className={`h-9 gap-1 text-xs font-bold ${
               isVIP
@@ -145,7 +164,9 @@ export default function AdminUserDetailsPage({
             size="sm"
             onClick={() => {
               toggleBlockUser(user.id);
-              showToast(isBlocked ? "User unblocked." : "User blocked from store.");
+              showToast(
+                isBlocked ? "User unblocked." : "User blocked from store."
+              );
             }}
             className="h-9 gap-1 text-xs font-bold"
           >
@@ -186,13 +207,15 @@ export default function AdminUserDetailsPage({
                   isBlocked
                     ? "bg-stone-500"
                     : isVIP
-                    ? "bg-gradient-to-tr from-amber-600 to-amber-400"
-                    : "bg-[#713f12]"
+                      ? "bg-gradient-to-tr from-amber-600 to-amber-400"
+                      : "bg-[#713f12]"
                 }`}
               >
                 {user.avatar}
               </div>
-              <h2 className="mt-3 text-lg font-bold text-[#422006]">{user.name}</h2>
+              <h2 className="mt-3 text-lg font-bold text-[#422006]">
+                {user.name}
+              </h2>
               <div className="mt-1 flex items-center gap-2">
                 {isBlocked ? (
                   <Badge variant="destructive">Blocked</Badge>
@@ -212,37 +235,53 @@ export default function AdminUserDetailsPage({
                 <span className="text-muted-foreground flex items-center gap-1.5">
                   <Mail className="h-3.5 w-3.5" /> Email:
                 </span>
-                <span className="font-semibold text-[#422006]">{user.email}</span>
+                <span className="font-semibold text-[#422006]">
+                  {user.email}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground flex items-center gap-1.5">
                   <Phone className="h-3.5 w-3.5" /> Phone:
                 </span>
-                <span className="font-semibold text-[#422006]">{user.phone}</span>
+                <span className="font-semibold text-[#422006]">
+                  {user.phone}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" /> Joined:
                 </span>
-                <span className="font-semibold text-[#422006]">{user.joinedDate}</span>
+                <span className="font-semibold text-[#422006]">
+                  {user.joinedDate}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5" /> Last Active:
                 </span>
-                <span className="font-semibold text-[#422006]">{user.lastActive}</span>
+                <span className="font-semibold text-[#422006]">
+                  {user.lastActive}
+                </span>
               </div>
             </div>
 
             {/* Quick Metrics */}
             <div className="grid grid-cols-2 gap-3 pt-4 border-t border-amber-900/10">
               <div className="rounded-xl bg-amber-50 p-3 text-center border border-amber-900/10">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">Total Spent</p>
-                <p className="text-base font-black text-[#713f12] mt-0.5">${user.totalSpent}</p>
+                <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Total Spent
+                </p>
+                <p className="text-base font-black text-[#713f12] mt-0.5">
+                  ${user.totalSpent}
+                </p>
               </div>
               <div className="rounded-xl bg-amber-50 p-3 text-center border border-amber-900/10">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">Orders</p>
-                <p className="text-base font-black text-[#422006] mt-0.5">{user.totalOrders}</p>
+                <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Orders
+                </p>
+                <p className="text-base font-black text-[#422006] mt-0.5">
+                  {user.totalOrders}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -262,7 +301,8 @@ export default function AdminUserDetailsPage({
               </CardHeader>
               <CardContent className="text-xs space-y-2">
                 <p className="text-[#5c3a1e] font-medium leading-relaxed">
-                  {user.spiritualFocus || "General Shiva Bhakti, Japa & Protection"}
+                  {user.spiritualFocus ||
+                    "General Shiva Bhakti, Japa & Protection"}
                 </p>
                 <div className="inline-flex items-center gap-1 text-[11px] text-amber-800 bg-amber-100/60 px-2.5 py-1 rounded-md">
                   <ShieldCheck className="h-3 w-3" />
@@ -280,9 +320,16 @@ export default function AdminUserDetailsPage({
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-xs text-[#5c3a1e] space-y-1">
-                <p className="font-semibold text-[#422006]">{user.address.street}</p>
-                <p>{user.address.city}, {user.address.state} - {user.address.postalCode}</p>
-                <p className="font-bold text-amber-900">{user.address.country}</p>
+                <p className="font-semibold text-[#422006]">
+                  {user.address.street}
+                </p>
+                <p>
+                  {user.address.city}, {user.address.state} -{" "}
+                  {user.address.postalCode}
+                </p>
+                <p className="font-bold text-amber-900">
+                  {user.address.country}
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -295,7 +342,8 @@ export default function AdminUserDetailsPage({
                 Devotee Notes & Astrological Consultations
               </CardTitle>
               <CardDescription>
-                Internal temple notes regarding Rudraksha sizing, gotra, and birth chart preferences.
+                Internal temple notes regarding Rudraksha sizing, gotra, and
+                birth chart preferences.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -356,11 +404,16 @@ export default function AdminUserDetailsPage({
                   {userOrders.map((ord) => (
                     <TableRow key={ord.id}>
                       <TableCell className="font-bold text-[#713f12]">
-                        <Link href={`/admin/orders/${ord.orderNumber}`} className="hover:underline">
+                        <Link
+                          href={`/admin/orders/${ord.orderNumber}`}
+                          className="hover:underline"
+                        >
                           #{ord.orderNumber}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{ord.date}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {ord.date}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2 text-xs font-semibold text-[#422006]">
                           <span>{ord.items[0]?.emoji}</span>
@@ -372,7 +425,9 @@ export default function AdminUserDetailsPage({
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="font-bold text-xs text-[#422006]">${ord.total}</TableCell>
+                      <TableCell className="font-bold text-xs text-[#422006]">
+                        ${ord.total}
+                      </TableCell>
                       <TableCell>
                         <Badge variant="secondary" className="text-[10px]">
                           {ord.paymentMethod} • {ord.paymentStatus}
@@ -384,10 +439,10 @@ export default function AdminUserDetailsPage({
                             ord.status === "Delivered"
                               ? "success"
                               : ord.status === "Shipped"
-                              ? "gold"
-                              : ord.status === "Cancelled"
-                              ? "destructive"
-                              : "outline"
+                                ? "gold"
+                                : ord.status === "Cancelled"
+                                  ? "destructive"
+                                  : "outline"
                           }
                         >
                           {ord.status}

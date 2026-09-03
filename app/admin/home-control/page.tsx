@@ -18,7 +18,13 @@ import {
   Star,
   Check,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,16 +38,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 
 export default function AdminHomeControlPage() {
-  const { homeControl, products, updateHomeControl, addOffer, toggleOfferStatus, deleteOffer } =
-    useAdmin();
+  const {
+    homeControl,
+    products,
+    updateHomeControl,
+    addOffer,
+    toggleOfferStatus,
+    deleteOffer,
+  } = useAdmin();
 
   // Hero form state
   const [heroData, setHeroData] = useState(homeControl.heroSection);
   const [announcement, setAnnouncement] = useState(homeControl.announcementBar);
-  const [selectedFeatured, setSelectedFeatured] = useState<string[]>(homeControl.featuredProductIds);
+  const [selectedFeatured, setSelectedFeatured] = useState<string[]>(
+    homeControl.featuredProductIds
+  );
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
   // New Offer Form state
@@ -50,7 +64,8 @@ export default function AdminHomeControlPage() {
     title: "Navaratri Divine Blessings",
     code: "NAVARATRI20",
     discountPercent: 20,
-    description: "20% off all Mukhis and Malas with complimentary Durga Puja consecration.",
+    description:
+      "20% off all Mukhis and Malas with complimentary Durga Puja consecration.",
     expiresAt: "2026-10-15",
     isActive: true,
     badge: "Festival Special",
@@ -81,7 +96,11 @@ export default function AdminHomeControlPage() {
       : [...selectedFeatured, productId];
     setSelectedFeatured(updated);
     updateHomeControl({ featuredProductIds: updated });
-    showToast(isPresent ? "Product removed from Featured section." : "Product added to Featured section.");
+    showToast(
+      isPresent
+        ? "Product removed from Featured section."
+        : "Product added to Featured section."
+    );
   };
 
   const handleCreateOffer = (e: React.FormEvent) => {
@@ -125,7 +144,9 @@ export default function AdminHomeControlPage() {
             Home Page Control & Banners
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
-            Control the announcement bar, hero section headlines, featured sacred products, promotional festival offers, and devotee testimonials.
+            Control the announcement bar, hero section headlines, featured
+            sacred products, promotional festival offers, and devotee
+            testimonials.
           </p>
         </div>
 
@@ -149,8 +170,12 @@ export default function AdminHomeControlPage() {
             <div className="flex items-center gap-2">
               <Megaphone className="h-5 w-5 text-[#713f12]" />
               <div>
-                <CardTitle className="text-base font-bold">Top Announcement Bar</CardTitle>
-                <CardDescription>Header notification shown to all visiting devotees</CardDescription>
+                <CardTitle className="text-base font-bold">
+                  Top Announcement Bar
+                </CardTitle>
+                <CardDescription>
+                  Header notification shown to all visiting devotees
+                </CardDescription>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -159,7 +184,9 @@ export default function AdminHomeControlPage() {
               </span>
               <Switch
                 checked={announcement.enabled}
-                onCheckedChange={(checked) => setAnnouncement({ ...announcement, enabled: checked })}
+                onCheckedChange={(checked) =>
+                  setAnnouncement({ ...announcement, enabled: checked })
+                }
               />
             </div>
           </div>
@@ -168,20 +195,28 @@ export default function AdminHomeControlPage() {
           <form onSubmit={handleSaveAnnouncement} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="space-y-1.5 sm:col-span-1">
-                <label className="text-xs font-bold text-[#422006]">Badge Label</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Badge Label
+                </label>
                 <Input
                   type="text"
                   value={announcement.badge}
-                  onChange={(e) => setAnnouncement({ ...announcement, badge: e.target.value })}
+                  onChange={(e) =>
+                    setAnnouncement({ ...announcement, badge: e.target.value })
+                  }
                   className="h-10"
                 />
               </div>
               <div className="space-y-1.5 sm:col-span-3">
-                <label className="text-xs font-bold text-[#422006]">Announcement Message</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Announcement Message
+                </label>
                 <Input
                   type="text"
                   value={announcement.text}
-                  onChange={(e) => setAnnouncement({ ...announcement, text: e.target.value })}
+                  onChange={(e) =>
+                    setAnnouncement({ ...announcement, text: e.target.value })
+                  }
                   className="h-10"
                 />
               </div>
@@ -189,7 +224,9 @@ export default function AdminHomeControlPage() {
 
             {/* Live Preview Box */}
             <div className="rounded-xl border border-amber-900/10 bg-amber-100/50 p-3 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground font-semibold">Preview:</span>
+              <span className="text-muted-foreground font-semibold">
+                Preview:
+              </span>
               <div className="flex items-center gap-2 font-medium text-[#713f12]">
                 <span className="rounded-full bg-[#713f12] text-white px-2 py-0.5 text-[10px] font-bold">
                   {announcement.badge}
@@ -199,7 +236,11 @@ export default function AdminHomeControlPage() {
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" size="sm" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
+              <Button
+                type="submit"
+                size="sm"
+                className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]"
+              >
                 <Save className="h-3.5 w-3.5 mr-1" />
                 Update Announcement Bar
               </Button>
@@ -223,63 +264,91 @@ export default function AdminHomeControlPage() {
           <form onSubmit={handleSaveHero} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
-                <label className="text-xs font-bold text-[#422006]">Top Badge Tag</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Top Badge Tag
+                </label>
                 <Input
                   type="text"
                   value={heroData.badgeText}
-                  onChange={(e) => setHeroData({ ...heroData, badgeText: e.target.value })}
+                  onChange={(e) =>
+                    setHeroData({ ...heroData, badgeText: e.target.value })
+                  }
                   className="h-10"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#422006]">Main Hero Headline</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Main Hero Headline
+                </label>
                 <Input
                   type="text"
                   value={heroData.headline}
-                  onChange={(e) => setHeroData({ ...heroData, headline: e.target.value })}
+                  onChange={(e) =>
+                    setHeroData({ ...heroData, headline: e.target.value })
+                  }
                   className="h-10"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#422006]">Highlighted Text Emphasis</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Highlighted Text Emphasis
+                </label>
                 <Input
                   type="text"
                   value={heroData.highlightText}
-                  onChange={(e) => setHeroData({ ...heroData, highlightText: e.target.value })}
+                  onChange={(e) =>
+                    setHeroData({ ...heroData, highlightText: e.target.value })
+                  }
                   className="h-10 text-[#713f12] font-bold"
                 />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <label className="text-xs font-bold text-[#422006]">Hero Subheadline / Mission</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Hero Subheadline / Mission
+                </label>
                 <textarea
                   rows={2}
                   value={heroData.subheadline}
-                  onChange={(e) => setHeroData({ ...heroData, subheadline: e.target.value })}
+                  onChange={(e) =>
+                    setHeroData({ ...heroData, subheadline: e.target.value })
+                  }
                   className="w-full rounded-xl border border-amber-900/15 bg-amber-50/20 p-3 text-xs text-[#422006] outline-none focus:border-amber-700"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#422006]">Primary CTA Button Text</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Primary CTA Button Text
+                </label>
                 <Input
                   type="text"
                   value={heroData.primaryCtaText}
-                  onChange={(e) => setHeroData({ ...heroData, primaryCtaText: e.target.value })}
+                  onChange={(e) =>
+                    setHeroData({ ...heroData, primaryCtaText: e.target.value })
+                  }
                   className="h-10"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#422006]">Primary CTA Target URL</label>
+                <label className="text-xs font-bold text-[#422006]">
+                  Primary CTA Target URL
+                </label>
                 <Input
                   type="text"
                   value={heroData.primaryCtaLink}
-                  onChange={(e) => setHeroData({ ...heroData, primaryCtaLink: e.target.value })}
+                  onChange={(e) =>
+                    setHeroData({ ...heroData, primaryCtaLink: e.target.value })
+                  }
                   className="h-10"
                 />
               </div>
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button type="submit" size="sm" className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
+              <Button
+                type="submit"
+                size="sm"
+                className="bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]"
+              >
                 <Save className="h-3.5 w-3.5 mr-1" />
                 Save Hero Section
               </Button>
@@ -294,7 +363,10 @@ export default function AdminHomeControlPage() {
           <div>
             <CardTitle className="text-base font-bold flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-[#713f12]" />
-              Homepage Featured Sacred Collection ({selectedFeatured.length} active)
+              Homepage Featured Sacred Collection ({
+                selectedFeatured.length
+              }{" "}
+              active)
             </CardTitle>
             <CardDescription>
               Toggle which products appear on the homepage sacred gallery
@@ -320,7 +392,9 @@ export default function AdminHomeControlPage() {
                       {prod.emoji}
                     </span>
                     <div className="min-w-0">
-                      <p className="font-bold text-xs text-[#422006] truncate">{prod.name}</p>
+                      <p className="font-bold text-xs text-[#422006] truncate">
+                        {prod.name}
+                      </p>
                       <p className="text-[11px] text-muted-foreground">
                         ${prod.price} • {prod.mukhiType}
                       </p>
@@ -349,7 +423,8 @@ export default function AdminHomeControlPage() {
           <div>
             <CardTitle className="text-base font-bold flex items-center gap-2">
               <Tag className="h-5 w-5 text-[#713f12]" />
-              Promotional Offers & Discount Banners ({homeControl.offers.length})
+              Promotional Offers & Discount Banners ({homeControl.offers.length}
+              )
             </CardTitle>
             <CardDescription>
               Create festival coupon discounts and promotional highlight banners
@@ -358,7 +433,10 @@ export default function AdminHomeControlPage() {
 
           <Dialog open={isAddOfferOpen} onOpenChange={setIsAddOfferOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="h-9 gap-1.5 bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]">
+              <Button
+                size="sm"
+                className="h-9 gap-1.5 bg-[#713f12] text-xs font-bold text-white hover:bg-[#5c330e]"
+              >
                 <Plus className="h-4 w-4" />
                 Add Offer Banner
               </Button>
@@ -368,68 +446,104 @@ export default function AdminHomeControlPage() {
               <DialogHeader>
                 <DialogTitle>Create Promotional Festival Offer</DialogTitle>
                 <DialogDescription>
-                  Set the discount code, percentage, description, and expiry date.
+                  Set the discount code, percentage, description, and expiry
+                  date.
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleCreateOffer} className="space-y-3.5 text-xs">
+              <form
+                onSubmit={handleCreateOffer}
+                className="space-y-3.5 text-xs"
+              >
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Offer Title</label>
+                  <label className="font-bold text-[#422006]">
+                    Offer Title
+                  </label>
                   <Input
                     type="text"
                     required
                     value={newOffer.title}
-                    onChange={(e) => setNewOffer({ ...newOffer, title: e.target.value })}
+                    onChange={(e) =>
+                      setNewOffer({ ...newOffer, title: e.target.value })
+                    }
                     className="h-9"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="font-bold text-[#422006]">Promo Code</label>
+                    <label className="font-bold text-[#422006]">
+                      Promo Code
+                    </label>
                     <Input
                       type="text"
                       required
                       value={newOffer.code}
-                      onChange={(e) => setNewOffer({ ...newOffer, code: e.target.value })}
+                      onChange={(e) =>
+                        setNewOffer({ ...newOffer, code: e.target.value })
+                      }
                       className="h-9 font-mono font-bold uppercase"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="font-bold text-[#422006]">Discount %</label>
+                    <label className="font-bold text-[#422006]">
+                      Discount %
+                    </label>
                     <Input
                       type="number"
                       min="1"
                       max="90"
                       value={newOffer.discountPercent}
-                      onChange={(e) => setNewOffer({ ...newOffer, discountPercent: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setNewOffer({
+                          ...newOffer,
+                          discountPercent: Number(e.target.value),
+                        })
+                      }
                       className="h-9 font-bold"
                     />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Expiry Date</label>
+                  <label className="font-bold text-[#422006]">
+                    Expiry Date
+                  </label>
                   <Input
                     type="date"
                     value={newOffer.expiresAt}
-                    onChange={(e) => setNewOffer({ ...newOffer, expiresAt: e.target.value })}
+                    onChange={(e) =>
+                      setNewOffer({ ...newOffer, expiresAt: e.target.value })
+                    }
                     className="h-9"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Offer Details</label>
+                  <label className="font-bold text-[#422006]">
+                    Offer Details
+                  </label>
                   <textarea
                     rows={2}
                     value={newOffer.description}
-                    onChange={(e) => setNewOffer({ ...newOffer, description: e.target.value })}
+                    onChange={(e) =>
+                      setNewOffer({ ...newOffer, description: e.target.value })
+                    }
                     className="w-full rounded-md border border-input p-2 text-xs"
                   />
                 </div>
 
                 <DialogFooter>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setIsAddOfferOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsAddOfferOpen(false)}
+                  >
                     Cancel
                   </Button>
-                  <Button type="submit" size="sm" className="bg-[#713f12] text-white hover:bg-[#5c330e]">
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="bg-[#713f12] text-white hover:bg-[#5c330e]"
+                  >
                     Save & Activate Offer
                   </Button>
                 </DialogFooter>
@@ -468,7 +582,9 @@ export default function AdminHomeControlPage() {
 
                 <div className="mt-3">
                   <h4 className="text-base font-extrabold">{off.title}</h4>
-                  <p className="text-xs text-amber-100/80 mt-1 leading-relaxed">{off.description}</p>
+                  <p className="text-xs text-amber-100/80 mt-1 leading-relaxed">
+                    {off.description}
+                  </p>
                 </div>
 
                 <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">

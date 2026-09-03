@@ -17,7 +17,13 @@ import {
   Printer,
   ShieldCheck,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 
 export default function AdminOrdersPage() {
   const { orders, updateOrderStatus } = useAdmin();
@@ -55,19 +61,27 @@ export default function AdminOrdersPage() {
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.shippingAddress.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.items.some((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      order.shippingAddress.city
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      order.items.some((i) =>
+        i.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
     const matchesStatus =
-      statusFilter === "all" || order.status.toLowerCase() === statusFilter.toLowerCase();
+      statusFilter === "all" ||
+      order.status.toLowerCase() === statusFilter.toLowerCase();
 
     const matchesPayment =
-      paymentFilter === "all" || order.paymentStatus.toLowerCase() === paymentFilter.toLowerCase();
+      paymentFilter === "all" ||
+      order.paymentStatus.toLowerCase() === paymentFilter.toLowerCase();
 
     return matchesSearch && matchesStatus && matchesPayment;
   });
 
-  const pendingCount = orders.filter((o) => o.status === "Pending" || o.status === "Processing").length;
+  const pendingCount = orders.filter(
+    (o) => o.status === "Pending" || o.status === "Processing"
+  ).length;
   const blessedCount = orders.filter((o) => o.status === "Blessed").length;
   const shippedCount = orders.filter((o) => o.status === "Shipped").length;
   const deliveredCount = orders.filter((o) => o.status === "Delivered").length;
@@ -114,7 +128,8 @@ export default function AdminOrdersPage() {
             Sacred Orders Management
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
-            Review incoming orders, coordinate Vedic temple consecrations, print invoices, and update courier shipments.
+            Review incoming orders, coordinate Vedic temple consecrations, print
+            invoices, and update courier shipments.
           </p>
         </div>
       </div>
@@ -125,25 +140,33 @@ export default function AdminOrdersPage() {
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Awaiting Fulfillment
           </p>
-          <p className="text-2xl font-black text-[#422006] mt-1">{pendingCount}</p>
+          <p className="text-2xl font-black text-[#422006] mt-1">
+            {pendingCount}
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-800">
             Temple Blessed
           </p>
-          <p className="text-2xl font-black text-amber-900 mt-1">{blessedCount}</p>
+          <p className="text-2xl font-black text-amber-900 mt-1">
+            {blessedCount}
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-700">
             In Transit (Shipped)
           </p>
-          <p className="text-2xl font-black text-amber-950 mt-1">{shippedCount}</p>
+          <p className="text-2xl font-black text-amber-950 mt-1">
+            {shippedCount}
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs">
           <p className="text-xs font-bold uppercase tracking-wider text-emerald-800">
             Delivered
           </p>
-          <p className="text-2xl font-black text-emerald-900 mt-1">{deliveredCount}</p>
+          <p className="text-2xl font-black text-emerald-900 mt-1">
+            {deliveredCount}
+          </p>
         </Card>
       </div>
 
@@ -203,9 +226,12 @@ export default function AdminOrdersPage() {
           {filteredOrders.length === 0 ? (
             <div className="p-12 text-center">
               <span className="text-4xl">📦</span>
-              <p className="mt-2 text-sm font-bold text-[#422006]">No orders match query</p>
+              <p className="mt-2 text-sm font-bold text-[#422006]">
+                No orders match query
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Try searching with another order number or resetting status filters.
+                Try searching with another order number or resetting status
+                filters.
               </p>
               <Button
                 variant="outline"
@@ -256,7 +282,8 @@ export default function AdminOrdersPage() {
                           {order.customerName}
                         </div>
                         <div className="text-[10px] text-muted-foreground">
-                          {order.shippingAddress.city}, {order.shippingAddress.country}
+                          {order.shippingAddress.city},{" "}
+                          {order.shippingAddress.country}
                         </div>
                       </TableCell>
 
@@ -264,7 +291,9 @@ export default function AdminOrdersPage() {
                       <TableCell>
                         <div className="text-xs font-medium text-[#422006] flex items-center gap-1.5">
                           <span>{order.items[0]?.emoji}</span>
-                          <span className="truncate max-w-[140px]">{order.items[0]?.name}</span>
+                          <span className="truncate max-w-[140px]">
+                            {order.items[0]?.name}
+                          </span>
                         </div>
                         {order.items.length > 1 && (
                           <div className="text-[10px] text-amber-800 font-semibold">
@@ -280,12 +309,18 @@ export default function AdminOrdersPage() {
                         </div>
                         <div className="flex items-center gap-1 text-[10px]">
                           <Badge
-                            variant={order.paymentStatus === "Paid" ? "success" : "warning"}
+                            variant={
+                              order.paymentStatus === "Paid"
+                                ? "success"
+                                : "warning"
+                            }
                             className="text-[9px] px-1 py-0"
                           >
                             {order.paymentStatus}
                           </Badge>
-                          <span className="text-muted-foreground">({order.paymentMethod})</span>
+                          <span className="text-muted-foreground">
+                            ({order.paymentMethod})
+                          </span>
                         </div>
                       </TableCell>
 
@@ -296,7 +331,9 @@ export default function AdminOrdersPage() {
                       <TableCell>
                         <select
                           value={order.status}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          onChange={(e) =>
+                            handleStatusChange(order.id, e.target.value)
+                          }
                           className="h-7 rounded-lg border border-amber-900/15 bg-white px-2 text-[11px] font-semibold text-[#422006] outline-none focus:border-amber-700"
                         >
                           <option value="Pending">Pending</option>

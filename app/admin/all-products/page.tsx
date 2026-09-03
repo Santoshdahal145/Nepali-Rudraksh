@@ -17,7 +17,13 @@ import {
   ShieldCheck,
   ArrowUpDown,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +44,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 
 export default function AdminAllProductsPage() {
   const { products, addProduct, deleteProduct } = useAdmin();
@@ -62,12 +68,17 @@ export default function AdminAllProductsPage() {
     emoji: "📿",
     deity: "Kalagni Rudra",
     origin: "Sankhuwasabha, Nepal",
-    description: "Authentic lab-certified Nepali Rudraksha blessed with Vedic mantras.",
+    description:
+      "Authentic lab-certified Nepali Rudraksha blessed with Vedic mantras.",
     badge: "New Arrival",
     certNumber: `CERT-NP-2026-${Math.floor(1000 + Math.random() * 9000)}`,
     inStock: true,
     isFeatured: false,
-    benefits: ["Brings peace of mind", "Balances nervous system", "Removes malefic planetary influences"],
+    benefits: [
+      "Brings peace of mind",
+      "Balances nervous system",
+      "Removes malefic planetary influences",
+    ],
   });
 
   const showToast = (msg: string) => {
@@ -104,7 +115,9 @@ export default function AdminAllProductsPage() {
   };
 
   const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to remove "${name}" from catalog?`)) {
+    if (
+      window.confirm(`Are you sure you want to remove "${name}" from catalog?`)
+    ) {
       deleteProduct(id);
       showToast(`Product "${name}" removed.`);
     }
@@ -118,7 +131,8 @@ export default function AdminAllProductsPage() {
       p.deity.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCat = categoryFilter === "all" || p.category === categoryFilter;
+    const matchesCat =
+      categoryFilter === "all" || p.category === categoryFilter;
 
     const matchesStock =
       stockFilter === "all" ||
@@ -129,7 +143,9 @@ export default function AdminAllProductsPage() {
     return matchesSearch && matchesCat && matchesStock;
   });
 
-  const lowStockCount = products.filter((p) => p.stock <= 4 && p.stock > 0).length;
+  const lowStockCount = products.filter(
+    (p) => p.stock <= 4 && p.stock > 0
+  ).length;
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
 
   return (
@@ -157,7 +173,8 @@ export default function AdminAllProductsPage() {
             All Products & Sacred Inventory
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
-            Track stock quantities, lab verification certificates, Mukhi grades, and pricing.
+            Track stock quantities, lab verification certificates, Mukhi grades,
+            and pricing.
           </p>
         </div>
 
@@ -174,7 +191,8 @@ export default function AdminAllProductsPage() {
             <DialogHeader>
               <DialogTitle>Add New Sacred Rudraksha Item</DialogTitle>
               <DialogDescription>
-                Enter the Vedic specifications, Mukhi classification, and stock details.
+                Enter the Vedic specifications, Mukhi classification, and stock
+                details.
               </DialogDescription>
             </DialogHeader>
 
@@ -182,13 +200,17 @@ export default function AdminAllProductsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Name */}
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="font-bold text-[#422006]">Product Title</label>
+                  <label className="font-bold text-[#422006]">
+                    Product Title
+                  </label>
                   <Input
                     type="text"
                     required
                     placeholder="e.g. 10 Mukhi Lord Krishna Rudraksha"
                     value={newForm.name}
-                    onChange={(e) => setNewForm({ ...newForm, name: e.target.value })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, name: e.target.value })
+                    }
                     className="h-9"
                   />
                 </div>
@@ -198,7 +220,12 @@ export default function AdminAllProductsPage() {
                   <label className="font-bold text-[#422006]">Category</label>
                   <select
                     value={newForm.category}
-                    onChange={(e) => setNewForm({ ...newForm, category: e.target.value as any })}
+                    onChange={(e) =>
+                      setNewForm({
+                        ...newForm,
+                        category: e.target.value as any,
+                      })
+                    }
                     className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-xs"
                   >
                     <option value="mukhi">Sacred Mukhi (1-21)</option>
@@ -210,81 +237,109 @@ export default function AdminAllProductsPage() {
 
                 {/* Mukhi Type */}
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Mukhi Specification</label>
+                  <label className="font-bold text-[#422006]">
+                    Mukhi Specification
+                  </label>
                   <Input
                     type="text"
                     placeholder="e.g. 10 Mukhi"
                     value={newForm.mukhiType}
-                    onChange={(e) => setNewForm({ ...newForm, mukhiType: e.target.value })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, mukhiType: e.target.value })
+                    }
                     className="h-9"
                   />
                 </div>
 
                 {/* Price */}
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Selling Price ($ USD)</label>
+                  <label className="font-bold text-[#422006]">
+                    Selling Price ($ USD)
+                  </label>
                   <Input
                     type="number"
                     min="1"
                     value={newForm.price}
-                    onChange={(e) => setNewForm({ ...newForm, price: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, price: Number(e.target.value) })
+                    }
                     className="h-9"
                   />
                 </div>
 
                 {/* Stock Count */}
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Stock Quantity</label>
+                  <label className="font-bold text-[#422006]">
+                    Stock Quantity
+                  </label>
                   <Input
                     type="number"
                     min="0"
                     value={newForm.stock}
-                    onChange={(e) => setNewForm({ ...newForm, stock: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, stock: Number(e.target.value) })
+                    }
                     className="h-9"
                   />
                 </div>
 
                 {/* Deity */}
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Governing Deity</label>
+                  <label className="font-bold text-[#422006]">
+                    Governing Deity
+                  </label>
                   <Input
                     type="text"
                     placeholder="e.g. Lord Vishnu"
                     value={newForm.deity}
-                    onChange={(e) => setNewForm({ ...newForm, deity: e.target.value })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, deity: e.target.value })
+                    }
                     className="h-9"
                   />
                 </div>
 
                 {/* Emoji / Symbol */}
                 <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Icon / Emoji</label>
+                  <label className="font-bold text-[#422006]">
+                    Icon / Emoji
+                  </label>
                   <Input
                     type="text"
                     value={newForm.emoji}
-                    onChange={(e) => setNewForm({ ...newForm, emoji: e.target.value })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, emoji: e.target.value })
+                    }
                     className="h-9 text-center text-lg"
                   />
                 </div>
 
                 {/* Origin */}
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="font-bold text-[#422006]">Himalayan Origin</label>
+                  <label className="font-bold text-[#422006]">
+                    Himalayan Origin
+                  </label>
                   <Input
                     type="text"
                     value={newForm.origin}
-                    onChange={(e) => setNewForm({ ...newForm, origin: e.target.value })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, origin: e.target.value })
+                    }
                     className="h-9"
                   />
                 </div>
 
                 {/* Description */}
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="font-bold text-[#422006]">Vedic Description</label>
+                  <label className="font-bold text-[#422006]">
+                    Vedic Description
+                  </label>
                   <textarea
                     rows={2}
                     value={newForm.description}
-                    onChange={(e) => setNewForm({ ...newForm, description: e.target.value })}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, description: e.target.value })
+                    }
                     className="w-full rounded-md border border-input p-2 text-xs"
                   />
                 </div>
@@ -318,7 +373,9 @@ export default function AdminAllProductsPage() {
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Total Catalog
           </p>
-          <p className="text-2xl font-black text-[#422006] mt-1">{products.length} Items</p>
+          <p className="text-2xl font-black text-[#422006] mt-1">
+            {products.length} Items
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs">
           <p className="text-xs font-bold uppercase tracking-wider text-emerald-800">
@@ -332,13 +389,17 @@ export default function AdminAllProductsPage() {
           <p className="text-xs font-bold uppercase tracking-wider text-amber-800">
             Low Stock Alert
           </p>
-          <p className="text-2xl font-black text-amber-900 mt-1">{lowStockCount} Items</p>
+          <p className="text-2xl font-black text-amber-900 mt-1">
+            {lowStockCount} Items
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs">
           <p className="text-xs font-bold uppercase tracking-wider text-red-800">
             Sold Out
           </p>
-          <p className="text-2xl font-black text-red-900 mt-1">{outOfStockCount} Items</p>
+          <p className="text-2xl font-black text-red-900 mt-1">
+            {outOfStockCount} Items
+          </p>
         </Card>
       </div>
 
@@ -386,7 +447,9 @@ export default function AdminAllProductsPage() {
       {/* Products Table */}
       <Card className="shadow-xs overflow-hidden">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base sm:text-lg">Sacred Product Catalog</CardTitle>
+          <CardTitle className="text-base sm:text-lg">
+            Sacred Product Catalog
+          </CardTitle>
           <CardDescription>
             Showing {filteredProducts.length} of {products.length} products
           </CardDescription>
@@ -396,9 +459,12 @@ export default function AdminAllProductsPage() {
           {filteredProducts.length === 0 ? (
             <div className="p-12 text-center">
               <span className="text-4xl">🔍</span>
-              <p className="mt-2 text-sm font-bold text-[#422006]">No sacred items match query</p>
+              <p className="mt-2 text-sm font-bold text-[#422006]">
+                No sacred items match query
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Try searching for another Mukhi, deity name, or resetting filters.
+                Try searching for another Mukhi, deity name, or resetting
+                filters.
               </p>
               <Button
                 variant="outline"
@@ -450,7 +516,10 @@ export default function AdminAllProductsPage() {
                               <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                                 <span className="font-mono">{product.sku}</span>
                                 {product.badge && (
-                                  <Badge variant="gold" className="text-[9px] px-1.5 py-0">
+                                  <Badge
+                                    variant="gold"
+                                    className="text-[9px] px-1.5 py-0"
+                                  >
                                     {product.badge}
                                   </Badge>
                                 )}
@@ -489,8 +558,8 @@ export default function AdminAllProductsPage() {
                                 isOut
                                   ? "bg-red-600"
                                   : isLowStock
-                                  ? "bg-amber-500 animate-pulse"
-                                  : "bg-emerald-600"
+                                    ? "bg-amber-500 animate-pulse"
+                                    : "bg-emerald-600"
                               }`}
                             />
                             <span
@@ -498,15 +567,19 @@ export default function AdminAllProductsPage() {
                                 isOut
                                   ? "text-red-700"
                                   : isLowStock
-                                  ? "text-amber-800"
-                                  : "text-emerald-800"
+                                    ? "text-amber-800"
+                                    : "text-emerald-800"
                               }`}
                             >
                               {product.stock} units
                             </span>
                           </div>
                           <span className="text-[10px] text-muted-foreground">
-                            {isOut ? "Out of stock" : isLowStock ? "Low stock alert" : "In stock"}
+                            {isOut
+                              ? "Out of stock"
+                              : isLowStock
+                                ? "Low stock alert"
+                                : "In stock"}
                           </span>
                         </TableCell>
 
@@ -549,7 +622,9 @@ export default function AdminAllProductsPage() {
                             <Button
                               variant="ghost"
                               size="xs"
-                              onClick={() => handleDelete(product.id, product.name)}
+                              onClick={() =>
+                                handleDelete(product.id, product.name)
+                              }
                               className="h-8 text-red-700 hover:bg-red-50 hover:text-red-900"
                             >
                               <Trash2 className="h-3.5 w-3.5" />

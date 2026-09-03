@@ -23,7 +23,7 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 import {
   adminProfileValidation,
   changePasswordValidation,

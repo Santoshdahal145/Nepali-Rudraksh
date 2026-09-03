@@ -19,7 +19,13 @@ import {
   Trash2,
   Lock,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +45,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useAdmin } from "../data/AdminContext";
+import { useAdmin } from "../../../providers/AdminContext";
 
 export default function AdminAllUsersPage() {
   const { users, toggleBlockUser, updateUserStatus, deleteUser } = useAdmin();
@@ -47,7 +53,9 @@ export default function AdminAllUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
-  const [selectedUserToBlock, setSelectedUserToBlock] = useState<string | null>(null);
+  const [selectedUserToBlock, setSelectedUserToBlock] = useState<string | null>(
+    null
+  );
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -64,10 +72,12 @@ export default function AdminAllUsersPage() {
       user.address.city.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "all" || user.status.toLowerCase() === statusFilter.toLowerCase();
+      statusFilter === "all" ||
+      user.status.toLowerCase() === statusFilter.toLowerCase();
 
     const matchesRole =
-      roleFilter === "all" || user.role.toLowerCase() === roleFilter.toLowerCase();
+      roleFilter === "all" ||
+      user.role.toLowerCase() === roleFilter.toLowerCase();
 
     return matchesSearch && matchesStatus && matchesRole;
   });
@@ -76,7 +86,11 @@ export default function AdminAllUsersPage() {
   const vipCount = users.filter((u) => u.status === "VIP").length;
   const blockedCount = users.filter((u) => u.status === "Blocked").length;
 
-  const handleToggleBlock = (userId: string, userName: string, isBlocked: boolean) => {
+  const handleToggleBlock = (
+    userId: string,
+    userName: string,
+    isBlocked: boolean
+  ) => {
     toggleBlockUser(userId);
     showToast(
       isBlocked
@@ -110,7 +124,8 @@ export default function AdminAllUsersPage() {
             All Users & Devotee Management
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
-            Search, manage account permissions, view consultation notes, and control devotee access.
+            Search, manage account permissions, view consultation notes, and
+            control devotee access.
           </p>
         </div>
 
@@ -133,13 +148,17 @@ export default function AdminAllUsersPage() {
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Total Users
           </p>
-          <p className="text-2xl font-black text-[#422006] mt-1">{users.length}</p>
+          <p className="text-2xl font-black text-[#422006] mt-1">
+            {users.length}
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs hover:border-amber-900/20 transition">
           <p className="text-xs font-bold uppercase tracking-wider text-emerald-800">
             Active Devotees
           </p>
-          <p className="text-2xl font-black text-emerald-900 mt-1">{activeCount}</p>
+          <p className="text-2xl font-black text-emerald-900 mt-1">
+            {activeCount}
+          </p>
         </Card>
         <Card className="p-4 shadow-2xs hover:border-amber-900/20 transition">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-800">
@@ -151,7 +170,9 @@ export default function AdminAllUsersPage() {
           <p className="text-xs font-bold uppercase tracking-wider text-red-800">
             Blocked Accounts
           </p>
-          <p className="text-2xl font-black text-red-950 mt-1">{blockedCount}</p>
+          <p className="text-2xl font-black text-red-950 mt-1">
+            {blockedCount}
+          </p>
         </Card>
       </div>
 
@@ -198,7 +219,9 @@ export default function AdminAllUsersPage() {
       {/* Users Table */}
       <Card className="shadow-xs overflow-hidden">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base sm:text-lg">Devotee Directory</CardTitle>
+          <CardTitle className="text-base sm:text-lg">
+            Devotee Directory
+          </CardTitle>
           <CardDescription>
             Showing {filteredUsers.length} of {users.length} total devotees
           </CardDescription>
@@ -208,9 +231,12 @@ export default function AdminAllUsersPage() {
           {filteredUsers.length === 0 ? (
             <div className="p-12 text-center">
               <span className="text-4xl">👥</span>
-              <p className="mt-2 text-sm font-bold text-[#422006]">No devotees found</p>
+              <p className="mt-2 text-sm font-bold text-[#422006]">
+                No devotees found
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Try searching with a different name, email, or reset your filters.
+                Try searching with a different name, email, or reset your
+                filters.
               </p>
               <Button
                 variant="outline"
@@ -245,7 +271,10 @@ export default function AdminAllUsersPage() {
                     const isVIP = user.status === "VIP";
 
                     return (
-                      <TableRow key={user.id} className={isBlocked ? "bg-red-50/30" : ""}>
+                      <TableRow
+                        key={user.id}
+                        className={isBlocked ? "bg-red-50/30" : ""}
+                      >
                         {/* Name & Avatar */}
                         <TableCell>
                           <div className="flex items-center gap-3">
@@ -254,8 +283,8 @@ export default function AdminAllUsersPage() {
                                 isBlocked
                                   ? "bg-stone-500"
                                   : isVIP
-                                  ? "bg-gradient-to-tr from-amber-600 to-amber-400"
-                                  : "bg-[#713f12]"
+                                    ? "bg-gradient-to-tr from-amber-600 to-amber-400"
+                                    : "bg-[#713f12]"
                               }`}
                             >
                               {user.avatar}
@@ -340,7 +369,9 @@ export default function AdminAllUsersPage() {
                             <Button
                               variant={isBlocked ? "outline" : "ghost"}
                               size="xs"
-                              onClick={() => handleToggleBlock(user.id, user.name, isBlocked)}
+                              onClick={() =>
+                                handleToggleBlock(user.id, user.name, isBlocked)
+                              }
                               className={`h-8 gap-1 text-xs font-semibold ${
                                 isBlocked
                                   ? "border-emerald-300 text-emerald-800 hover:bg-emerald-50"
