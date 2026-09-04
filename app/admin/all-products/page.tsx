@@ -90,34 +90,6 @@ export default function AdminAllProductsPage() {
     setTimeout(() => setFeedbackToast(null), 3000);
   };
 
-  const handleCreateProduct = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newForm.name) return;
-
-    addProduct({
-      name: newForm.name,
-      category: newForm.category,
-      mukhiType: newForm.mukhiType,
-      price: Number(newForm.price),
-      originalPrice: Number(newForm.originalPrice),
-      costPrice: Number(newForm.costPrice),
-      stock: Number(newForm.stock),
-      sku: newForm.sku,
-      emoji: newForm.emoji,
-      deity: newForm.deity,
-      origin: newForm.origin,
-      description: newForm.description,
-      badge: newForm.badge,
-      certNumber: newForm.certNumber,
-      inStock: newForm.stock > 0,
-      isFeatured: newForm.isFeatured,
-      benefits: newForm.benefits,
-    });
-
-    setIsAddModalOpen(false);
-    showToast(`"${newForm.name}" was added to sacred inventory.`);
-  };
-
   const handleDelete = (id: string, name: string) => {
     if (
       window.confirm(`Are you sure you want to remove "${name}" from catalog?`)
@@ -174,7 +146,7 @@ export default function AdminAllProductsPage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#422006]">
-            All Products & Sacred Inventory
+            All Products
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
             Track stock quantities, lab verification certificates, Mukhi grades,
@@ -187,7 +159,7 @@ export default function AdminAllProductsPage() {
           <DialogTrigger asChild>
             <Button className="h-10 gap-1.5 bg-[#713f12] text-xs font-bold text-white shadow-xs hover:bg-[#5c330e]">
               <Plus className="h-4 w-4" />
-              Add Sacred Item
+              Add Product
             </Button>
           </DialogTrigger>
 
@@ -199,174 +171,6 @@ export default function AdminAllProductsPage() {
                 details.
               </DialogDescription>
             </DialogHeader>
-
-            <form onSubmit={handleCreateProduct} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Name */}
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="font-bold text-[#422006]">
-                    Product Title
-                  </label>
-                  <Input
-                    type="text"
-                    required
-                    placeholder="e.g. 10 Mukhi Lord Krishna Rudraksha"
-                    value={newForm.name}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, name: e.target.value })
-                    }
-                    className="h-9"
-                  />
-                </div>
-
-                {/* Category */}
-                <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">Category</label>
-                  <select
-                    value={newForm.category}
-                    onChange={(e) =>
-                      setNewForm({
-                        ...newForm,
-                        category: e.target.value as any,
-                      })
-                    }
-                    className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-xs"
-                  >
-                    <option value="mukhi">Sacred Mukhi (1-21)</option>
-                    <option value="mala">Japa Mala (108+1)</option>
-                    <option value="collector">Collector Rare Bead</option>
-                    <option value="bracelet">Silver Bracelet</option>
-                  </select>
-                </div>
-
-                {/* Mukhi Type */}
-                <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">
-                    Mukhi Specification
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="e.g. 10 Mukhi"
-                    value={newForm.mukhiType}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, mukhiType: e.target.value })
-                    }
-                    className="h-9"
-                  />
-                </div>
-
-                {/* Price */}
-                <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">
-                    Selling Price ($ USD)
-                  </label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={newForm.price}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, price: Number(e.target.value) })
-                    }
-                    className="h-9"
-                  />
-                </div>
-
-                {/* Stock Count */}
-                <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">
-                    Stock Quantity
-                  </label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={newForm.stock}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, stock: Number(e.target.value) })
-                    }
-                    className="h-9"
-                  />
-                </div>
-
-                {/* Deity */}
-                <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">
-                    Governing Deity
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="e.g. Lord Vishnu"
-                    value={newForm.deity}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, deity: e.target.value })
-                    }
-                    className="h-9"
-                  />
-                </div>
-
-                {/* Emoji / Symbol */}
-                <div className="space-y-1">
-                  <label className="font-bold text-[#422006]">
-                    Icon / Emoji
-                  </label>
-                  <Input
-                    type="text"
-                    value={newForm.emoji}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, emoji: e.target.value })
-                    }
-                    className="h-9 text-center text-lg"
-                  />
-                </div>
-
-                {/* Origin */}
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="font-bold text-[#422006]">
-                    Himalayan Origin
-                  </label>
-                  <Input
-                    type="text"
-                    value={newForm.origin}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, origin: e.target.value })
-                    }
-                    className="h-9"
-                  />
-                </div>
-
-                {/* Description */}
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="font-bold text-[#422006]">
-                    Vedic Description
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={newForm.description}
-                    onChange={(e) =>
-                      setNewForm({ ...newForm, description: e.target.value })
-                    }
-                    className="w-full rounded-md border border-input p-2 text-xs"
-                  />
-                </div>
-              </div>
-
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsAddModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="bg-[#713f12] text-white hover:bg-[#5c330e]"
-                >
-                  Save & Publish Product
-                </Button>
-              </DialogFooter>
-            </form>
           </DialogContent>
         </Dialog>
       </div>
@@ -395,14 +199,6 @@ export default function AdminAllProductsPage() {
           </p>
           <p className="text-2xl font-black text-amber-900 mt-1">
             {lowStockCount} Items
-          </p>
-        </Card>
-        <Card className="p-4 shadow-2xs">
-          <p className="text-xs font-bold uppercase tracking-wider text-red-800">
-            Sold Out
-          </p>
-          <p className="text-2xl font-black text-red-900 mt-1">
-            {outOfStockCount} Items
           </p>
         </Card>
       </div>
@@ -452,7 +248,7 @@ export default function AdminAllProductsPage() {
       <Card className="shadow-xs overflow-hidden">
         <CardHeader className="pb-3">
           <CardTitle className="text-base sm:text-lg">
-            Sacred Product Catalog
+            Product Catalog
           </CardTitle>
           <CardDescription>
             Showing {filteredProducts.length} of {products.length} products

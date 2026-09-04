@@ -6,6 +6,7 @@ import { AdminProvider } from "../../providers/AdminContext";
 import { AdminSidebar } from "./components/AdminSidebar";
 import { AdminHeader } from "./components/AdminHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 function AdminPortalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -49,8 +50,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AdminProvider>
-      <AdminPortalShell>{children}</AdminPortalShell>
-    </AdminProvider>
+    <ReactQueryProvider>
+      <AdminProvider>
+        <AdminPortalShell>{children}</AdminPortalShell>
+      </AdminProvider>
+    </ReactQueryProvider>
   );
 }

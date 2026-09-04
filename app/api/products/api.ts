@@ -18,7 +18,7 @@ type VariantImagePayload = {
   position?: number;
 };
 
-type CreateProductPayload = {
+export type CreateProductPayload = {
   name: string;
   slug?: string;
   description: string;
@@ -28,7 +28,7 @@ type CreateProductPayload = {
   images?: ProductImagePayload[];
 };
 
-type UpdateProductPayload = Partial<CreateProductPayload>;
+export type UpdateProductPayload = Partial<CreateProductPayload>;
 
 type GetProductsParams = {
   page?: number;
