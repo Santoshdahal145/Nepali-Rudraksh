@@ -242,7 +242,7 @@ export default function NavBar() {
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#713f12] text-xs font-bold text-white shadow-xs transition-transform duration-200 group-hover:scale-105">
                 {userInitials}
               </div>
-              <span className="max-w-[130px] truncate text-xs font-semibold text-[#422006] transition-colors group-hover:text-[#713f12]">
+              <span className="max-w-32.5 truncate text-xs font-semibold text-[#422006] transition-colors group-hover:text-[#713f12]">
                 {userDisplayName}
               </span>
             </Link>
@@ -426,7 +426,7 @@ export default function NavBar() {
                   placeholder="Search 1-21 Mukhi, Siddh Mala, bracelets, deity..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent text-sm sm:text-base font-medium text-[#2d1a0e] placeholder:text-[#5c3a1e]/40 outline-none"
+                  className="w-full bg-transparent text-sm sm:text-base font-medium  placeholder:text-[#5c3a1e]/40 outline-none"
                 />
                 {searchQuery && (
                   <button

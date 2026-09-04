@@ -45,9 +45,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAdmin } from "../../../providers/AdminContext";
+import { initialProducts } from "../data/mockData";
 
 export default function AdminAllProductsPage() {
-  const { products, addProduct, deleteProduct } = useAdmin();
+  const products = initialProducts;
+
+  const addProduct = () => {};
+  const deleteProduct = () => {};
 
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");

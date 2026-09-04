@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { db } from "@/src/prisma/db";
 
-async function seedAdmin() {
+export async function seedAdmin() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   const firstName = process.env.ADMIN_FIRST_NAME || "Admin";
@@ -37,12 +37,3 @@ async function seedAdmin() {
 
   console.log(`Admin seeded: ${admin.email}`);
 }
-
-seedAdmin()
-  .catch((error) => {
-    console.error("Failed to seed admin:", error);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await db.close();
-  });
