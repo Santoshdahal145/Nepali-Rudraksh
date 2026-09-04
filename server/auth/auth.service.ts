@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { db } from "../../src/prisma/db";
-import { sendEmail } from "../helpers/emailHelper";
+import { sendEmail } from "../../lib/emailHelper";
 import { generateOtp } from "../user/user.service";
 import type { ChangePasswordInput, ForgotPasswordInput, LoginInput, ResetPasswordInput, ValidateOtpInput } from "./auth.schema";
 import { issueTokens } from "./token.service";

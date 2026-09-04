@@ -4,7 +4,7 @@
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { db } from "../../src/prisma/db";
-import { sendEmail } from "../helpers/emailHelper"; 
+import { sendEmail } from "../../lib/emailHelper"; 
 import type { CreateUserInput, UpdateUserInput } from "./user.schema";
 import { Temporal } from "@js-temporal/polyfill";
 import { ResendOtpInput } from "../auth/auth.schema";
