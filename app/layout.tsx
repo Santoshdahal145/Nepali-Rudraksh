@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/providers/AuthContext";
 import Script from "next/script";
+import { PriceProvider } from "@/providers/PriceContext";
 
 const publicSansHeading = Public_Sans({
   subsets: ["latin"],
@@ -47,11 +48,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           src="https://accounts.google.com/gsi/client"
           strategy="lazyOnload"
         />
-        <AuthProvider>
-          {children}
+        <PriceProvider>
+          <AuthProvider>
+            {children}
 
-          <Toaster position="top-right" richColors />
-        </AuthProvider>
+            <Toaster position="top-right" richColors />
+          </AuthProvider>
+        </PriceProvider>
       </body>
     </html>
   );

@@ -21,6 +21,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAuth } from "@/providers/AuthContext";
+import CurrencySelector from "./CurrencySelector";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -217,6 +218,9 @@ export default function NavBar() {
             <Search className="size-4.5" />
           </Button>
 
+          {/* Currency Selector */}
+          <CurrencySelector variant="desktop" />
+
           {/* Cart */}
           <Button
             variant="ghost"
@@ -268,6 +272,9 @@ export default function NavBar() {
 
         {/* ── Mobile Actions ── */}
         <div className="flex items-center gap-1 lg:hidden">
+          {/* Mobile Currency Selector */}
+          <CurrencySelector variant="compact" />
+
           {/* Mobile Search Button */}
           <Button
             variant="ghost"
@@ -341,6 +348,11 @@ export default function NavBar() {
                   <Search className="h-4 w-4 text-[#713f12]" />
                   <span>Search Mukhis, Malas...</span>
                 </button>
+              </div>
+
+              {/* Mobile Currency Selector */}
+              <div className="px-4 pt-3">
+                <CurrencySelector variant="full" />
               </div>
 
               {/* Nav links */}
