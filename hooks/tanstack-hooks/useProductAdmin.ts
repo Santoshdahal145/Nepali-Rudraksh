@@ -122,3 +122,16 @@ export default function useProductAdminHook(
     updateProduct,
   };
 }
+
+export function useSingleProductAdmin(productId: number) {
+  return useQuery({
+    queryKey: [PRODUCT_KEYS.getSingle, productId],
+    queryFn: async () => {
+      const res = await requestAPI<ProductType>(
+        productApi.getProductById(productId),
+      );
+      return res.data as ProductType;
+    },
+    enabled: !isNaN(productId) && productId > 0,
+  });
+}
