@@ -63,7 +63,7 @@ export type CreateOriginPayload = {
   country: string;
 };
 
-type UpdateOriginPayload = Partial<CreateOriginPayload>;
+export type UpdateOriginPayload = Partial<CreateOriginPayload>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Products

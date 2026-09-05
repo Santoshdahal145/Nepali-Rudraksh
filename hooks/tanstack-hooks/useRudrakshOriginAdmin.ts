@@ -1,7 +1,7 @@
 import {
   CreateOriginPayload,
   rudrakshOriginApi,
-  UpdateProductPayload,
+  UpdateOriginPayload,
 } from "@/app/api/products/api";
 import { AllRudrakshOriginResponseType, RudrakshOriginType } from "@/app/types";
 import { requestAPI } from "@/lib/requestAPI";
@@ -11,6 +11,7 @@ export const enum RUDRAKSH_ORIGIN_KEYS {
   create = "create-rudraksh-origin",
   update = "update-rudraksh-origin",
   getAll = "all-rudraksh-origin",
+  getSingle = "single-rudraksh-origin",
   delete = "delete-rudraksh-origin",
 }
 
@@ -21,8 +22,10 @@ export default function useRudrakshOriginAdminHook() {
   const getRudrakshOrigins = useQuery({
     queryKey: [RUDRAKSH_ORIGIN_KEYS.getAll],
     queryFn: async () => {
-      const response = await requestAPI(rudrakshOriginApi.getRudrakshOrigins());
-      return response.data as AllRudrakshOriginResponseType;
+      const response = await requestAPI<
+        RudrakshOriginType[] | AllRudrakshOriginResponseType
+      >(rudrakshOriginApi.getRudrakshOrigins());
+      return response.data;
     },
   });
 
@@ -37,18 +40,29 @@ export default function useRudrakshOriginAdminHook() {
     },
 
     onSuccess: (newOrigin) => {
+      queryClient.invalidateQueries({
+        queryKey: [RUDRAKSH_ORIGIN_KEYS.getAll],
+      });
       queryClient.setQueryData(
         [RUDRAKSH_ORIGIN_KEYS.getAll],
-        (oldData: AllRudrakshOriginResponseType | undefined) => {
+        (oldData: any) => {
           if (!oldData) return oldData;
-          return {
-            ...oldData,
-            origins: [newOrigin, ...oldData.origins],
-            pagination: {
-              ...oldData.pagination,
-              total: oldData.pagination.total + 1,
-            },
-          };
+          if (Array.isArray(oldData)) {
+            return [newOrigin, ...oldData];
+          }
+          if (oldData.origins) {
+            return {
+              ...oldData,
+              origins: [newOrigin, ...oldData.origins],
+              pagination: oldData.pagination
+                ? {
+                    ...oldData.pagination,
+                    total: oldData.pagination.total + 1,
+                  }
+                : undefined,
+            };
+          }
+          return oldData;
         },
       );
     },
@@ -62,7 +76,7 @@ export default function useRudrakshOriginAdminHook() {
       data,
     }: {
       id: number;
-      data: UpdateProductPayload;
+      data: UpdateOriginPayload;
     }) => {
       const response = await requestAPI(
         rudrakshOriginApi.updateRudrakshOrigin(id, data),
@@ -71,16 +85,29 @@ export default function useRudrakshOriginAdminHook() {
     },
 
     onSuccess: (updatedItem) => {
+      queryClient.invalidateQueries({
+        queryKey: [RUDRAKSH_ORIGIN_KEYS.getAll],
+      });
+      queryClient.setQueryData(
+        [RUDRAKSH_ORIGIN_KEYS.getSingle, updatedItem.id],
+        updatedItem,
+      );
       queryClient.setQueryData(
         [RUDRAKSH_ORIGIN_KEYS.getAll],
-        (oldData: AllRudrakshOriginResponseType | undefined) => {
+        (oldData: any) => {
           if (!oldData) return oldData;
-          return {
-            ...oldData,
-            origins: oldData.origins.map((o) =>
-              o.id === updatedItem.id ? updatedItem : o,
-            ),
-          };
+          if (Array.isArray(oldData)) {
+            return oldData.map((o) => (o.id === updatedItem.id ? updatedItem : o));
+          }
+          if (oldData.origins) {
+            return {
+              ...oldData,
+              origins: oldData.origins.map((o: RudrakshOriginType) =>
+                o.id === updatedItem.id ? updatedItem : o,
+              ),
+            };
+          }
+          return oldData;
         },
       );
     },
@@ -95,18 +122,31 @@ export default function useRudrakshOriginAdminHook() {
     },
 
     onSuccess: (deletedId) => {
+      queryClient.invalidateQueries({
+        queryKey: [RUDRAKSH_ORIGIN_KEYS.getAll],
+      });
       queryClient.setQueryData(
         [RUDRAKSH_ORIGIN_KEYS.getAll],
-        (oldData: AllRudrakshOriginResponseType | undefined) => {
+        (oldData: any) => {
           if (!oldData) return oldData;
-          return {
-            ...oldData,
-            origins: oldData.origins.filter((o) => o.id !== deletedId),
-            pagination: {
-              ...oldData.pagination,
-              total: oldData.pagination.total - 1,
-            },
-          };
+          if (Array.isArray(oldData)) {
+            return oldData.filter((o) => o.id !== deletedId);
+          }
+          if (oldData.origins) {
+            return {
+              ...oldData,
+              origins: oldData.origins.filter(
+                (o: RudrakshOriginType) => o.id !== deletedId,
+              ),
+              pagination: oldData.pagination
+                ? {
+                    ...oldData.pagination,
+                    total: Math.max(0, oldData.pagination.total - 1),
+                  }
+                : undefined,
+            };
+          }
+          return oldData;
         },
       );
     },
@@ -118,4 +158,17 @@ export default function useRudrakshOriginAdminHook() {
     createRudrakshOrigin,
     updateRudrakshOrigin,
   };
+}
+
+export function useSingleRudrakshOriginAdmin(id: number) {
+  return useQuery({
+    queryKey: [RUDRAKSH_ORIGIN_KEYS.getSingle, id],
+    queryFn: async () => {
+      const response = await requestAPI<RudrakshOriginType>(
+        rudrakshOriginApi.getRudrakshOriginById(id),
+      );
+      return response.data as RudrakshOriginType;
+    },
+    enabled: !isNaN(id) && id > 0,
+  });
 }

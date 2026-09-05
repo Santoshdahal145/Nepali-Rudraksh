@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import useProductAdminHook from "@/hooks/tanstack-hooks/useProductAdmin";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Eye, Loader2, PackageSearch, Search, Trash2 } from "lucide-react";
+import { Eye, Globe, Loader2, PackageSearch, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -126,6 +126,19 @@ export default function AdminAllProductsPage() {
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
             Track stock quantities, Mukhi grades, and pricing.
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link href="/admin/all-products/origins">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-10 gap-2 border-amber-900/15 bg-white text-xs font-bold text-[#713f12] shadow-2xs hover:bg-amber-50 hover:text-[#422006]"
+            >
+              <Globe className="h-4 w-4 text-amber-700" />
+              Manage Origins
+            </Button>
+          </Link>
         </div>
       </div>
 
