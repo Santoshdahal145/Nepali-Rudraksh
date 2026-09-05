@@ -10,12 +10,16 @@ export const createUserSchema = z.object({
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 
-export const updateUserSchema = createUserSchema.partial();
+export const UserRoleEnum = z.enum(["ADMIN", "USER"]);
+export type UserRole = z.infer<typeof UserRoleEnum>;
+
+export const updateUserSchema = createUserSchema.partial().extend({
+  role: UserRoleEnum.optional(),
+  isEmailVerified: z.boolean().optional(),
+});
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 
-export const UserRoleEnum = z.enum(["ADMIN", "USER"]);
-export type UserRole = z.infer<typeof UserRoleEnum>;
 
 export const getUsersQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),

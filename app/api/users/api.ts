@@ -38,9 +38,26 @@ const getUserById = (id: number | string): ApiRequestType => ({
   showToast: false,
 });
 
+/**
+ * PATCH /api/users/[id]
+ * Update user fields (e.g. role, details, verification)
+ */
+const updateUser = (
+  id: number | string,
+  data: Partial<UserType>
+): ApiRequestType => ({
+  method: "patch",
+  route: `/users/${id}`,
+  payload: data,
+  showToast: true,
+  successMessage: "Devotee details updated successfully",
+});
+
 export const userAdminApi = {
   getAllUsers,
   getUserById,
+  updateUser,
 };
 
-export { getAllUsers, getUserById };
+export { getAllUsers, getUserById, updateUser };
+
