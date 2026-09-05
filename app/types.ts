@@ -58,3 +58,4 @@ export type PaginatedResponse<K extends string, T> = {
 
 
 export type   AllProductsResponseType = PaginatedResponse<'products', ProductType[]>
+export type   AllRudrakshOriginResponseType = PaginatedResponse<'origins', RudrakshOriginType[]>

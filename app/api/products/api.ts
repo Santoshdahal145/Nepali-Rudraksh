@@ -43,7 +43,7 @@ type GetProductsParams = {
   sortOrder?: "asc" | "desc";
 };
 
-type CreateVariantPayload = {
+export type CreateVariantPayload = {
   productId: number;
   sku: string;
   price: number;
@@ -56,9 +56,9 @@ type CreateVariantPayload = {
   images?: VariantImagePayload[];
 };
 
-type UpdateVariantPayload = Partial<Omit<CreateVariantPayload, "productId">>;
+export type UpdateVariantPayload = Partial<Omit<CreateVariantPayload, "productId">>;
 
-type CreateOriginPayload = {
+export type CreateOriginPayload = {
   name: string;
   country: string;
 };
