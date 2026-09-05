@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import useProductAdminHook from "@/hooks/tanstack-hooks/useProductAdmin";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Eye, Globe, Loader2, PackageSearch, Search, Trash2 } from "lucide-react";
+import { Eye, Globe, Loader2, PackageSearch, Plus, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -137,6 +137,16 @@ export default function AdminAllProductsPage() {
             >
               <Globe className="h-4 w-4 text-amber-700" />
               Manage Origins
+            </Button>
+          </Link>
+
+          <Link href="/admin/all-products/new">
+            <Button
+              size="sm"
+              className="h-10 gap-2 bg-[#713f12] text-white hover:bg-[#5c3a1e] text-xs font-bold shadow-xs"
+            >
+              <Plus className="h-4 w-4" />
+              Add Product
             </Button>
           </Link>
         </div>

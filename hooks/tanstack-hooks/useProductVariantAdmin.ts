@@ -1,12 +1,13 @@
 import { CreateVariantPayload, productVariantApi, UpdateVariantPayload } from "@/app/api/products/api";
 import { ProductType, ProductVariantType } from "@/app/types";
 import { requestAPI } from "@/lib/requestAPI";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PRODUCT_KEYS } from "./useProductAdmin";
 
 export const enum PRODUCT_VARIANT_KEYS {
   create = "create-product-variant",
   update = "update-product-variant",
+  getSingle = "single-product-variant",
   delete = "delete-product-variant",
 }
 
@@ -96,4 +97,17 @@ export default function useProductVariantAdminHook(productId: number) {
     createProductVariant,
     updateProductVariant,
   };
+}
+
+export function useSingleProductVariantAdmin(variantId: number) {
+  return useQuery({
+    queryKey: [PRODUCT_VARIANT_KEYS.getSingle, variantId],
+    queryFn: async () => {
+      const response = await requestAPI<ProductVariantType>(
+        productVariantApi.getProductVariantById(variantId),
+      );
+      return response.data as ProductVariantType;
+    },
+    enabled: !isNaN(variantId) && variantId > 0,
+  });
 }

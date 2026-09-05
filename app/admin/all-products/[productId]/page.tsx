@@ -12,12 +12,14 @@ import {
   Check,
   CircleDot,
   Copy,
+  Edit,
   ExternalLink,
   Eye,
   Globe,
   Layers,
   Loader2,
   Package,
+  Plus,
   RefreshCw,
   Ruler,
   Scale,
@@ -624,6 +626,15 @@ export default function SingleProductAdminPage() {
                 Table
               </button>
             </div>
+
+            <Link href={`/admin/all-products/${product.id}/variants/new`}>
+              <Button
+                size="sm"
+                className="h-9 gap-1.5 bg-[#713f12] text-white hover:bg-[#5c3a1e] font-bold text-xs shadow-xs"
+              >
+                <Plus className="h-3.5 w-3.5" /> Add Variant
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -638,6 +649,16 @@ export default function SingleProductAdminPage() {
               This product exists in the catalog but has no active inventory variants. Create a variant
               with SKU, size, origin, and pricing to make it purchasable.
             </p>
+            <div className="mt-5">
+              <Link href={`/admin/all-products/${product.id}/variants/new`}>
+                <Button
+                  size="sm"
+                  className="bg-[#713f12] text-white hover:bg-[#5c3a1e] font-bold text-xs gap-1.5"
+                >
+                  <Plus className="h-4 w-4" /> Add Your First Variant
+                </Button>
+              </Link>
+            </div>
           </Card>
         ) : filteredVariants.length === 0 ? (
           <Card className="p-8 text-center border-amber-900/10 bg-white">
@@ -818,15 +839,29 @@ export default function SingleProductAdminPage() {
                         ID: #{variant.id} • {variant.variantImages?.length || 0} variant image(s)
                       </span>
 
-                      <Button
-                        variant="ghost"
-                        size="xs"
-                        onClick={() => handleDeleteVariant(variant.id, variant.sku)}
-                        disabled={deleteProductVariant.isPending}
-                        className="h-7 px-2 text-red-700 hover:bg-red-50 hover:text-red-900 text-[11px]"
-                      >
-                        <Trash2 className="h-3 w-3 mr-1" /> Delete
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Link
+                          href={`/admin/all-products/${product.id}/variants/${variant.id}/edit`}
+                        >
+                          <Button
+                            variant="outline"
+                            size="xs"
+                            className="h-7 px-2 border-amber-900/15 text-[#713f12] hover:bg-amber-50 text-[11px] gap-1"
+                          >
+                            <Edit className="h-3 w-3" /> Edit
+                          </Button>
+                        </Link>
+
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={() => handleDeleteVariant(variant.id, variant.sku)}
+                          disabled={deleteProductVariant.isPending}
+                          className="h-7 px-2 text-red-700 hover:bg-red-50 hover:text-red-900 text-[11px]"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" /> Delete
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -963,15 +998,28 @@ export default function SingleProductAdminPage() {
 
                       {/* Actions */}
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={() => handleDeleteVariant(variant.id, variant.sku)}
-                          disabled={deleteProductVariant.isPending}
-                          className="h-8 text-red-700 hover:bg-red-50 hover:text-red-900"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Link
+                            href={`/admin/all-products/${product.id}/variants/${variant.id}/edit`}
+                          >
+                            <Button
+                              variant="outline"
+                              size="xs"
+                              className="h-8 gap-1 border-amber-900/15 text-xs text-[#713f12] hover:bg-amber-100/60"
+                            >
+                              <Edit className="h-3.5 w-3.5" /> Edit
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="ghost"
+                            size="xs"
+                            onClick={() => handleDeleteVariant(variant.id, variant.sku)}
+                            disabled={deleteProductVariant.isPending}
+                            className="h-8 text-red-700 hover:bg-red-50 hover:text-red-900"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
