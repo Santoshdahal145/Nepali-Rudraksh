@@ -23,13 +23,14 @@ export default function useProductAdminHook(
   const getProducts = useQuery({
     queryKey: [PRODUCT_KEYS.getAll, page, limit, debouncedSearch],
     queryFn: async () => {
-      return (await requestAPI(
+      const res = await requestAPI<AllProductsResponseType>(
         productApi.getProducts({
           page,
           limit,
           search: debouncedSearch,
         }),
-      ) )
+      );
+      return res.data as AllProductsResponseType;
     },
   });
 

@@ -30,7 +30,7 @@ export default function useProductVariantAdminHook(productId: number) {
           if (!oldData) return oldData;
           return {
             ...oldData,
-            variants: [...oldData.variants, newVariant],
+            productVariants: [...(oldData.productVariants ?? []), newVariant],
           };
         },
       );
@@ -60,7 +60,7 @@ export default function useProductVariantAdminHook(productId: number) {
           if (!oldData) return oldData;
           return {
             ...oldData,
-            variants: oldData.variants.map((v) =>
+            productVariants: (oldData.productVariants ?? []).map((v) =>
               v.id === updatedVariant.id ? updatedVariant : v,
             ),
           };
@@ -84,7 +84,7 @@ export default function useProductVariantAdminHook(productId: number) {
           if (!oldData) return oldData;
           return {
             ...oldData,
-            variants: oldData.variants.filter((v) => v.id !== deletedId),
+            productVariants: (oldData.productVariants ?? []).filter((v) => v.id !== deletedId),
           };
         },
       );

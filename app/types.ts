@@ -34,11 +34,10 @@ export type ProductVariantType = FieldOutputTypes["public"]["ProductVariant"] & 
 }
 
 export type ProductType = FieldOutputTypes["public"]["Product"] & {
-  variants: ProductVariantType[];
-  images: ProductImageType[];
+  productVariants?: ProductVariantType[];
+  productImages?: ProductImageType[];
   individualRudrakshaDetail?: IndividualRudrakshaDetailType;
   rudrakshaMalaDetail?: RudrakshaMalaDetailType;
-  
 }
 
 export  type PaginationType={
