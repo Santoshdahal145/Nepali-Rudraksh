@@ -56,5 +56,26 @@ export type PaginatedResponse<K extends string, T> = {
 };
 
 
-export type   AllProductsResponseType = PaginatedResponse<'products', ProductType[]>
-export type   AllRudrakshOriginResponseType = PaginatedResponse<'origins', RudrakshOriginType[]>
+export type AllProductsResponseType = PaginatedResponse<'products', ProductType[]>
+export type AllRudrakshOriginResponseType = PaginatedResponse<'origins', RudrakshOriginType[]>
+
+// USER TYPES
+export type AccountType = FieldOutputTypes["public"]["Account"];
+export type OtpType = Omit<FieldOutputTypes["public"]["Otp"], "codeHash">;
+
+export type SingleUserResponseType = UserType & {
+  accounts?: AccountType[];
+  otps?: OtpType[];
+};
+
+export type AllUsersResponseType = PaginatedResponse<"users", UserType[]>;
+
+export type GetUsersParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: "ADMIN" | "USER";
+  isEmailVerified?: boolean;
+  sortBy?: "createdAt" | "firstName" | "lastName" | "email";
+  sortOrder?: "asc" | "desc";
+};

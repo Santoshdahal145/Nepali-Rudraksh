@@ -5,7 +5,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { db } from "../../src/prisma/db";
 import { sendEmail } from "../../lib/emailHelper"; 
-import type { CreateUserInput, UpdateUserInput } from "./user.schema";
+import type { CreateUserInput, UpdateUserInput, GetUsersQueryInput } from "./user.schema";
 import { Temporal } from "@js-temporal/polyfill";
 import { ResendOtpInput } from "../auth/auth.schema";
 
@@ -259,3 +259,130 @@ export async function updateUser(id: number, input: UpdateUserInput) {
         throw new Error("Failed to update user");
     }
 }
+
+// ── Admin User Services ─────────────────────────────────────────────────────────
+
+/**
+ * Admin: Fetch all users with pagination, filtering, and sorting
+ * Returns safe user objects (without password and hashedRefreshToken)
+ */
+export async function getAllUsers(
+  params: GetUsersQueryInput = {
+    page: 1,
+    limit: 20,
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  }
+) {
+  const {
+    page = 1,
+    limit = 20,
+    search,
+    role,
+    isEmailVerified,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+  } = params;
+
+  const offset = (page - 1) * limit;
+
+  let collection = db.orm.public.User.include("accounts");
+
+  if (role) {
+    collection = collection.where({ role });
+  }
+
+  if (isEmailVerified !== undefined) {
+    collection = collection.where({ isEmailVerified });
+  }
+
+  if (sortBy === "firstName") {
+    collection = collection.orderBy((u) =>
+      sortOrder === "asc" ? u.firstName.asc() : u.firstName.desc()
+    );
+  } else if (sortBy === "lastName") {
+    collection = collection.orderBy((u) =>
+      sortOrder === "asc" ? u.lastName.asc() : u.lastName.desc()
+    );
+  } else if (sortBy === "email") {
+    collection = collection.orderBy((u) =>
+      sortOrder === "asc" ? u.email.asc() : u.email.desc()
+    );
+  } else {
+    collection = collection.orderBy((u) =>
+      sortOrder === "asc" ? u.createdAt.asc() : u.createdAt.desc()
+    );
+  }
+
+  let users = await collection.all();
+
+  // Search filter across name, email, phone
+  if (search && search.trim()) {
+    const term = search.trim().toLowerCase();
+    users = users.filter((u) => {
+      const fullName = `${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
+      const email = (u.email || "").toLowerCase();
+      const phone = (u.phoneNumber || "").toLowerCase();
+      return (
+        fullName.includes(term) ||
+        email.includes(term) ||
+        phone.includes(term)
+      );
+    });
+  }
+
+  const total = users.length;
+  const totalPages = Math.ceil(total / limit) || 1;
+  const paginatedUsers = users.slice(offset, offset + limit);
+
+  // Strip sensitive passwords & refresh tokens
+  const safeUsers = paginatedUsers.map((user) => {
+    const { password, hashedRefreshToken, ...safe } = user;
+    return safe;
+  });
+
+  return {
+    users: safeUsers,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
+}
+
+/**
+ * Fetch a single user by ID with full detailed information (including accounts and OTP history)
+ * Strips sensitive data: password hash, hashedRefreshToken, and OTP codeHash.
+ */
+export async function getUserById(id: number | string) {
+  const numericId = typeof id === "string" ? parseInt(id, 10) : id;
+  if (isNaN(numericId)) {
+    throw new Error("Invalid user ID");
+  }
+
+  const user = await db.orm.public.User
+    .where({ id: numericId })
+    .include("accounts")
+    .include("otps", (otp) => otp.orderBy((o) => o.createdAt.desc()))
+    .first();
+
+  if (!user) {
+    return null;
+  }
+
+  const { password, hashedRefreshToken, otps, ...safeUser } = user;
+
+  // Sanitize OTP records so raw codeHash is never exposed
+  const sanitizedOtps =
+    otps?.map(({ codeHash, ...safeOtp }) => safeOtp) ?? [];
+
+  return {
+    ...safeUser,
+    otps: sanitizedOtps,
+  };
+}
+
