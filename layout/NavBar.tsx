@@ -376,7 +376,7 @@ export default function NavBar() {
               <div className="flex flex-col gap-3 px-5 py-5">
                 {isAuthenticated ? (
                   <Link
-                    href="/user-settings"
+                    href="/profile"
                     onClick={() => setSheetOpen(false)}
                     className="group flex items-center gap-3 rounded-2xl border border-amber-900/20 bg-white p-3 shadow-xs transition-all duration-200 hover:border-amber-900/40 hover:bg-amber-50/70"
                   >

@@ -18,7 +18,7 @@ interface AuthContextType {
   user: UserType | null;
   isAuthenticated: boolean;
   login: (email: string, pass: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   changePassword: (currentPass: string, newPass: string) => Promise<void>;
   setUserToSessionStorage: (user: UserType) => void;
   updateProfile: (data: {

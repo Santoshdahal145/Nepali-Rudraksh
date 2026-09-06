@@ -492,7 +492,6 @@ export default function AdminAllUsersPage() {
                                 Details
                               </Button>
                             </Link>
-                            s
                           </div>
                         </TableCell>
                       </TableRow>
