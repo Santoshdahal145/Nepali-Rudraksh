@@ -1,145 +1,236 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Check, Filter, Search, ShieldCheck } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
+import { Sparkles, ShieldCheck, Gem, Leaf, CheckCircle2, PackageSearch } from "lucide-react";
+import { getPublicProductsData } from "@/server/product/public.data";
+import { ProductType as ProductTypeEnum } from "@/server/product/product.schema";
+import { ProductCard } from "./components/ProductCard";
+import { ProductFilterBar } from "./components/ProductFilterBar";
+import { ProductCategoryNav } from "./components/ProductCategoryNav";
+import { ProductPagination } from "./components/ProductPagination";
+import { Button } from "@/components/ui/button";
 
-const categories = [
-  { id: "all", label: "All Sacred Items" },
-  { id: "mukhi", label: "Sacred Mukhis (1-21)" },
-  { id: "mala", label: "Japa Malas (108)" },
-];
+export const revalidate = 60; // ISR revalidate every 60 seconds
 
-export default function AllProductsPage() {
+type PageProps = {
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    search?: string;
+    type?: string;
+    mukhi?: string;
+    originId?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }>;
+};
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+
+  let title = "Sacred Himalayan Rudraksha Beads & Japa Malas | Nepali Rudraksh";
+  let description =
+    "Explore authentic 1 to 21 Mukhi Nepali Rudraksha beads, hand-knotted 108+1 Japa Malas, and lab-certified spiritual artifacts blessed at Pashupatinath Temple.";
+
+  if (params.type === "INDIVIDUAL_RUDRAKSHA") {
+    title = "Individual Himalayan Rudraksha Beads (1-21 Mukhi) | Nepali Rudraksh";
+    description =
+      "Browse certified individual Nepali Rudraksha beads with naturally formed Mukhi lines. Ethically harvested in Sankhuwasabha & Bhojpur.";
+  } else if (params.type === "RUDRAKSHA_MALA") {
+    title = "Hand-Knotted Sacred Rudraksha Japa Malas (108+1) | Nepali Rudraksh";
+    description =
+      "Authentic Nepali Rudraksha Japa Malas crafted with silk cord for meditation, mantra chanting, and Shiva sadhana.";
+  }
+
+  if (params.search) {
+    title = `Search Results for "${params.search}" | Nepali Rudraksh`;
+  }
+
+  return {
+    title,
+    description,
+    keywords: [
+      "Nepali Rudraksha",
+      "Pashupatinath Rudraksha",
+      "Authentic Rudraksha beads",
+      "1 Mukhi to 21 Mukhi",
+      "Japa Mala 108",
+      "Consecrated Rudraksha",
+      "Nepal Certified",
+    ],
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      siteName: "Nepali Rudraksh",
+    },
+  };
+}
+
+export default async function AllProductsPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+
+  const page = params.page ? Math.max(1, parseInt(params.page, 10)) : 1;
+  const limit = params.limit ? Math.max(1, parseInt(params.limit, 10)) : 12;
+  const search = params.search?.trim();
+  const type =
+    params.type === "INDIVIDUAL_RUDRAKSHA" || params.type === "RUDRAKSHA_MALA"
+      ? (params.type as ProductTypeEnum)
+      : undefined;
+  const mukhi = params.mukhi ? parseInt(params.mukhi, 10) : undefined;
+  const originId = params.originId ? parseInt(params.originId, 10) : undefined;
+  const sortBy =
+    params.sortBy === "name" || params.sortBy === "price" || params.sortBy === "createdAt"
+      ? params.sortBy
+      : "createdAt";
+  const sortOrder = params.sortOrder === "asc" ? "asc" : "desc";
+
+  const data = await getPublicProductsData({
+    page,
+    limit,
+    search,
+    type,
+    mukhi,
+    originId,
+    sortBy,
+    sortOrder,
+  });
+
+  const { products, pagination } = data;
+
+  const currentParamsRecord: Record<string, string | undefined> = {
+    page: String(page),
+    search,
+    type,
+    mukhi: mukhi ? String(mukhi) : undefined,
+    originId: originId ? String(originId) : undefined,
+    sortBy,
+    sortOrder,
+  };
+
   return (
-    <main className="flex-1 pb-20 pt-8 sm:pt-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb & Header Title */}
-        <div className="mb-8">
+    <main className="min-h-screen bg-[#faf7f2] pb-20 pt-8 sm:pt-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* Breadcrumb & Header Banner */}
+        <div>
           <div className="flex items-center gap-2 text-xs font-medium text-[#5c3a1e]/70">
-            <Link href="/" className="hover:text-[#713f12]">
+            <Link href="/" className="hover:text-[#713f12] transition-colors">
               Home
             </Link>
             <span>/</span>
-            <span className="text-[#713f12] font-semibold">
-              Sacred Collection
-            </span>
+            <span className="text-[#713f12] font-semibold">Sacred Collection</span>
           </div>
 
           <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight text-[#2d1a0e] sm:text-4xl">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-100/70 border border-amber-900/15 px-2.5 py-0.5 rounded-full">
+                  <Sparkles className="h-3 w-3 text-amber-700" />
+                  Direct from Himalayan Groves
+                </span>
+                <span className="text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  ✓ Pashupatinath Consecrated
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#422006]">
                 Authentic Himalayan Rudraksha
               </h1>
-              <p className="mt-2 text-sm text-[#5c3a1e]/70 max-w-2xl">
-                Explore our sacred collection of non-doctored, lab-certified
-                Nepali Rudraksha beads, malas, and silver-crafted ornaments.
+              <p className="mt-2 text-xs sm:text-sm text-[#5c3a1e]/80 max-w-2xl leading-relaxed">
+                Every bead in our sacred sanctuary is 100% naturally formed, lab-certified,
+                and energized according to Vedic rites at the holy Pashupatinath Temple in Kathmandu.
               </p>
             </div>
 
-            <span className="text-xs font-semibold text-[#713f12] bg-amber-100/70 border border-amber-900/10 px-3.5 py-1.5 rounded-full w-fit">
-              10 Sacred Items Found
+            <span className="text-xs font-bold text-[#713f12] bg-white border border-amber-900/15 px-4 py-2 rounded-xl shadow-2xs w-fit shrink-0">
+              {pagination.total} {pagination.total === 1 ? "Sacred Bead" : "Sacred Beads & Malas"}
             </span>
           </div>
         </div>
 
-        {/* Search, Filter Bar & Sort Controls */}
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-amber-900/10 bg-white p-3.5 shadow-xs">
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search Mukhi, deity, or mala..."
-              value={""}
-              onChange={(e) => {}}
-              className="h-10 pl-10 border-amber-900/15 focus-visible:ring-amber-700 text-xs sm:text-sm bg-transparent"
-            />
+        {/* Category Cards Navigation */}
+        <ProductCategoryNav currentType={type} totalCount={pagination.total} />
+
+        {/* Filter, Search & Sort Bar */}
+        <ProductFilterBar
+          initialSearch={search}
+          initialSortBy={sortBy}
+          initialSortOrder={sortOrder}
+          initialMukhi={mukhi ? String(mukhi) : ""}
+          totalFound={pagination.total}
+        />
+
+        {/* Products Display Grid */}
+        {products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-amber-900/20 bg-white p-12 sm:p-16 text-center shadow-xs">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100/70 text-[#713f12] mb-4">
+              <PackageSearch className="h-8 w-8 text-[#713f12]" />
+            </div>
+            <h3 className="text-lg font-bold text-[#422006]">
+              No Sacred Rudrakshas Match Your Search
+            </h3>
+            <p className="text-xs sm:text-sm text-[#5c3a1e]/75 mt-1.5 max-w-md">
+              We couldn&apos;t find any beads matching your exact filters. Try adjusting your Mukhi
+              selection, clearing the search term, or browsing all available categories.
+            </p>
+            <Link href="/all-products" className="mt-5">
+              <Button className="h-10 rounded-xl bg-[#713f12] text-white hover:bg-[#5c3a1e] font-bold text-xs px-5 shadow-xs">
+                View All Sacred Items
+              </Button>
+            </Link>
           </div>
-
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-2">
-            <select
-              value={""}
-              onChange={(e) => {}}
-              className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs sm:text-sm font-medium text-[#422006] outline-none "
-            >
-              <option value="featured">Sort by: Featured</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-            </select>
-
-            <Button
-              variant="outline"
-              className="h-10 gap-1.5 border-amber-900/15 text-xs font-medium text-[#713f12] sm:hidden"
-              onClick={() => {}}
-            >
-              <Filter className="h-3.5 w-3.5" />
-              Filter
-            </Button>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
-        </div>
+        )}
 
-        {/* Main Content Layout with Sidebar & Products Grid */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-          {/* Desktop Filters Sidebar */}
-          <aside className="hidden lg:block lg:col-span-1 space-y-6">
-            {/* Category Filter */}
-            <div className="rounded-2xl border border-amber-900/10 bg-white p-5 shadow-xs">
-              <h3 className="text-sm font-bold text-[#422006] uppercase tracking-wider mb-4">
-                Categories
-              </h3>
-              <div className="space-y-1.5">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {}}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-between ${
-                      true
-                        ? "bg-[#713f12] text-white shadow-xs"
-                        : "text-[#5c3a1e]/80 hover:bg-amber-50 hover:text-[#713f12]"
-                    }`}
-                  >
-                    <span>{cat.label}</span>
-                    <Check className="h-3.5 w-3.5" />
-                  </button>
-                ))}
+        {/* Pagination */}
+        <ProductPagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          hasNextPage={pagination.hasNextPage}
+          hasPrevPage={pagination.hasPrevPage}
+          currentParams={currentParamsRecord}
+        />
+
+        {/* Spiritual Guarantee & Trust Pillars */}
+        <div className="rounded-3xl border border-amber-900/15 bg-gradient-to-br from-white via-amber-50/40 to-amber-100/30 p-6 sm:p-8 mt-12 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-[#713f12]">
+                <ShieldCheck className="h-5 w-5 text-[#713f12]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#422006]">100% Genuine & Natural</h4>
+                <p className="text-xs text-[#5c3a1e]/75 mt-1 leading-relaxed">
+                  Every bead is tested for density and internal seed compartments with zero synthetic carving.
+                </p>
               </div>
             </div>
 
-            {/* Vedic Guarantee Card */}
-            <div className="rounded-2xl border border-amber-900/10 bg-linear-to-br from-amber-50 to-orange-50/40 p-5">
-              <div className="flex items-center gap-2 text-[#713f12] mb-2">
-                <ShieldCheck className="h-5 w-5" />
-                <span className="text-xs font-bold uppercase tracking-wider">
-                  Authenticity Promise
-                </span>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-[#713f12]">
+                <Sparkles className="h-5 w-5 text-[#713f12]" />
               </div>
-              <p className="text-xs text-[#5c3a1e]/80 leading-relaxed">
-                Every bead comes with an official certificate of origin, X-Ray
-                test verification, and complimentary Vedic blessing.
-              </p>
+              <div>
+                <h4 className="text-sm font-bold text-[#422006]">Pashupatinath Blessed</h4>
+                <p className="text-xs text-[#5c3a1e]/75 mt-1 leading-relaxed">
+                  Consecrated with authentic Shaivite rituals, Panchamrit snan, and personalized Beej mantras.
+                </p>
+              </div>
             </div>
-          </aside>
 
-          {/* Mobile Filter Drawer / Horizontal Pills */}
-          <div className="lg:hidden col-span-1">
-            <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-none">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => {}}
-                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
-                    true
-                      ? "bg-[#713f12] text-white"
-                      : "bg-white border border-amber-900/10 text-[#5c3a1e]"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-[#713f12]">
+                <Leaf className="h-5 w-5 text-[#713f12]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#422006]">Ethically Harvested</h4>
+                <p className="text-xs text-[#5c3a1e]/75 mt-1 leading-relaxed">
+                  Direct partnership with local indigenous farmers in Eastern Nepal hills supporting Himalayan communities.
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -107,6 +107,18 @@ export async function getAllProductsPublic(
     );
   }
 
+  if (sortBy === "price") {
+    products.sort((a, b) => {
+      const getMinPrice = (p: typeof a) => {
+        if (!p.productVariants || p.productVariants.length === 0) return 0;
+        return Math.min(...p.productVariants.map((v) => Number(v.price) || 0));
+      };
+      const priceA = getMinPrice(a);
+      const priceB = getMinPrice(b);
+      return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
+    });
+  }
+
   const total = products.length;
   const totalPages = Math.ceil(total / limit) || 1;
   const paginatedProducts = products.slice(offset, offset + limit);

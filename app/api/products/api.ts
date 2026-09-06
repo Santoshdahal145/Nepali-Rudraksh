@@ -200,6 +200,21 @@ const deleteRudrakshOrigin = (id: number): ApiRequestType => ({
   successMessage: "Rudraksha origin deleted successfully",
 });
 
+/** GET /api/products/public — Public product listing with filters */
+const getPublicProducts = (params?: GetProductsParams): ApiRequestType => ({
+  method: "get",
+  route: "/products/public",
+  params,
+  showToast: false,
+});
+
+/** GET /api/products/public/[slug] — Fetch single product by slug */
+const getPublicProductBySlug = (slug: string): ApiRequestType => ({
+  method: "get",
+  route: `/products/public/${slug}`,
+  showToast: false,
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Exports
 // ─────────────────────────────────────────────────────────────────────────────
@@ -207,6 +222,8 @@ const deleteRudrakshOrigin = (id: number): ApiRequestType => ({
 export const productApi = {
   getProducts,
   getProductById,
+  getPublicProducts,
+  getPublicProductBySlug,
   createProduct,
   updateProduct,
   deleteProduct,
