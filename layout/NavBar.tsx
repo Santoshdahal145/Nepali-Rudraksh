@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,6 @@ import {
   X,
   ArrowRight,
   Sparkles,
-  Star,
 } from "lucide-react";
 import {
   Sheet,
@@ -21,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAuth } from "@/providers/AuthContext";
+import useCart from "@/hooks/tanstack-hooks/useCart";
 import CurrencySelector from "./CurrencySelector";
 
 const navLinks = [
@@ -120,7 +120,13 @@ export default function NavBar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { totalItems } = useCart();
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const userDisplayName =
@@ -140,11 +146,10 @@ export default function NavBar() {
   // Auto focus input when search modal opens
   useEffect(() => {
     if (searchOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         searchInputRef.current?.focus();
       }, 100);
-    } else {
-      setSearchQuery("");
+      return () => clearTimeout(timer);
     }
   }, [searchOpen]);
 
@@ -153,6 +158,7 @@ export default function NavBar() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && searchOpen) {
         setSearchOpen(false);
+        setSearchQuery("");
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -230,9 +236,11 @@ export default function NavBar() {
           >
             <Link href="/cart">
               <ShoppingBag className="size-4.5" />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#713f12] text-[9px] font-bold text-white">
-                2
-              </span>
+              {isMounted && totalItems > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#713f12] text-[9px] font-bold text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
             </Link>
           </Button>
 
@@ -295,9 +303,11 @@ export default function NavBar() {
           >
             <Link href="/cart">
               <ShoppingBag className="size-5" />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#713f12] text-[9px] font-bold text-white">
-                2
-              </span>
+              {isMounted && totalItems > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#713f12] text-[9px] font-bold text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
             </Link>
           </Button>
 
@@ -453,7 +463,10 @@ export default function NavBar() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setSearchOpen(false)}
+                  onClick={() => {
+                    setSearchOpen(false);
+                    setSearchQuery("");
+                  }}
                   className="h-8 px-2.5 text-xs text-muted-foreground hover:text-[#422006]"
                 >
                   ESC

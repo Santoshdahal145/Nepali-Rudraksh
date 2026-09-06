@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowRight,
   Award,
   BookOpen,
   Check,
@@ -13,9 +12,10 @@ import {
   ShieldCheck,
   ShoppingBag,
   Sparkles,
+  Loader2,
 } from "lucide-react";
+import useCart from "@/hooks/tanstack-hooks/useCart";
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ProductType, ProductVariantType } from "@/app/types";
@@ -38,7 +38,11 @@ interface ProductInteractiveViewProps {
 export function ProductInteractiveView({
   product,
 }: ProductInteractiveViewProps) {
-  const variants = product.productVariants || [];
+  const { addToCart, isAdding } = useCart();
+  const variants = useMemo(
+    () => product.productVariants || [],
+    [product.productVariants]
+  );
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
     variants[0]?.id ?? null
   );
@@ -96,10 +100,27 @@ export function ProductInteractiveView({
     setTimeout(() => setCopiedSku(false), 2000);
   };
 
-  const handleAddToCart = () => {
-    toast.success(
-      `Added "${product.name}${activeVariant?.sku ? ` (${activeVariant.sku})` : ""}" to your sacred cart.`
-    );
+  const handleAddToCart = async () => {
+    if (!activeVariant) {
+      toast.error("Please select a variant first.");
+      return;
+    }
+    if (activeVariant.stock <= 0) {
+      toast.error("This sacred bead is currently out of stock.");
+      return;
+    }
+    try {
+      await addToCart(activeVariant.id, quantity);
+      toast.success(
+        `Added ${quantity}x "${product.name}${
+          activeVariant.sku ? ` (${activeVariant.sku})` : ""
+        }" to your sacred cart.`
+      );
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add item to cart."
+      );
+    }
   };
 
   const mukhiNumber =
@@ -458,11 +479,19 @@ export function ProductInteractiveView({
               {/* Add to Cart Button */}
               <Button
                 onClick={handleAddToCart}
-                disabled={isOutOfStock}
+                disabled={isOutOfStock || isAdding}
                 className="flex-1 h-12 rounded-xl bg-[#713f12] text-white hover:bg-[#5c3a1e] font-extrabold text-sm shadow-md shadow-amber-900/15 transition-all"
               >
-                <ShoppingBag className="h-4 w-4 mr-2" />
-                {isOutOfStock ? "Out of Stock" : "Add to Sacred Cart"}
+                {isAdding ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                )}
+                {isOutOfStock
+                  ? "Out of Stock"
+                  : isAdding
+                  ? "Adding to Cart..."
+                  : "Add to Sacred Cart"}
               </Button>
             </div>
           </div>
