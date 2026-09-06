@@ -10,7 +10,8 @@
     "lint": "eslint",
     "contract:emit": "prisma contract emit",
     "seed:everything": "bun run scripts/seed-everything.ts",
-    "seed:products": "bun run scripts/seed-product.ts"
+    "seed:products": "bun run scripts/seed-product.ts",
+    "seed:users": "bun run scripts/seed-user.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
