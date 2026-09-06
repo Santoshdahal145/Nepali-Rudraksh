@@ -130,64 +130,13 @@ export default function AdminAllUsersPage() {
     }
   };
 
-  // Quick action: Toggle Admin Role
-  const handleToggleRole = async (user: UserType) => {
-    const newRole = user.role === "ADMIN" ? "USER" : "ADMIN";
-    const actionText =
-      newRole === "ADMIN" ? "promote to Admin" : "demote to Devotee";
-
-    if (
-      !window.confirm(
-        `Are you sure you want to ${actionText} ${user.firstName} ${user.lastName}?`
-      )
-    ) {
-      return;
-    }
-
-    try {
-      await updateUser.mutateAsync({
-        id: user.id,
-        data: { role: newRole },
-      });
-      toast.success(
-        `${user.firstName} ${user.lastName} is now ${newRole === "ADMIN" ? "an Administrator" : "a Devotee"}.`
-      );
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to update user role");
-    }
-  };
-
-  // Quick action: Toggle Email Verification
-  const handleToggleVerification = async (user: UserType) => {
-    const newStatus = !user.isEmailVerified;
-    try {
-      await updateUser.mutateAsync({
-        id: user.id,
-        data: { isEmailVerified: newStatus },
-      });
-      toast.success(
-        `${user.firstName}'s email is now ${newStatus ? "verified" : "marked unverified"}.`
-      );
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to update verification status");
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Top Banner */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-6 shadow-xs">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Badge variant="gold" className="text-[10px]">
-              Devotee Directory
-            </Badge>
-            <span className="text-xs text-muted-foreground">
-              {pagination ? `${pagination.total} registered accounts` : "Live Catalog"}
-            </span>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#422006]">
-            All Users & Devotee Management
+            All Users Management
           </h1>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/80 mt-1 max-w-2xl">
             Search devotee directory, manage administrator privileges, check
@@ -220,7 +169,7 @@ export default function AdminAllUsersPage() {
             Total Devotees
           </p>
           <p className="text-2xl font-black text-[#422006] mt-1">
-            {getUsers.isLoading ? "—" : pagination?.total ?? 0}
+            {getUsers.isLoading ? "—" : (pagination?.total ?? 0)}
           </p>
         </Card>
 
@@ -282,22 +231,11 @@ export default function AdminAllUsersPage() {
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Role Filter */}
-          <select
-            value={roleFilter}
-            onChange={(e) => handleRoleChange(e.target.value)}
-            className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs font-semibold text-[#422006] outline-none focus:border-amber-700 shadow-2xs"
-          >
-            <option value="all">Role: All Devotees</option>
-            <option value="ADMIN">👑 Administrators</option>
-            <option value="USER">🌿 Standard Devotees</option>
-          </select>
-
           {/* Verification Filter */}
           <select
             value={verifiedFilter}
             onChange={(e) => handleVerifiedChange(e.target.value)}
-            className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs font-semibold text-[#422006] outline-none focus:border-amber-700 shadow-2xs"
+            className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs font-semibold text-[#422006] outline-none shadow-2xs"
           >
             <option value="all">Email: All</option>
             <option value="true">✓ Verified Email</option>
@@ -318,27 +256,13 @@ export default function AdminAllUsersPage() {
                       : "email-asc"
             }
             onChange={(e) => handleSortChange(e.target.value)}
-            className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs font-semibold text-[#422006] outline-none focus:border-amber-700 shadow-2xs"
+            className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs font-semibold text-[#422006] outline-none  shadow-2xs"
           >
             <option value="newest">Sort: Newest Joined</option>
             <option value="oldest">Sort: Oldest Joined</option>
             <option value="name-asc">Sort: First Name (A-Z)</option>
             <option value="name-desc">Sort: First Name (Z-A)</option>
             <option value="email-asc">Sort: Email (A-Z)</option>
-          </select>
-
-          {/* Per Page Limit */}
-          <select
-            value={limit}
-            onChange={(e) => {
-              setLimit(Number(e.target.value));
-              setPage(1);
-            }}
-            className="h-10 rounded-xl border border-amber-900/15 bg-white px-3 text-xs font-semibold text-[#422006] outline-none focus:border-amber-700 shadow-2xs"
-          >
-            <option value={10}>10 / page</option>
-            <option value={20}>20 / page</option>
-            <option value={50}>50 / page</option>
           </select>
         </div>
       </div>
@@ -401,7 +325,8 @@ export default function AdminAllUsersPage() {
                 No devotees match your criteria
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Try searching for a different keyword or resetting applied filters.
+                Try searching for a different keyword or resetting applied
+                filters.
               </p>
               <Button
                 variant="outline"
@@ -450,9 +375,10 @@ export default function AdminAllUsersPage() {
                   {users.map((user) => {
                     const isAdmin = user.role === "ADMIN";
                     const isVerified = Boolean(user.isEmailVerified);
-                    const initials = `${user.firstName?.[0] || ""}${
-                      user.lastName?.[0] || ""
-                    }`.toUpperCase() || "D";
+                    const initials =
+                      `${user.firstName?.[0] || ""}${
+                        user.lastName?.[0] || ""
+                      }`.toUpperCase() || "D";
 
                     return (
                       <TableRow
@@ -494,13 +420,15 @@ export default function AdminAllUsersPage() {
                         <TableCell>
                           <div className="text-xs text-[#422006] flex items-center gap-1.5">
                             <Mail className="h-3 w-3 text-muted-foreground shrink-0" />
-                            <span className="truncate max-w-[180px] sm:max-w-[240px]">
+                            <span className="truncate max-w-45 sm:max-w-60">
                               {user.email}
                             </span>
                           </div>
                           <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
                             <Phone className="h-3 w-3 text-muted-foreground shrink-0" />
-                            <span>{user.phoneNumber || "No phone provided"}</span>
+                            <span>
+                              {user.phoneNumber || "No phone provided"}
+                            </span>
                           </div>
                         </TableCell>
 
@@ -564,36 +492,7 @@ export default function AdminAllUsersPage() {
                                 Details
                               </Button>
                             </Link>
-
-                            {/* Role Toggle Action */}
-                            <Button
-                              variant="ghost"
-                              size="xs"
-                              onClick={() => handleToggleRole(user)}
-                              disabled={updateUser.isPending}
-                              title={
-                                isAdmin
-                                  ? "Demote to standard Devotee"
-                                  : "Promote to Administrator"
-                              }
-                              className={`h-8 gap-1 text-xs font-semibold ${
-                                isAdmin
-                                  ? "text-stone-600 hover:bg-stone-100"
-                                  : "text-amber-800 hover:bg-amber-100"
-                              }`}
-                            >
-                              {isAdmin ? (
-                                <>
-                                  <UserX className="h-3.5 w-3.5 text-stone-500" />
-                                  <span className="hidden sm:inline">Demote</span>
-                                </>
-                              ) : (
-                                <>
-                                  <UserCheck className="h-3.5 w-3.5 text-amber-700" />
-                                  <span className="hidden sm:inline">Make Admin</span>
-                                </>
-                              )}
-                            </Button>
+                            s
                           </div>
                         </TableCell>
                       </TableRow>

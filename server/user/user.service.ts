@@ -365,11 +365,11 @@ export async function getUserById(id: number | string) {
   }
 
   const user = await db.orm.public.User
-    .where({ id: numericId })
-    .include("accounts")
-    .include("otps", (otp) => otp.orderBy((o) => o.createdAt.desc()))
-    .first();
-
+  .where({ id: numericId })
+  .include("accounts")
+  .include("otps", (otp) => otp.orderBy((o) => o.createdAt.desc()))
+  .first();
+  
   if (!user) {
     return null;
   }

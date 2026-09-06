@@ -1,40 +1,34 @@
 "use client";
 
-import React, { useState, use } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
+  Calendar,
+  Clock,
+  Copy,
   Crown,
-  UserCheck,
-  UserX,
+  FileText,
+  KeyRound,
+  Lock,
   Mail,
   Phone,
-  Calendar,
-  Sparkles,
-  ShieldCheck,
-  ShieldAlert,
-  CheckCircle2,
-  Clock,
-  KeyRound,
-  FileText,
-  Copy,
-  ExternalLink,
-  Loader2,
-  Lock,
   RefreshCw,
+  ShieldAlert,
+  ShieldCheck,
+  UserX,
 } from "lucide-react";
+import Link from "next/link";
+import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -46,7 +40,6 @@ import {
 import useUserAdminHook, {
   useSingleUserAdmin,
 } from "@/hooks/tanstack-hooks/useUserAdmin";
-import { SingleUserResponseType } from "@/app/types";
 
 export default function AdminUserDetailsPage({
   params,
@@ -54,7 +47,7 @@ export default function AdminUserDetailsPage({
   params: Promise<{ userId: string }>;
 }) {
   const resolvedParams = use(params);
-  const router = useRouter();
+
   const userId = resolvedParams.userId;
 
   // Real Single User TanStack Query
@@ -67,15 +60,17 @@ export default function AdminUserDetailsPage({
   } = useSingleUserAdmin(userId);
   const { updateUser } = useUserAdminHook();
 
-  const [notes, setNotes] = useState("");
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [notes, setNotes] = useState(user?.adminNote || "");
+
+  useEffect(() => {
+    setNotes(user?.adminNote || "");
+  }, [user]);
 
   // Copy helper
   const handleCopy = (text: string, fieldName: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedField(fieldName);
+
     toast.success(`${fieldName} copied to clipboard`);
-    setTimeout(() => setCopiedField(null), 2000);
   };
 
   // Format date helper
@@ -193,9 +188,9 @@ export default function AdminUserDetailsPage({
 
   const isAdmin = user.role === "ADMIN";
   const isVerified = Boolean(user.isEmailVerified);
-  const initials = `${user.firstName?.[0] || ""}${
-    user.lastName?.[0] || ""
-  }`.toUpperCase() || "D";
+  const initials =
+    `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase() ||
+    "D";
 
   const accounts = user.accounts ?? [];
   const otps = user.otps ?? [];
@@ -237,52 +232,6 @@ export default function AdminUserDetailsPage({
 
         {/* Quick Action Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Role Toggle */}
-          <Button
-            variant={isAdmin ? "outline" : "default"}
-            size="sm"
-            onClick={handleToggleRole}
-            disabled={updateUser.isPending}
-            className={`h-9 gap-1.5 text-xs font-bold ${
-              isAdmin
-                ? "border-amber-900/20 text-[#713f12] hover:bg-amber-50"
-                : "bg-[#713f12] text-white hover:bg-[#5c3a1e]"
-            }`}
-          >
-            {isAdmin ? (
-              <>
-                <UserX className="h-3.5 w-3.5 text-stone-500" />
-                Demote to Devotee
-              </>
-            ) : (
-              <>
-                <Crown className="h-3.5 w-3.5 text-amber-300" />
-                Promote to Admin
-              </>
-            )}
-          </Button>
-
-          {/* Email Verification Toggle */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleToggleVerification}
-            disabled={updateUser.isPending}
-            className="h-9 gap-1.5 text-xs font-bold border-amber-900/20 text-[#713f12] hover:bg-amber-50"
-          >
-            {isVerified ? (
-              <>
-                <ShieldAlert className="h-3.5 w-3.5 text-amber-700" />
-                Mark Unverified
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-700" />
-                Mark Verified
-              </>
-            )}
-          </Button>
-
           {/* Refresh Button */}
           <Button
             variant="outline"
@@ -318,7 +267,10 @@ export default function AdminUserDetailsPage({
                 </h2>
                 <div className="mt-1 flex items-center gap-1.5 flex-wrap justify-center">
                   {isAdmin ? (
-                    <Badge variant="gold" className="text-[10px] font-extrabold">
+                    <Badge
+                      variant="gold"
+                      className="text-[10px] font-extrabold"
+                    >
                       👑 Admin Privileges
                     </Badge>
                   ) : (
@@ -332,7 +284,10 @@ export default function AdminUserDetailsPage({
                       ✓ Email Verified
                     </Badge>
                   ) : (
-                    <Badge variant="destructive" className="text-[10px] bg-amber-100 text-amber-900 border-amber-300">
+                    <Badge
+                      variant="destructive"
+                      className="text-[10px] bg-amber-100 text-amber-900 border-amber-300"
+                    >
                       ⚠ Unverified
                     </Badge>
                   )}
@@ -434,12 +389,19 @@ export default function AdminUserDetailsPage({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
                 placeholder="E.g. Prefers 5-Mukhi Nepali beads, consulted on horoscope alignment..."
-                className="w-full rounded-xl border border-amber-900/15 p-3 text-xs text-[#422006] focus:border-amber-700 outline-none bg-amber-50/20"
+                className="w-full rounded-xl border border-amber-900/15 p-3 text-xs text-[#422006]  outline-none bg-amber-50/20"
               />
               <Button
                 size="sm"
-                onClick={() => {
-                  toast.success("Devotee notes recorded locally.");
+                onClick={async () => {
+                  try {
+                    await updateUser.mutateAsync({
+                      id: user.id,
+                      data: { adminNote: notes },
+                    });
+                  } catch (err: any) {
+                    toast.error(err?.message || "Failed to save notes");
+                  }
                 }}
                 className="w-full bg-[#713f12] text-white hover:bg-[#5c3a1e] text-xs font-bold"
               >
@@ -459,7 +421,8 @@ export default function AdminUserDetailsPage({
                 Linked Authentication Accounts ({accounts.length})
               </CardTitle>
               <CardDescription className="text-xs text-[#5c3a1e]/70">
-                Third-party OAuth identity providers connected to this devotee profile.
+                Third-party OAuth identity providers connected to this devotee
+                profile.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -470,7 +433,8 @@ export default function AdminUserDetailsPage({
                     Direct Email & Password Account
                   </p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    No external OAuth accounts (such as Google) are currently linked.
+                    No external OAuth accounts (such as Google) are currently
+                    linked.
                   </p>
                 </div>
               ) : (
@@ -518,7 +482,8 @@ export default function AdminUserDetailsPage({
                 Security & OTP Audit History ({otps.length})
               </CardTitle>
               <CardDescription className="text-xs text-[#5c3a1e]/70">
-                Historical record of one-time password verifications for email and security.
+                Historical record of one-time password verifications for email
+                and security.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -601,10 +566,7 @@ export default function AdminUserDetailsPage({
                                   Expired
                                 </Badge>
                               ) : (
-                                <Badge
-                                  variant="gold"
-                                  className="text-[10px]"
-                                >
+                                <Badge variant="gold" className="text-[10px]">
                                   Pending Active
                                 </Badge>
                               )}

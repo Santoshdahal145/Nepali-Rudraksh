@@ -1252,6 +1252,13 @@
           },
           "User": {
             "fields": {
+              "adminNote": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -1370,6 +1377,9 @@
             },
             "storage": {
               "fields": {
+                "adminNote": {
+                  "column": "adminNote"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -2462,6 +2472,11 @@
                 }
               ],
               "columns": {
+                "adminNote": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
                   "default": {
@@ -2688,7 +2703,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6b83c847ea0c03f216e2fa14a3d9fe17379c9d6adae2515652674b6aad6cc33e"
+    "storageHash": "d7984a10d43e131581c750fb64ad08baada9e96508e948fc71e0a9a9b30f6d4f"
   },
   "capabilities": {
     "postgres": {

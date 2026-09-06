@@ -14,7 +14,7 @@ const MAX_OTP_ATTEMPTS = 5;
 
 
 const getSafeUserFromDB=(user: FieldOutputTypes["public"]["User"])=>{
-    const { password,hashedRefreshToken,createdAt,updatedAt, ...safeUser } = user;
+    const { password,hashedRefreshToken,createdAt,updatedAt,adminNote, ...safeUser } = user;
     return safeUser;
 }
 

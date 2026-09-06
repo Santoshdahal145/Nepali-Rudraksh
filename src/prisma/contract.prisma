@@ -45,6 +45,7 @@ model User {
   isEmailVerified    Boolean?  @default(false)
   password           String?
   phoneNumber        String?
+  adminNote          String?
   accounts           Account[]
   otps               Otp[]
   createdAt          DateTime  @default(now())

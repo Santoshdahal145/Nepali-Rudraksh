@@ -6,6 +6,7 @@ export const createUserSchema = z.object({
     lastName: z.string(),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     phoneNumber: z.string(),
+    adminNote: z.string(),
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
@@ -31,4 +32,4 @@ export const getUsersQuerySchema = z.object({
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
-export type GetUsersQueryInput = z.infer<typeof getUsersQuerySchema>;
+export type GetUsersQueryInput = z.infer<typeof getUsersQuerySchema>;

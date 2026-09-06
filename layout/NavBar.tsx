@@ -239,7 +239,7 @@ export default function NavBar() {
           {/* Auth: Login or User Avatar */}
           {isAuthenticated ? (
             <Link
-              href="/user-settings"
+              href="/profile"
               className="group flex h-9 items-center gap-2 rounded-full border border-amber-900/20 bg-amber-50/60 pl-1 pr-3.5 transition-all duration-200 hover:border-amber-900/40 hover:bg-amber-100/70 hover:shadow-xs"
               title="User Settings"
             >
