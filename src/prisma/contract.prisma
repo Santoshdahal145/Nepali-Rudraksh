@@ -203,7 +203,7 @@ model Cart {
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
   createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  updatedAt DateTime   @default(now())
 
   @@index([userId])
 }
@@ -216,7 +216,7 @@ model CartItem {
   variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
   quantity  Int            @default(1)
   createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  updatedAt DateTime       @default(now())
 
   @@unique([cartId, variantId])
   @@index([cartId])

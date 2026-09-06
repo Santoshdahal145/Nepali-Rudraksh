@@ -11,6 +11,8 @@ bunx prisma@latest db update --db $env:DB --dry-run
 # 4. apply it
 bunx prisma@latest db update --db $env:DB
 
+$env:DB="postgresql://postgres:your_new_password@localhost:5432/nepali-rudraksh?schema=public"
+
 contract emit — reads your human-written contract.prisma and compiles it into contract.json (the machine-readable schema) and
 contract.d.ts (the TypeScript types your db.orm.public.* client uses). Nothing downstream sees your .prisma edits until you emit.
 This never touches the database.

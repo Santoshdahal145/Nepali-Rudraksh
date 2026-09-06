@@ -8,6 +8,14 @@
       "model": "Account",
       "namespace": "public"
     },
+    "cart": {
+      "model": "Cart",
+      "namespace": "public"
+    },
+    "cartItem": {
+      "model": "CartItem",
+      "namespace": "public"
+    },
     "individualRudrakshaDetail": {
       "model": "IndividualRudrakshaDetail",
       "namespace": "public"
@@ -196,6 +204,190 @@
               },
               "namespaceId": "public",
               "table": "account"
+            }
+          },
+          "Cart": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "items": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "cartId"
+                  ]
+                },
+                "to": {
+                  "model": "CartItem",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "cart"
+            }
+          },
+          "CartItem": {
+            "fields": {
+              "cartId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "quantity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "variantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "cart": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "cartId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Cart",
+                  "namespace": "public"
+                }
+              },
+              "variant": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "variantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "ProductVariant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "cartId": {
+                  "column": "cartId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "quantity": {
+                  "column": "quantity"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "variantId": {
+                  "column": "variantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "cartItem"
             }
           },
           "IndividualRudrakshaDetail": {
@@ -902,6 +1094,21 @@
               }
             },
             "relations": {
+              "cartItems": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "variantId"
+                  ]
+                },
+                "to": {
+                  "model": "CartItem",
+                  "namespace": "public"
+                }
+              },
               "individualVariantAttrs": {
                 "cardinality": "1:1",
                 "on": {
@@ -1359,6 +1566,21 @@
                   "namespace": "public"
                 }
               },
+              "cart": {
+                "cardinality": "1:1",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Cart",
+                  "namespace": "public"
+                }
+              },
               "otps": {
                 "cardinality": "1:N",
                 "on": {
@@ -1590,6 +1812,200 @@
                   "columns": [
                     "provider",
                     "providerAccountId"
+                  ]
+                }
+              ]
+            },
+            "cart": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "cart"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "cart_userId_idx_a489d58a",
+                  "prefix": "cart_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "userId"
+                  ]
+                }
+              ]
+            },
+            "cartItem": {
+              "columns": {
+                "cartId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "quantity": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "variantId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "cartId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "cartItem"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "cart"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "variantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "cartItem"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "productVariant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "cartId"
+                  ],
+                  "name": "cartItem_cartId_idx_79939295",
+                  "prefix": "cartItem_cartId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "variantId"
+                  ],
+                  "name": "cartItem_variantId_idx_e16bb45d",
+                  "prefix": "cartItem_variantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "cartId",
+                    "variantId"
                   ]
                 }
               ]
@@ -2703,7 +3119,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d7984a10d43e131581c750fb64ad08baada9e96508e948fc71e0a9a9b30f6d4f"
+    "storageHash": "a0817dc9e07df28fde443442e96ea245f9a307b8ee293bc259f038d77be5b6ec"
   },
   "capabilities": {
     "postgres": {
