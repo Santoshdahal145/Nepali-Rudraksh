@@ -26,3 +26,12 @@ export async function getCurrentUser():Promise<JwtPayloadType|null> {
     return null;
   }
 }
+export async function getCurrentRefreshToken():Promise<string|null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("refreshToken")?.value;
+  if (!token) {
+    return null;
+  }
+ return token;
+ 
+} 

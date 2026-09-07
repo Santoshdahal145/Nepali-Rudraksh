@@ -1,6 +1,11 @@
+import { getCurrentRefreshToken } from "@/lib/auth.utils";
+import { revokeRefreshToken } from "@/server/auth/token.service";
 import { NextResponse } from "next/server";
 
 export async function POST() {
+     const refreshToken = await getCurrentRefreshToken();
+     refreshToken &&  await revokeRefreshToken(refreshToken);
+    
   const response = NextResponse.json({
     message: "Logged out successfully",
   });

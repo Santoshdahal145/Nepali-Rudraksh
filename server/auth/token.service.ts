@@ -8,7 +8,7 @@ const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET!;
 type TokenPayload = { userId: number; role: string };
 
 export function signAccessToken(payload: TokenPayload) {
-    return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15m" });
+    return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "1m" });
 }
 
 export function signRefreshToken(payload: TokenPayload) {
@@ -35,6 +35,10 @@ export async function issueTokens(userId: number, role: string) {
 
     return { accessToken, refreshToken };
 }
+export async function issueNewAccessToken(userId: number, role: string) {
+    const accessToken = signAccessToken({ userId, role });
+    return { accessToken };
+}
 
 export async function refreshAccessToken(refreshToken: string) {
     const payload = verifyRefreshToken(refreshToken);
@@ -51,7 +55,7 @@ export async function refreshAccessToken(refreshToken: string) {
     if (!matches) {
         throw new Error("Invalid refresh token");
     }
-    return issueTokens(user.id, user.role ?? "USER");
+    return issueNewAccessToken(user.id, user.role ?? "USER");
 }
 
 export async function revokeRefreshToken(refreshToken: string) {
