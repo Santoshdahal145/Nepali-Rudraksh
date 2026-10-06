@@ -24,6 +24,7 @@ import {
  * Fetch active cart for authenticated user or guest by cartId
  */
 export async function GET(request: Request) {
+  console.log("get here --");
   try {
     const user = await getCurrentUser();
     const { searchParams } = new URL(request.url);
@@ -36,7 +37,10 @@ export async function GET(request: Request) {
 
       // If a guest cartId was provided alongside, automatically merge it into user cart
       if (cartId && !isNaN(cartId) && cartId !== userCart.id) {
-        const mergedCart = await mergeGuestCartIntoUserCart(cartId, user.userId);
+        const mergedCart = await mergeGuestCartIntoUserCart(
+          cartId,
+          user.userId
+        );
         return NextResponse.json(mergedCart, { status: 200 });
       }
 
@@ -56,7 +60,8 @@ export async function GET(request: Request) {
     return NextResponse.json(newGuestCart, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch cart:", error);
-    const message = error instanceof Error ? error.message : "Failed to fetch cart";
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch cart";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -66,8 +71,12 @@ export async function GET(request: Request) {
  * Add an item, merge carts, or batch sync items
  */
 export async function POST(request: Request) {
+  console.log("post here --");
   try {
-    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const body = (await request.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    >;
     const user = await getCurrentUser();
 
     // Action A: Merge guest cart into user cart
@@ -90,11 +99,17 @@ export async function POST(request: Request) {
     }
 
     // Action B: Batch sync cart items
-    if (body.action === "sync" || (Array.isArray(body.items) && !body.variantId)) {
+    if (
+      body.action === "sync" ||
+      (Array.isArray(body.items) && !body.variantId)
+    ) {
       const parsedSync = syncCartSchema.safeParse(body);
       if (!parsedSync.success) {
         return NextResponse.json(
-          { error: "Invalid sync cart data", details: parsedSync.error.flatten().fieldErrors },
+          {
+            error: "Invalid sync cart data",
+            details: parsedSync.error.flatten().fieldErrors,
+          },
           { status: 400 }
         );
       }
@@ -116,7 +131,10 @@ export async function POST(request: Request) {
     const validation = addToCartSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid cart item data", details: validation.error.flatten().fieldErrors },
+        {
+          error: "Invalid cart item data",
+          details: validation.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
@@ -138,11 +156,15 @@ export async function POST(request: Request) {
       }
     }
 
-    const updatedCart = await addItemToCart(targetCartId, { variantId, quantity });
+    const updatedCart = await addItemToCart(targetCartId, {
+      variantId,
+      quantity,
+    });
     return NextResponse.json(updatedCart, { status: 200 });
   } catch (error) {
     console.error("Cart add error:", error);
-    const message = error instanceof Error ? error.message : "Failed to add item to cart";
+    const message =
+      error instanceof Error ? error.message : "Failed to add item to cart";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
@@ -153,18 +175,29 @@ export async function POST(request: Request) {
  */
 export async function PATCH(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const body = (await request.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    >;
     const user = await getCurrentUser();
 
     const validation = updateCartItemQuantitySchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid update data", details: validation.error.flatten().fieldErrors },
+        {
+          error: "Invalid update data",
+          details: validation.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
 
-    const { cartItemId, variantId, quantity, cartId: inputCartId } = validation.data;
+    const {
+      cartItemId,
+      variantId,
+      quantity,
+      cartId: inputCartId,
+    } = validation.data;
 
     // 1. Update by CartItem ID
     if (cartItemId) {
@@ -187,7 +220,11 @@ export async function PATCH(request: Request) {
         );
       }
 
-      const updated = await updateCartItemQuantity(targetCartId, variantId, quantity);
+      const updated = await updateCartItemQuantity(
+        targetCartId,
+        variantId,
+        quantity
+      );
       return NextResponse.json(updated, { status: 200 });
     }
 
@@ -197,7 +234,8 @@ export async function PATCH(request: Request) {
     );
   } catch (error) {
     console.error("Cart update error:", error);
-    const message = error instanceof Error ? error.message : "Failed to update cart item";
+    const message =
+      error instanceof Error ? error.message : "Failed to update cart item";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
@@ -226,20 +264,20 @@ export async function DELETE(request: Request) {
     const cartItemId = cartItemIdParam
       ? parseInt(cartItemIdParam, 10)
       : typeof body.cartItemId === "number"
-      ? body.cartItemId
-      : undefined;
+        ? body.cartItemId
+        : undefined;
 
     const variantId = variantIdParam
       ? parseInt(variantIdParam, 10)
       : typeof body.variantId === "number"
-      ? body.variantId
-      : undefined;
+        ? body.variantId
+        : undefined;
 
     const inputCartId = cartIdParam
       ? parseInt(cartIdParam, 10)
       : typeof body.cartId === "number"
-      ? body.cartId
-      : undefined;
+        ? body.cartId
+        : undefined;
 
     const shouldClear = isClear || body.clear === true;
 
@@ -281,12 +319,18 @@ export async function DELETE(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "Provide cartItemId, variantId, or clear=true to perform a deletion" },
+      {
+        error:
+          "Provide cartItemId, variantId, or clear=true to perform a deletion",
+      },
       { status: 400 }
     );
   } catch (error) {
     console.error("Cart delete error:", error);
-    const message = error instanceof Error ? error.message : "Failed to remove item from cart";
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Failed to remove item from cart";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
