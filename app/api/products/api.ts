@@ -28,7 +28,10 @@ export type CreateProductPayload = {
   images?: ProductImagePayload[];
 };
 
-export type UpdateProductPayload = Partial<CreateProductPayload>;
+export type UpdateProductPayload = Omit<
+  Partial<CreateProductPayload>,
+  "type" | "slug" | "individualDetail" | "malaDetail"
+>;
 
 type GetProductsParams = {
   page?: number;
@@ -56,7 +59,9 @@ export type CreateVariantPayload = {
   images?: VariantImagePayload[];
 };
 
-export type UpdateVariantPayload = Partial<Omit<CreateVariantPayload, "productId">>;
+export type UpdateVariantPayload = Partial<
+  Omit<CreateVariantPayload, "productId">
+>;
 
 export type CreateOriginPayload = {
   name: string;
@@ -94,7 +99,10 @@ const createProduct = (data: CreateProductPayload): ApiRequestType => ({
 });
 
 /** PATCH /api/products/[id] — Update an existing product */
-const updateProduct = (id: number, data: UpdateProductPayload): ApiRequestType => ({
+const updateProduct = (
+  id: number,
+  data: UpdateProductPayload,
+): ApiRequestType => ({
   method: "patch",
   route: `/products/${id}`,
   payload: data,
@@ -137,7 +145,10 @@ const getProductVariantById = (id: number): ApiRequestType => ({
 });
 
 /** PATCH /api/products/product-variants/[id] — Update a variant */
-const updateProductVariant = (id: number, data: UpdateVariantPayload): ApiRequestType => ({
+const updateProductVariant = (
+  id: number,
+  data: UpdateVariantPayload,
+): ApiRequestType => ({
   method: "patch",
   route: `/products/product-variants/${id}`,
   payload: data,
@@ -181,7 +192,10 @@ const createRudrakshOrigin = (data: CreateOriginPayload): ApiRequestType => ({
 });
 
 /** PATCH /api/products/rudraksh-origin/[id] — Update a Rudraksha origin */
-const updateRudrakshOrigin = (id: number, data: UpdateOriginPayload): ApiRequestType => ({
+const updateRudrakshOrigin = (
+  id: number,
+  data: UpdateOriginPayload,
+): ApiRequestType => ({
   method: "patch",
   route: `/products/rudraksh-origin/${id}`,
   payload: data,

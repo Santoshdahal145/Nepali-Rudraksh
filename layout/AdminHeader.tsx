@@ -15,8 +15,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { initialOrders, initialProducts } from "../data/mockData";
-import { useAdmin } from "../../../providers/AdminContext";
+import { useAdmin } from "../providers/AdminContext";
 
 interface AdminHeaderProps {
   onOpenMobileMenu: () => void;
@@ -41,9 +40,6 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
     if (pathname === "/admin/settings") return "System & Store Settings";
     return "Admin Portal";
   };
-
-  const lowStockCount = initialProducts.filter((p) => p.stock <= 5).length;
-  const recentOrders = initialOrders.slice(0, 3);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-amber-900/10 bg-[#fdfbf7]/90 px-4 sm:px-8 backdrop-blur-md">
@@ -109,7 +105,7 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
           >
             <Bell className="h-4 w-4" />
             <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-600 text-[9px] font-bold text-white">
-              {recentOrders.length + (lowStockCount > 0 ? 1 : 0)}
+              2
             </span>
           </Button>
 
@@ -122,7 +118,7 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
                     Notifications
                   </span>
                   <Badge variant="gold" className="text-[10px]">
-                    {recentOrders.length + (lowStockCount > 0 ? 1 : 0)} New
+                    3 New
                   </Badge>
                 </div>
                 <button
@@ -134,51 +130,9 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
               </div>
 
               <div className="mt-3 space-y-2 max-h-72 overflow-y-auto">
-                {recentOrders.map((ord) => (
-                  <Link
-                    key={ord.id}
-                    href={`/admin/orders/${ord.orderNumber}`}
-                    onClick={() => setShowNotifications(false)}
-                    className="flex items-start gap-3 rounded-xl p-2.5 transition hover:bg-amber-50/70 border border-transparent hover:border-amber-900/10"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
-                      <CheckCircle2 className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-[#422006] truncate">
-                        Order #{ord.orderNumber} by {ord.customerName}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">
-                        {ord.items.length} sacred item(s) • ${ord.total} •{" "}
-                        {ord.status}
-                      </p>
-                      <span className="text-[10px] text-amber-800/70">
-                        {ord.date}
-                      </span>
-                    </div>
-                  </Link>
+                {[].map((ord) => (
+                  <></>
                 ))}
-
-                {lowStockCount > 0 && (
-                  <Link
-                    href="/admin/all-products"
-                    onClick={() => setShowNotifications(false)}
-                    className="flex items-start gap-3 rounded-xl p-2.5 bg-amber-50/60 border border-amber-200 transition hover:bg-amber-100/70"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-200 text-amber-900">
-                      <AlertTriangle className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-amber-950">
-                        Low Stock Alert
-                      </p>
-                      <p className="text-[11px] text-amber-900/80">
-                        {lowStockCount} sacred Rudraksha beads are running low
-                        in stock.
-                      </p>
-                    </div>
-                  </Link>
-                )}
               </div>
 
               <div className="mt-3 pt-2 border-t border-amber-900/10 text-center">

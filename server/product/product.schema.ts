@@ -23,20 +23,37 @@ export type VariantImageInput = z.infer<typeof variantImageSchema>;
 
 // Detail schemas
 export const individualRudrakshaDetailSchema = z.object({
-  mukhi: z.number().int().positive({ message: "Mukhi must be a positive integer" }),
+  mukhi: z
+    .number()
+    .int()
+    .positive({ message: "Mukhi must be a positive integer" }),
 });
-export type IndividualRudrakshaDetailInput = z.infer<typeof individualRudrakshaDetailSchema>;
+export type IndividualRudrakshaDetailInput = z.infer<
+  typeof individualRudrakshaDetailSchema
+>;
 
 export const rudrakshaMalaDetailSchema = z.object({
-  mukhi: z.number().int().positive({ message: "Mukhi must be a positive integer" }).optional().nullable(),
+  mukhi: z
+    .number()
+    .int()
+    .positive({ message: "Mukhi must be a positive integer" })
+    .optional()
+    .nullable(),
 });
-export type RudrakshaMalaDetailInput = z.infer<typeof rudrakshaMalaDetailSchema>;
+export type RudrakshaMalaDetailInput = z.infer<
+  typeof rudrakshaMalaDetailSchema
+>;
 
 // Variant attribute schemas
 export const individualVariantAttrsSchema = z.object({
-  size: z.number().int().positive({ message: "Size (in mm) must be a positive integer" }),
+  size: z
+    .number()
+    .int()
+    .positive({ message: "Size (in mm) must be a positive integer" }),
 });
-export type IndividualVariantAttrsInput = z.infer<typeof individualVariantAttrsSchema>;
+export type IndividualVariantAttrsInput = z.infer<
+  typeof individualVariantAttrsSchema
+>;
 
 export const malaVariantAttrsSchema = z.object({
   beadCount: z.number().int().positive().optional().nullable(),
@@ -49,8 +66,15 @@ export type MalaVariantAttrsInput = z.infer<typeof malaVariantAttrsSchema>;
 export const createProductVariantSchema = z.object({
   productId: z.number().int().positive().optional(),
   sku: z.string().min(1, { message: "SKU is required" }),
-  price: z.number().int().nonnegative({ message: "Price must be non-negative" }),
-  stock: z.number().int().nonnegative({ message: "Stock cannot be negative" }).default(0),
+  price: z
+    .number()
+    .int()
+    .nonnegative({ message: "Price must be non-negative" }),
+  stock: z
+    .number()
+    .int()
+    .nonnegative({ message: "Stock cannot be negative" })
+    .default(0),
   color: z.string().optional().nullable(),
   originId: z.number().int().positive().optional().nullable(),
   weightGrams: z.number().positive().optional().nullable(),
@@ -58,7 +82,9 @@ export const createProductVariantSchema = z.object({
   malaAttrs: malaVariantAttrsSchema.optional().nullable(),
   images: z.array(variantImageSchema).optional(),
 });
-export type CreateProductVariantInput = z.infer<typeof createProductVariantSchema>;
+export type CreateProductVariantInput = z.infer<
+  typeof createProductVariantSchema
+>;
 
 export const updateProductVariantSchema = z.object({
   sku: z.string().min(1).optional(),
@@ -71,7 +97,9 @@ export const updateProductVariantSchema = z.object({
   malaAttrs: malaVariantAttrsSchema.optional().nullable(),
   images: z.array(variantImageSchema).optional(),
 });
-export type UpdateProductVariantInput = z.infer<typeof updateProductVariantSchema>;
+export type UpdateProductVariantInput = z.infer<
+  typeof updateProductVariantSchema
+>;
 
 // ── Product Schemas ───────────────────────────────────────────────────────────
 
@@ -94,13 +122,7 @@ export type CreateProductInput = z.infer<typeof createProductSchema>;
 
 export const updateProductSchema = z.object({
   name: z.string().min(1).optional(),
-  slug: z
-    .string()
-    .min(1)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .optional(),
   description: z.string().min(1).optional(),
-  type: ProductTypeEnum.optional(),
   individualDetail: individualRudrakshaDetailSchema.optional().nullable(),
   malaDetail: rudrakshaMalaDetailSchema.optional().nullable(),
   images: z.array(productImageSchema).optional(),

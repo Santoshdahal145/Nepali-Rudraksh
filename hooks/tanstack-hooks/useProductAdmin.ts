@@ -86,6 +86,9 @@ export default function useProductAdminHook(
           };
         },
       );
+      queryClient.invalidateQueries({
+        queryKey: [PRODUCT_KEYS.getSingle, updatedItem.id],
+      });
     },
   });
 

@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { AdminProvider } from "../../providers/AdminContext";
-import { AdminSidebar } from "./components/AdminSidebar";
-import { AdminHeader } from "./components/AdminHeader";
+import { AdminSidebar } from "../../layout/AdminSidebar";
+import { AdminHeader } from "../../layout/AdminHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 function AdminPortalShell({ children }: { children: React.ReactNode }) {

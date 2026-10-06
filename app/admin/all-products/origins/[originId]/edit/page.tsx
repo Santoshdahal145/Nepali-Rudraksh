@@ -29,6 +29,8 @@ import useRudrakshOriginAdminHook, {
   useSingleRudrakshOriginAdmin,
 } from "@/hooks/tanstack-hooks/useRudrakshOriginAdmin";
 import { UpdateOriginPayload } from "@/app/api/products/api";
+import OriginLoading from "./OriginLoading";
+import OriginError from "./OriginError";
 
 const originEditValidationSchema = Yup.object().shape({
   name: Yup.string()
@@ -87,58 +89,12 @@ export default function EditRudrakshOriginPage() {
 
   // Loading State
   if (isLoading) {
-    return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 py-16">
-        <div className="relative flex items-center justify-center">
-          <div className="h-14 w-14 rounded-full border-4 border-amber-200 border-t-amber-700 animate-spin" />
-          <span className="absolute text-lg">🌍</span>
-        </div>
-        <p className="text-sm font-semibold text-[#5c3a1e]/70 mt-2">
-          Loading origin data…
-        </p>
-      </div>
-    );
+    return <OriginLoading />;
   }
 
   // Not Found / Error State
   if (isError || !origin) {
-    return (
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <Link
-          href="/admin/all-products/origins"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-[#713f12] hover:text-[#422006]"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Origins List
-        </Link>
-
-        <Card className="border-red-200 bg-red-50/40 p-8 text-center shadow-xs">
-          <span className="text-3xl">⚠️</span>
-          <h2 className="text-lg font-bold text-red-900 mt-2">
-            Origin Not Found
-          </h2>
-          <p className="text-xs text-red-700/80 mt-1 max-w-md mx-auto">
-            {error instanceof Error
-              ? error.message
-              : `Unable to locate origin with ID #${originId}.`}
-          </p>
-          <div className="mt-4 flex items-center justify-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              className="gap-1.5 border-amber-900/20 text-[#713f12]"
-            >
-              <RefreshCw className="h-3.5 w-3.5" /> Retry
-            </Button>
-            <Link href="/admin/all-products/origins">
-              <Button size="sm" className="bg-[#713f12] text-white">
-                Back to Origins List
-              </Button>
-            </Link>
-          </div>
-        </Card>
-      </div>
-    );
+    return <OriginError originId={originId} error={error} onRetry={() => refetch()} />;
   }
 
   return (

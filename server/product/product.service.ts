@@ -27,7 +27,7 @@ export async function getAllProductsPublic(
     limit: 20,
     sortBy: "createdAt",
     sortOrder: "desc",
-  }
+  },
 ) {
   const {
     page = 1,
@@ -43,8 +43,7 @@ export async function getAllProductsPublic(
 
   const offset = (page - 1) * limit;
 
-  let collection = db.orm.public.Product
-    .include("individualRudrakshaDetail")
+  let collection = db.orm.public.Product.include("individualRudrakshaDetail")
     .include("rudrakshaMalaDetail")
     .include("productImages", (img) => img.orderBy((i) => i.position.asc()))
     .include("productVariants", (pv) =>
@@ -52,7 +51,7 @@ export async function getAllProductsPublic(
         .include("individualVariantAttrs")
         .include("malaVariantAttrs")
         .include("origin")
-        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc()))
+        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc())),
     );
 
   if (type) {
@@ -66,11 +65,11 @@ export async function getAllProductsPublic(
 
   if (sortBy === "name") {
     collection = collection.orderBy((p) =>
-      sortOrder === "asc" ? p.name.asc() : p.name.desc()
+      sortOrder === "asc" ? p.name.asc() : p.name.desc(),
     );
   } else {
     collection = collection.orderBy((p) =>
-      sortOrder === "asc" ? p.createdAt.asc() : p.createdAt.desc()
+      sortOrder === "asc" ? p.createdAt.asc() : p.createdAt.desc(),
     );
   }
 
@@ -79,7 +78,7 @@ export async function getAllProductsPublic(
   // Relational filters
   if (originId !== undefined) {
     products = products.filter((p) =>
-      p.productVariants?.some((v) => v.originId === originId)
+      p.productVariants?.some((v) => v.originId === originId),
     );
   }
 
@@ -97,13 +96,13 @@ export async function getAllProductsPublic(
 
   if (minPrice !== undefined) {
     products = products.filter((p) =>
-      p.productVariants?.some((v) => Number(v.price) >= minPrice)
+      p.productVariants?.some((v) => Number(v.price) >= minPrice),
     );
   }
 
   if (maxPrice !== undefined) {
     products = products.filter((p) =>
-      p.productVariants?.some((v) => Number(v.price) <= maxPrice)
+      p.productVariants?.some((v) => Number(v.price) <= maxPrice),
     );
   }
 
@@ -140,8 +139,7 @@ export async function getAllProductsPublic(
  * Fetch a single product by unique slug
  */
 export async function getSingleProductBySlug(slug: string) {
-  const product = await db.orm.public.Product
-    .where({ slug })
+  const product = await db.orm.public.Product.where({ slug })
     .include("individualRudrakshaDetail")
     .include("rudrakshaMalaDetail")
     .include("productImages", (img) => img.orderBy((i) => i.position.asc()))
@@ -150,7 +148,7 @@ export async function getSingleProductBySlug(slug: string) {
         .include("individualVariantAttrs")
         .include("malaVariantAttrs")
         .include("origin")
-        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc()))
+        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc())),
     )
     .first();
 
@@ -166,7 +164,7 @@ export async function getAllProductsAdmin(
     limit: 50,
     sortBy: "createdAt",
     sortOrder: "desc",
-  }
+  },
 ) {
   return await getAllProductsPublic(params);
 }
@@ -175,8 +173,7 @@ export async function getAllProductsAdmin(
  * Admin: Fetch single product by ID
  */
 export async function getSingleProductById(id: number) {
-  const product = await db.orm.public.Product
-    .where({ id })
+  const product = await db.orm.public.Product.where({ id })
     .include("individualRudrakshaDetail")
     .include("rudrakshaMalaDetail")
     .include("productImages", (img) => img.orderBy((i) => i.position.asc()))
@@ -185,7 +182,7 @@ export async function getSingleProductById(id: number) {
         .include("individualVariantAttrs")
         .include("malaVariantAttrs")
         .include("origin")
-        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc()))
+        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc())),
     )
     .first();
 
@@ -200,7 +197,9 @@ export async function createProduct(input: CreateProductInput) {
   let slug = input.slug ? slugify(input.slug) : slugify(input.name);
 
   // Ensure unique slug
-  const existingProductWithSlug = await db.orm.public.Product.where({ slug }).first();
+  const existingProductWithSlug = await db.orm.public.Product.where({
+    slug,
+  }).first();
   if (existingProductWithSlug) {
     if (input.slug) {
       throw new Error(`Product with slug "${slug}" already exists`);
@@ -258,62 +257,19 @@ export async function updateProduct(id: number, input: UpdateProductInput) {
   if (!existing) {
     throw new Error("Product not found");
   }
-
-  if (input.slug && input.slug !== existing.slug) {
-    const duplicateSlug = await db.orm.public.Product.where({ slug: input.slug }).first();
-    if (duplicateSlug) {
-      throw new Error(`Product with slug "${input.slug}" already exists`);
-    }
-  }
-
   await db.transaction(async (tx) => {
-    // 1. Update core product fields
     const productUpdates: {
       name?: string;
-      slug?: string;
       description?: string;
-      type?: any;
     } = {};
-
     if (input.name !== undefined) productUpdates.name = input.name;
-    if (input.slug !== undefined) productUpdates.slug = input.slug;
-    if (input.description !== undefined) productUpdates.description = input.description;
-    if (input.type !== undefined) productUpdates.type = input.type;
+    if (input.description !== undefined)
+      productUpdates.description = input.description;
 
     if (Object.keys(productUpdates).length > 0) {
       await tx.orm.public.Product.where({ id }).update(productUpdates);
     }
 
-    const currentType = input.type ?? existing.type;
-
-    // 2. Update type-specific details
-    if (currentType === "INDIVIDUAL_RUDRAKSHA" && input.individualDetail) {
-      const existingDetail = await tx.orm.public.IndividualRudrakshaDetail.where({ productId: id }).first();
-      if (existingDetail) {
-        await tx.orm.public.IndividualRudrakshaDetail.where({ id: existingDetail.id }).update({
-          mukhi: input.individualDetail.mukhi,
-        });
-      } else {
-        await tx.orm.public.IndividualRudrakshaDetail.create({
-          productId: id,
-          mukhi: input.individualDetail.mukhi,
-        });
-      }
-    } else if (currentType === "RUDRAKSHA_MALA" && input.malaDetail) {
-      const existingDetail = await tx.orm.public.RudrakshaMalaDetail.where({ productId: id }).first();
-      if (existingDetail) {
-        await tx.orm.public.RudrakshaMalaDetail.where({ id: existingDetail.id }).update({
-          mukhi: input.malaDetail.mukhi ?? null,
-        });
-      } else {
-        await tx.orm.public.RudrakshaMalaDetail.create({
-          productId: id,
-          mukhi: input.malaDetail.mukhi ?? null,
-        });
-      }
-    }
-
-    // 3. Update Product Images if supplied
     if (input.images !== undefined) {
       await tx.orm.public.ProductImage.where({ productId: id }).delete();
       for (let i = 0; i < input.images.length; i++) {
@@ -335,14 +291,14 @@ export async function updateProduct(id: number, input: UpdateProductInput) {
  * Admin: Delete product by ID (cascades to details, images, and variants)
  */
 export async function deleteProduct(id: number) {
-
-
   const existing = await db.orm.public.Product.where({ id }).first();
   if (!existing) {
     throw new Error("Product not found");
   }
   //check here if has exisiting product variants
-  const variants = await db.orm.public.ProductVariant.where({ productId: id }).all();
+  const variants = await db.orm.public.ProductVariant.where({
+    productId: id,
+  }).all();
   if (variants.length > 0) {
     throw new Error("Product has variants, cannot delete");
   }
@@ -356,7 +312,7 @@ export async function deleteProduct(id: number) {
  */
 export async function createProductVariant(
   productId: number,
-  input: CreateProductVariantInput
+  input: CreateProductVariantInput,
 ) {
   const product = await db.orm.public.Product.where({ id: productId }).first();
   if (!product) {
@@ -423,8 +379,7 @@ export async function createProductVariant(
  * Admin: Fetch a single Product Variant by ID
  */
 export async function getSingleProductVariantById(variantId: number) {
-  const variant = await db.orm.public.ProductVariant
-    .where({ id: variantId })
+  const variant = await db.orm.public.ProductVariant.where({ id: variantId })
     .include("individualVariantAttrs")
     .include("malaVariantAttrs")
     .include("origin")
@@ -438,8 +393,7 @@ export async function getSingleProductVariantById(variantId: number) {
  * Admin: Fetch all variants for a specific Product
  */
 export async function getProductVariantsByProductId(productId: number) {
-  const variants = await db.orm.public.ProductVariant
-    .where({ productId })
+  const variants = await db.orm.public.ProductVariant.where({ productId })
     .include("individualVariantAttrs")
     .include("malaVariantAttrs")
     .include("origin")
@@ -455,7 +409,7 @@ export async function getProductVariantsByProductId(productId: number) {
  */
 export async function updateProductVariant(
   variantId: number,
-  input: UpdateProductVariantInput
+  input: UpdateProductVariantInput,
 ) {
   const existingVariant = await db.orm.public.ProductVariant.where({
     id: variantId,
@@ -487,7 +441,7 @@ export async function updateProductVariant(
 
     if (Object.keys(variantUpdates).length > 0) {
       await tx.orm.public.ProductVariant.where({ id: variantId }).update(
-        variantUpdates
+        variantUpdates,
       );
     }
 

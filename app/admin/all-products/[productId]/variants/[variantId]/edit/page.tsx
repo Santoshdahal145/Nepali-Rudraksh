@@ -264,7 +264,7 @@ export default function EditProductVariantPage() {
   return (
     <div className="space-y-6 pb-16 max-w-4xl mx-auto">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs">
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs">
         <Link
           href="/admin/all-products"
           className="font-semibold text-muted-foreground hover:text-[#422006] transition-colors"
@@ -274,19 +274,21 @@ export default function EditProductVariantPage() {
         <span className="text-muted-foreground/60">/</span>
         <Link
           href={`/admin/all-products/${product.id}`}
-          className="font-semibold text-muted-foreground hover:text-[#422006] truncate max-w-50"
+          className="font-semibold text-muted-foreground hover:text-[#422006] truncate max-w-44 sm:max-w-64"
         >
           {product.name}
         </Link>
         <span className="text-muted-foreground/60">/</span>
-        <span className="font-bold text-[#713f12]">Edit Variant: {variant.sku}</span>
+        <span className="font-bold text-[#713f12] truncate max-w-44">
+          Edit: {variant.sku}
+        </span>
       </div>
 
       {/* Header Banner */}
-      <div className="rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-6 sm:p-8 shadow-xs">
+      <div className="rounded-2xl sm:rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-4 sm:p-6 md:p-8 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 mb-1">
+          <div className="space-y-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
               <Badge variant="gold" className="text-[10px]">
                 Variant #{variant.id}
               </Badge>
@@ -294,7 +296,7 @@ export default function EditProductVariantPage() {
                 {product.name}
               </Badge>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#422006] tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#422006] tracking-tight break-words">
               Edit Variant: {variant.sku}
             </h1>
             <p className="text-xs sm:text-sm text-[#5c3a1e]/80 max-w-xl">
@@ -302,7 +304,7 @@ export default function EditProductVariantPage() {
             </p>
           </div>
 
-          <Link href={`/admin/all-products/${product.id}`}>
+          <Link href={`/admin/all-products/${product.id}`} className="self-start sm:self-auto shrink-0">
             <Button
               variant="outline"
               size="sm"
@@ -601,13 +603,13 @@ export default function EditProductVariantPage() {
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-amber-900/10">
-          <Link href={`/admin/all-products/${product.id}`}>
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-amber-900/10">
+          <Link href={`/admin/all-products/${product.id}`} className="w-full sm:w-auto">
             <Button
               type="button"
               variant="outline"
               disabled={isBusy}
-              className="border-amber-900/15 text-[#713f12] text-xs h-11 px-5"
+              className="w-full sm:w-auto border-amber-900/15 text-[#713f12] text-xs h-11 px-5"
             >
               Cancel
             </Button>
@@ -616,7 +618,7 @@ export default function EditProductVariantPage() {
           <Button
             type="submit"
             disabled={isBusy}
-            className="bg-[#713f12] text-white hover:bg-[#5c3a1e] font-bold text-xs h-11 px-8 shadow-md gap-2"
+            className="w-full sm:w-auto bg-[#713f12] text-white hover:bg-[#5c3a1e] font-bold text-xs h-11 px-8 shadow-md gap-2"
           >
             {isBusy ? (
               <>
