@@ -14,7 +14,7 @@ export async function POST(request: Request) {
           error: "Invalid request",
           details: result.error.message,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 1,
+      maxAge: 60 * 60 * 24,
     });
 
     response.cookies.set("refreshToken", tokens.refreshToken, {

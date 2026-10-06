@@ -6,48 +6,55 @@ export type UserType = Omit<
 >;
 
 export type StoreSettingType = Omit<
-  FieldOutputTypes["public"]["StoreSettings"], "id" | "updatedAt"
+  FieldOutputTypes["public"]["StoreSettings"],
+  "id" | "updatedAt"
 >;
 
 export type PaymentSettingType = Omit<
-  FieldOutputTypes["public"]["PaymentSettings"], "id" | "updatedAt"
+  FieldOutputTypes["public"]["PaymentSettings"],
+  "id" | "updatedAt"
 >;
 
 //PRODUCT TYPE
-export type RudrakshOriginType = FieldOutputTypes["public"]["RudrakshaOrigin"]
+export type RudrakshOriginType = FieldOutputTypes["public"]["RudrakshaOrigin"];
 
-export type IndividualRudrakshaDetailType = FieldOutputTypes["public"]["IndividualRudrakshaDetail"]
+export type IndividualRudrakshaDetailType =
+  FieldOutputTypes["public"]["IndividualRudrakshaDetail"];
 
-export type RudrakshaMalaDetailType = FieldOutputTypes["public"]["RudrakshaMalaDetail"]
+export type RudrakshaMalaDetailType =
+  FieldOutputTypes["public"]["RudrakshaMalaDetail"];
 
-export type ProductImageType = FieldOutputTypes["public"]["ProductImage"]
+export type ProductImageType = FieldOutputTypes["public"]["ProductImage"];
 
-export type IndividualVariantAttrsType = FieldOutputTypes["public"]["IndividualVariantAttrs"]
+export type IndividualVariantAttrsType =
+  FieldOutputTypes["public"]["IndividualVariantAttrs"];
 
-export type MalaVariantAttrsType = FieldOutputTypes["public"]["MalaVariantAttrs"]
+export type MalaVariantAttrsType =
+  FieldOutputTypes["public"]["MalaVariantAttrs"];
 
-export type ProductVariantType = FieldOutputTypes["public"]["ProductVariant"] & {
-  individualVariantAttrs?: IndividualVariantAttrsType;
-  malaVariantAttrs?: MalaVariantAttrsType;
-  origin?: RudrakshOriginType;
-  variantImages?: ProductImageType[];
-}
+export type ProductVariantType =
+  FieldOutputTypes["public"]["ProductVariant"] & {
+    individualVariantAttrs?: IndividualVariantAttrsType;
+    malaVariantAttrs?: MalaVariantAttrsType;
+    origin?: RudrakshOriginType;
+    variantImages?: ProductImageType[];
+  };
 
 export type ProductType = FieldOutputTypes["public"]["Product"] & {
   productVariants?: ProductVariantType[];
   productImages?: ProductImageType[];
   individualRudrakshaDetail?: IndividualRudrakshaDetailType;
   rudrakshaMalaDetail?: RudrakshaMalaDetailType;
-}
+};
 
-export  type PaginationType={
-     page: number,
-     limit: number,
-     total: number,
-     totalPages: number,
-     hasNextPage: boolean,
-     hasPrevPage: boolean
-}
+export type PaginationType = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
 
 export type PaginatedResponse<K extends string, T> = {
   [P in K]: T;
@@ -55,9 +62,14 @@ export type PaginatedResponse<K extends string, T> = {
   pagination: PaginationType;
 };
 
-
-export type AllProductsResponseType = PaginatedResponse<'products', ProductType[]>
-export type AllRudrakshOriginResponseType = PaginatedResponse<'origins', RudrakshOriginType[]>
+export type AllProductsResponseType = PaginatedResponse<
+  "products",
+  ProductType[]
+>;
+export type AllRudrakshOriginResponseType = PaginatedResponse<
+  "origins",
+  RudrakshOriginType[]
+>;
 
 // USER TYPES
 export type AccountType = FieldOutputTypes["public"]["Account"];
@@ -78,4 +90,11 @@ export type GetUsersParams = {
   isEmailVerified?: boolean;
   sortBy?: "createdAt" | "firstName" | "lastName" | "email";
   sortOrder?: "asc" | "desc";
-};
+};
+
+export type DashboardResponseType = {
+  totalRevenue: number;
+  totalOrders: number;
+  totalProducts: number;
+  totalCustomers: number;
+};
