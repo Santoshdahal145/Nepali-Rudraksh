@@ -74,25 +74,26 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-export default function DevoteeStorySection() {
+export default function CustomerReviewSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextTestimonial = () => {
-    setCurrentIndex(
-      (prev) => (prev + 1) % testimonials.length
-    );
+    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevTestimonial = () => {
     setCurrentIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
   };
 
   const current = testimonials[currentIndex];
 
   return (
-    <section id="devotee-stories" className="relative bg-white py-14 sm:py-20 lg:py-28">
+    <section
+      id="devotee-stories"
+      className="relative bg-white py-14 sm:py-20 lg:py-28"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
@@ -220,7 +221,9 @@ export default function DevoteeStorySection() {
               <p className="text-lg font-extrabold text-[#713f12] sm:text-xl">
                 {item.metric}
               </p>
-              <p className="mt-1 text-[11px] text-[#5c3a1e]/70 sm:text-xs">{item.label}</p>
+              <p className="mt-1 text-[11px] text-[#5c3a1e]/70 sm:text-xs">
+                {item.label}
+              </p>
             </div>
           ))}
         </div>

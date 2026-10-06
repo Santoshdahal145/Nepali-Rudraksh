@@ -32,7 +32,8 @@ const products: Product[] = [
     rating: 5.0,
     reviewsCount: 128,
     badge: "Rare & Sacred",
-    description: "Supreme consciousness & liberation. Blessed from Pashupatinath Temple.",
+    description:
+      "Supreme consciousness & liberation. Blessed from Pashupatinath Temple.",
     emoji: "🌙",
   },
   {
@@ -45,7 +46,8 @@ const products: Product[] = [
     rating: 4.9,
     reviewsCount: 412,
     badge: "Bestseller",
-    description: "Ideal for daily japa, peace of mind, health, and spiritual alignment.",
+    description:
+      "Ideal for daily japa, peace of mind, health, and spiritual alignment.",
     emoji: "📿",
   },
   {
@@ -58,7 +60,8 @@ const products: Product[] = [
     rating: 4.9,
     reviewsCount: 235,
     badge: "Prosperity",
-    description: "Attracts wealth, success, prosperity, and career breakthrough.",
+    description:
+      "Attracts wealth, success, prosperity, and career breakthrough.",
     emoji: "✨",
   },
   {
@@ -71,7 +74,8 @@ const products: Product[] = [
     rating: 5.0,
     reviewsCount: 64,
     badge: "Collector",
-    description: "Awakens the Sixth Sense (Ajna Chakra) and intuition. Extremely rare.",
+    description:
+      "Awakens the Sixth Sense (Ajna Chakra) and intuition. Extremely rare.",
     emoji: "🔱",
   },
   {
@@ -84,7 +88,8 @@ const products: Product[] = [
     rating: 4.8,
     reviewsCount: 180,
     badge: "Handcrafted",
-    description: "925 Pure Sterling Silver handcrafted by master Newari artisans.",
+    description:
+      "925 Pure Sterling Silver handcrafted by master Newari artisans.",
     emoji: "⚡",
   },
   {
@@ -97,7 +102,8 @@ const products: Product[] = [
     rating: 5.0,
     reviewsCount: 92,
     badge: "Divine Union",
-    description: "Represents the union of Lord Shiva & Goddess Parvati. Harmonizes relationships.",
+    description:
+      "Represents the union of Lord Shiva & Goddess Parvati. Harmonizes relationships.",
     emoji: "💫",
   },
 ];
@@ -110,7 +116,7 @@ const categories: { label: string; value: Category }[] = [
   { label: "Collector Beads", value: "collector" },
 ];
 
-export default function CollectionSection() {
+export default function FeatureItemSection() {
   const [activeTab, setActiveTab] = useState<Category>("all");
 
   const filteredProducts =
@@ -119,7 +125,10 @@ export default function CollectionSection() {
       : products.filter((p) => p.category === activeTab);
 
   return (
-    <section id="collections" className="relative bg-[#faf7f2] py-14 sm:py-20 lg:py-28">
+    <section
+      id="collections"
+      className="relative bg-[#faf7f2] py-14 sm:py-20 lg:py-28"
+    >
       {/* Background Ambience */}
       <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-amber-200/20 blur-3xl sm:h-96 sm:w-96" />
       <div className="pointer-events-none absolute bottom-10 left-0 h-72 w-72 rounded-full bg-orange-200/20 blur-3xl sm:h-96 sm:w-96" />
@@ -136,7 +145,8 @@ export default function CollectionSection() {
               Curated Himalayan Treasures
             </h2>
             <p className="mt-2 max-w-xl text-xs text-[#5c3a1e]/70 sm:text-sm md:text-base">
-              Each piece is certified for authenticity, lab-tested, and blessed with sacred mantras prior to dispatch.
+              Each piece is certified for authenticity, lab-tested, and blessed
+              with sacred mantras prior to dispatch.
             </p>
           </div>
 
@@ -234,7 +244,9 @@ export default function CollectionSection() {
                       </span>
                     )}
                   </div>
-                  <span className="text-[9px] text-green-700 font-medium sm:text-[10px]">Free Lab Certificate</span>
+                  <span className="text-[9px] text-green-700 font-medium sm:text-[10px]">
+                    Free Lab Certificate
+                  </span>
                 </div>
 
                 <Link href={`/all-products`}>

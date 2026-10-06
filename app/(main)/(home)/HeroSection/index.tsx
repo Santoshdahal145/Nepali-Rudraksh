@@ -30,7 +30,9 @@ export default function HeroSection() {
             <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-[#2d1a0e] xs:text-4xl sm:text-5xl lg:text-6xl">
               Sacred Beads,{" "}
               <span className="relative inline-block">
-                <span className="relative z-10 text-[#713f12]">Divine Energy</span>
+                <span className="relative z-10 text-[#713f12]">
+                  Divine Energy
+                </span>
                 <svg
                   className="absolute -bottom-1 left-0 w-full"
                   viewBox="0 0 300 12"
@@ -49,7 +51,8 @@ export default function HeroSection() {
 
             <p className="mt-4 max-w-lg text-base leading-relaxed text-[#5c3a1e]/80 sm:mt-6 sm:text-lg">
               Hand-selected Rudraksha beads sourced directly from the sacred
-              forests of Nepal — authenticated, blessed, and delivered with reverence to your doorstep.
+              forests of Nepal — authenticated, blessed, and delivered with
+              reverence to your doorstep.
             </p>
 
             {/* Trust chips */}
@@ -99,7 +102,8 @@ export default function HeroSection() {
                 ))}
               </div>
               <p className="text-xs text-[#5c3a1e]/80 sm:text-sm">
-                <span className="font-bold text-[#422006]">10,000+</span> devotees trust us worldwide
+                <span className="font-bold text-[#422006]">10,000+</span>{" "}
+                devotees trust us worldwide
               </p>
             </div>
           </div>
@@ -132,9 +136,16 @@ export default function HeroSection() {
                   { val: "4.9★", label: "Rating" },
                   { val: "Nepal", label: "Origin" },
                 ].map(({ val, label }) => (
-                  <div key={label} className="flex flex-col items-center text-center">
-                    <span className="text-xs font-bold text-[#713f12] sm:text-sm">{val}</span>
-                    <span className="text-[9px] text-[#5c3a1e]/70 sm:text-[10px]">{label}</span>
+                  <div
+                    key={label}
+                    className="flex flex-col items-center text-center"
+                  >
+                    <span className="text-xs font-bold text-[#713f12] sm:text-sm">
+                      {val}
+                    </span>
+                    <span className="text-[9px] text-[#5c3a1e]/70 sm:text-[10px]">
+                      {label}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -153,7 +164,9 @@ export default function HeroSection() {
               <p className="text-[10px] text-[#5c3a1e]/60">By Nepali Experts</p>
             </div>
             <div className="absolute -right-2 bottom-4 hidden rounded-xl border border-amber-900/10 bg-white px-3 py-1.5 shadow-lg shadow-amber-900/10 sm:block sm:px-3 sm:py-2">
-              <p className="text-xs font-bold text-[#713f12]">🚚 Free Shipping</p>
+              <p className="text-xs font-bold text-[#713f12]">
+                🚚 Free Shipping
+              </p>
               <p className="text-[10px] text-[#5c3a1e]/60">Orders over $150</p>
             </div>
           </div>

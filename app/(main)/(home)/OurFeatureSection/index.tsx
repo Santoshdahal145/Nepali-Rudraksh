@@ -45,7 +45,7 @@ const features = [
   },
 ];
 
-export default function FeatureSection() {
+export default function OurFeatureSection() {
   return (
     <section id="features" className="bg-white py-14 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -59,7 +59,8 @@ export default function FeatureSection() {
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[#5c3a1e]/70 sm:text-base">
             We are more than a store — we are guardians of an ancient tradition,
-            connecting spiritual seekers with genuinely sacred Himalayan Rudraksha.
+            connecting spiritual seekers with genuinely sacred Himalayan
+            Rudraksha.
           </p>
         </div>
 
@@ -70,11 +71,17 @@ export default function FeatureSection() {
               key={title}
               className={`group rounded-2xl border ${border} bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-900/8 sm:p-6`}
             >
-              <div className={`mb-3.5 inline-flex h-10 w-10 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${color}`}>
+              <div
+                className={`mb-3.5 inline-flex h-10 w-10 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${color}`}
+              >
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mb-1.5 text-base font-bold text-[#422006] sm:text-lg">{title}</h3>
-              <p className="text-xs leading-relaxed text-[#5c3a1e]/70 sm:text-sm">{desc}</p>
+              <h3 className="mb-1.5 text-base font-bold text-[#422006] sm:text-lg">
+                {title}
+              </h3>
+              <p className="text-xs leading-relaxed text-[#5c3a1e]/70 sm:text-sm">
+                {desc}
+              </p>
             </div>
           ))}
         </div>
@@ -88,8 +95,12 @@ export default function FeatureSection() {
             { val: "4.9★", label: "Average Rating" },
           ].map(({ val, label }) => (
             <div key={label} className="flex flex-col items-center text-center">
-              <span className="text-xl font-extrabold text-amber-300 sm:text-2xl lg:text-3xl">{val}</span>
-              <span className="mt-1 text-[10px] font-medium text-amber-100/80 uppercase tracking-wider sm:text-xs">{label}</span>
+              <span className="text-xl font-extrabold text-amber-300 sm:text-2xl lg:text-3xl">
+                {val}
+              </span>
+              <span className="mt-1 text-[10px] font-medium text-amber-100/80 uppercase tracking-wider sm:text-xs">
+                {label}
+              </span>
             </div>
           ))}
         </div>
