@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Menu,
   Search,
   ShoppingBag,
   User,
-  X,
   ArrowRight,
   Sparkles,
   ChevronDown,
@@ -19,208 +16,21 @@ import {
   Calendar,
   Layers,
 } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/AuthContext";
 import useCart from "@/hooks/tanstack-hooks/useCart";
 import CurrencySelector from "./CurrencySelector";
-
-// Mega menu catalog for "Shop" dropdown
-const shopMegaMenu = {
-  categories: [
-    {
-      name: "Individual Rudraksha",
-      desc: "Natural 1 to 21 Mukhi single beads",
-      href: "/all-products?type=INDIVIDUAL_RUDRAKSHA",
-      badge: "Popular",
-      emoji: "🌿",
-    },
-    {
-      name: "Sacred Japa Malas",
-      desc: "Hand-knotted 108+1 meditation malas",
-      href: "/all-products?type=RUDRAKSHA_MALA",
-      badge: "Bestseller",
-      emoji: "📿",
-    },
-    {
-      name: "Rudraksha Bracelets",
-      desc: "Daily protection & sterling silver",
-      href: "/all-products?search=bracelet",
-      emoji: "⚡",
-    },
-    {
-      name: "Rare Collector Beads",
-      desc: "Gauri Shankar, Trijuti & 1 Mukhi",
-      href: "/all-products?search=collector",
-      badge: "Rare",
-      emoji: "👑",
-    },
-  ],
-  popularMukhis: [
-    {
-      name: "1 Mukhi (Half Moon)",
-      desc: "Supreme consciousness & Shiva",
-      href: "/all-products?mukhi=1",
-      emoji: "🌙",
-    },
-    {
-      name: "5 Mukhi (Panchamukhi)",
-      desc: "Health, peace & daily japa",
-      href: "/all-products?mukhi=5",
-      emoji: "🌿",
-    },
-    {
-      name: "7 Mukhi (Mahalakshmi)",
-      desc: "Wealth, abundance & prosperity",
-      href: "/all-products?mukhi=7",
-      emoji: "✨",
-    },
-    {
-      name: "8 Mukhi (Lord Ganesha)",
-      desc: "Removes obstacles & brings success",
-      href: "/all-products?mukhi=8",
-      emoji: "🐘",
-    },
-    {
-      name: "11 Mukhi (Hanuman)",
-      desc: "Courage, protection & willpower",
-      href: "/all-products?mukhi=11",
-      emoji: "🛡️",
-    },
-    {
-      name: "14 Mukhi (Devamani)",
-      desc: "Awakens Ajna intuition chakra",
-      href: "/all-products?mukhi=14",
-      emoji: "🔱",
-    },
-  ],
-  terroirs: [
-    {
-      name: "Sankhuwasabha, Nepal",
-      desc: "Prime high-altitude forest harvest",
-      href: "/all-products?search=sankhuwasabha",
-      emoji: "🏔️",
-    },
-    {
-      name: "Bhojpur Wild Terroir",
-      desc: "Ancient natural mountain growth",
-      href: "/all-products?search=bhojpur",
-      emoji: "🌾",
-    },
-    {
-      name: "Pashupatinath Consecrated",
-      desc: "Blessed with holy Gangajal & Vedic mantras",
-      href: "/all-products",
-      emoji: "🕉️",
-    },
-    {
-      name: "100% Lab Authenticated",
-      desc: "Certified with X-ray clarity inspection",
-      href: "/all-products",
-      emoji: "📜",
-    },
-  ],
-};
-
-const searchableProducts = [
-  {
-    id: "1",
-    name: "1 Mukhi Half Moon Rudraksha",
-    mukhi: "1 Mukhi",
-    price: "$499",
-    category: "Collector Rare",
-    emoji: "🌙",
-    deity: "Lord Shiva",
-  },
-  {
-    id: "2",
-    name: "5 Mukhi Nepal Siddh Mala (108+1)",
-    mukhi: "5 Mukhi",
-    price: "$149",
-    category: "Japa Mala",
-    emoji: "📿",
-    deity: "Kalagni Rudra",
-  },
-  {
-    id: "3",
-    name: "7 Mukhi Mahalakshmi Rudraksha",
-    mukhi: "7 Mukhi",
-    price: "$189",
-    category: "Sacred Mukhi",
-    emoji: "✨",
-    deity: "Goddess Mahalakshmi",
-  },
-  {
-    id: "4",
-    name: "14 Mukhi Devamani Rudraksha",
-    mukhi: "14 Mukhi",
-    price: "$1299",
-    category: "Collector Rare",
-    emoji: "🔱",
-    deity: "Lord Hanuman & Shiva",
-  },
-  {
-    id: "5",
-    name: "Sacred Rudraksha Silver Bracelet",
-    mukhi: "5 Mukhi",
-    price: "$89",
-    category: "Silver Ornament",
-    emoji: "⚡",
-    deity: "Lord Shiva",
-  },
-  {
-    id: "6",
-    name: "Gauri Shankar Sacred Divine Bead",
-    mukhi: "Twin Bead",
-    price: "$649",
-    category: "Sacred Union",
-    emoji: "💫",
-    deity: "Shiva & Parvati",
-  },
-  {
-    id: "7",
-    name: "8 Mukhi Lord Ganesha Rudraksha",
-    mukhi: "8 Mukhi",
-    price: "$219",
-    category: "Sacred Mukhi",
-    emoji: "🐘",
-    deity: "Lord Ganesha",
-  },
-  {
-    id: "8",
-    name: "11 Mukhi Hanuman Rudraksha",
-    mukhi: "11 Mukhi",
-    price: "$389",
-    category: "Sacred Mukhi",
-    emoji: "🛡️",
-    deity: "11 Rudras / Hanuman",
-  },
-];
-
-const popularSearches = [
-  "1 Mukhi",
-  "Siddh Mala 108",
-  "7 Mukhi Wealth",
-  "Gauri Shankar",
-  "Silver Bracelet",
-  "Hanuman 11 Mukhi",
-];
+import MobileNav from "./MobileNav";
+import SearchModal from "./SearchModal";
+import { shopMegaMenu } from "./nav-data";
 
 export default function NavBar() {
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
-  const [mobileShopExpanded, setMobileShopExpanded] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const accountTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
@@ -286,50 +96,17 @@ export default function NavBar() {
     }, 180);
   };
 
-  // Auto focus input when search modal opens
-  useEffect(() => {
-    if (searchOpen) {
-      const timer = setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [searchOpen]);
-
-  // Handle ESC key to close search modal & dropdowns
+  // Handle ESC key to close dropdowns
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (searchOpen) {
-          setSearchOpen(false);
-          setSearchQuery("");
-        }
         setShopDropdownOpen(false);
         setAccountDropdownOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [searchOpen]);
-
-  // Filter products by search query
-  const filteredResults = searchQuery.trim()
-    ? searchableProducts.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.mukhi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.deity.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setSearchOpen(false);
-      router.push(`/all-products`);
-    }
-  };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -561,20 +338,18 @@ export default function NavBar() {
           {/* Currency Selector */}
           <CurrencySelector variant="desktop" />
 
-          {/* Cart Pill */}
-          <Link href="/cart">
-            <Button
-              variant="outline"
-              className="relative h-9 gap-2 rounded-full border-amber-900/15 bg-white/90 px-3.5 text-xs font-semibold text-[#5c3a1e] hover:bg-amber-50 hover:text-[#713f12] shadow-2xs cursor-pointer"
-            >
-              <ShoppingBag className="size-3.5 text-[#713f12]" />
-              <span>Cart</span>
-              {isMounted && totalItems > 0 && (
-                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#713f12] px-1 text-[9px] font-bold text-white">
-                  {totalItems > 99 ? "99+" : totalItems}
-                </span>
-              )}
-            </Button>
+          {/* Cart Pill (Himalayan Botanical Sage 🌿) */}
+          <Link
+            href="/cart"
+            className="relative flex h-9 items-center gap-2 rounded-full border border-[#c7d7c9] bg-[#eaf0eb] px-3.5 text-xs font-bold text-[#243d2c] shadow-2xs transition-all duration-200 hover:bg-[#dbe6dd] hover:border-[#b0c8b3] cursor-pointer"
+          >
+            <ShoppingBag className="size-3.5 text-[#2c5339]" />
+            <span>Cart</span>
+            {isMounted && totalItems > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2c5339] px-1 text-[9px] font-bold text-white">
+                {totalItems > 99 ? "99+" : totalItems}
+              </span>
+            )}
           </Link>
 
           {/* Login / Account Dropdown */}
@@ -586,15 +361,15 @@ export default function NavBar() {
             >
               <Link
                 href="/profile"
-                className="group flex h-9 items-center gap-2 rounded-full border border-amber-900/20 bg-amber-50/70 pl-1 pr-3 transition-all hover:border-amber-900/40 hover:bg-amber-100/60"
+                className="group flex h-9 items-center gap-2 rounded-full border border-[#e2d5c4] bg-[#f6eee4] pl-1 pr-3 text-xs font-semibold text-[#553c2a] shadow-2xs transition-all duration-200 hover:bg-[#ede1d0] hover:border-[#d0bfa8]"
               >
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#713f12] text-xs font-bold text-white">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#7a5538] text-xs font-bold text-[#f6eee4]">
                   {userInitials}
                 </div>
-                <span className="max-w-24 truncate text-xs font-semibold text-[#422006]">
+                <span className="max-w-24 truncate text-xs font-semibold text-[#553c2a]">
                   {userDisplayName}
                 </span>
-                <ChevronDown className="h-3 w-3 text-[#713f12]/60" />
+                <ChevronDown className="h-3 w-3 text-[#7a5538]/70" />
               </Link>
 
               {/* Account Dropdown */}
@@ -645,14 +420,12 @@ export default function NavBar() {
               )}
             </div>
           ) : (
-            <Link href="/login">
-              <Button
-                variant="outline"
-                className="h-9 gap-1.5 rounded-full border-amber-900/20 bg-white/90 px-3.5 text-xs font-semibold text-[#713f12] hover:bg-amber-50 hover:border-amber-900/40 cursor-pointer"
-              >
-                <User className="size-3.5" />
-                <span>Login</span>
-              </Button>
+            <Link
+              href="/login"
+              className="flex h-9 items-center gap-1.5 rounded-full border border-[#e2d5c4] bg-[#f6eee4] px-3.5 text-xs font-semibold text-[#553c2a] shadow-2xs transition-all duration-200 hover:bg-[#ede1d0] hover:border-[#d0bfa8] cursor-pointer"
+            >
+              <User className="size-3.5 text-[#7a5538]" />
+              <span>Login</span>
             </Link>
           )}
 
@@ -667,461 +440,17 @@ export default function NavBar() {
       </div>
 
       {/* ═════════════════════════════════════════════════════════════════════════════ */}
-      {/* ── MOBILE NAVIGATION (lg:hidden) — TWO-TIER NON-CONGESTED STRUCTURE ──      */}
+      {/* ── MOBILE NAVIGATION (lg:hidden) ──                                          */}
       {/* ═════════════════════════════════════════════════════════════════════════════ */}
-      <div className="lg:hidden flex flex-col bg-white border-b border-amber-900/10">
-        {/* ── Line 1 (Above): Bigger App Logo & Name at Leftmost, Search & Menu at Rightmost ── */}
-        <div className="flex items-center justify-between px-4 py-3">
-          {/* Leftmost: App Logo & App Name (Enlarged) */}
-          <Link href="/" className="flex items-center gap-3 shrink-0 group">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#713f12] text-lg text-amber-100 shadow-xs transition-transform duration-200 group-active:scale-95">
-              🌿
-            </span>
-            <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-black tracking-tight text-[#422006] leading-tight">
-                Nepali <span className="text-[#713f12]">Rudraksh</span>
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-[#713f12]/80 leading-none mt-0.5">
-                Authentic Himalayan Beads
-              </span>
-            </div>
-          </Link>
-
-          {/* Rightmost: Search at the left of Menu */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Search Trigger Button */}
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              aria-label="Search items"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-900/15 bg-white text-[#713f12] shadow-2xs hover:border-amber-900/35 hover:bg-amber-50 active:scale-95 transition-all cursor-pointer"
-            >
-              <Search className="size-5" />
-            </button>
-
-            {/* Menu Icon Drawer Trigger */}
-            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-              <SheetTrigger>
-                <div
-                  role="button"
-                  aria-label="Open navigation menu"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-900/15 bg-[#713f12] text-amber-100 shadow-2xs hover:bg-[#5c330e] active:scale-95 transition-all cursor-pointer"
-                >
-                  <Menu className="size-5" />
-                </div>
-              </SheetTrigger>
-
-            {/* iOS-Inspired Drawer Menu */}
-            <SheetContent
-              side="right"
-              className="flex w-84 flex-col border-l border-amber-900/15 bg-[#faf7f2] p-0 text-[#422006]"
-            >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between border-b border-amber-900/10 px-5 py-4 bg-white">
-                <SheetTitle className="flex items-center gap-2 text-sm font-bold text-[#422006]">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#713f12] text-xs text-amber-100">
-                    🌿
-                  </span>
-                  Nepali Rudraksh
-                </SheetTitle>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full text-[#713f12]/70 hover:bg-amber-50 hover:text-[#713f12]"
-                  onClick={() => setSheetOpen(false)}
-                >
-                  <X className="size-4" />
-                </Button>
-              </div>
-
-              {/* Drawer Search */}
-              <div className="p-4 border-b border-amber-900/10 bg-white/70">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSheetOpen(false);
-                    setSearchOpen(true);
-                  }}
-                  className="flex w-full items-center gap-2.5 rounded-2xl border border-amber-900/15 bg-white px-3.5 py-2.5 text-xs text-[#5c3a1e]/70 shadow-2xs hover:border-amber-900/30 transition-colors"
-                >
-                  <Search className="h-4 w-4 text-[#713f12]" />
-                  <span>Search 1-21 Mukhi, malas...</span>
-                </button>
-              </div>
-
-              {/* Drawer Navigation Links & Catalog */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-                {/* Shop Catalog Accordion Card */}
-                <div className="rounded-2xl border border-amber-900/15 bg-white overflow-hidden shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setMobileShopExpanded(!mobileShopExpanded)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-xs font-bold text-[#422006] hover:bg-amber-50/50 transition-colors"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Layers className="h-4 w-4 text-[#713f12]" />
-                      Shop Catalog
-                    </span>
-                    <ChevronDown
-                      className={`h-4 w-4 text-[#713f12]/60 transition-transform duration-200 ${
-                        mobileShopExpanded ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-
-                  {mobileShopExpanded && (
-                    <div className="border-t border-amber-900/10 bg-amber-50/30 p-2 space-y-1">
-                      <Link
-                        href="/all-products"
-                        onClick={() => setSheetOpen(false)}
-                        className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-[#713f12] hover:bg-amber-100/60"
-                      >
-                        <span>View All Products</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-
-                      <div className="pt-1.5 pb-0.5 px-3 text-[10px] font-bold uppercase tracking-wider text-[#713f12]/70">
-                        Categories
-                      </div>
-                      {shopMegaMenu.categories.map((c) => (
-                        <Link
-                          key={c.name}
-                          href={c.href}
-                          onClick={() => setSheetOpen(false)}
-                          className="flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-medium text-[#422006] hover:bg-amber-100/50"
-                        >
-                          <span>{c.emoji}</span>
-                          <span>{c.name}</span>
-                        </Link>
-                      ))}
-
-                      <div className="pt-2 pb-0.5 px-3 text-[10px] font-bold uppercase tracking-wider text-[#713f12]/70">
-                        Popular Mukhis
-                      </div>
-                      <div className="grid grid-cols-2 gap-1 px-1">
-                        {shopMegaMenu.popularMukhis.slice(0, 4).map((m) => (
-                          <Link
-                            key={m.name}
-                            href={m.href}
-                            onClick={() => setSheetOpen(false)}
-                            className="flex items-center gap-1.5 rounded-lg p-1.5 text-[11px] font-medium text-[#422006] hover:bg-amber-100/50 truncate"
-                          >
-                            <span>{m.emoji}</span>
-                            <span className="truncate">{m.name.split(" ")[0]} Mukhi</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* About Us */}
-                <Link
-                  href="/#story"
-                  onClick={() => setSheetOpen(false)}
-                  className="flex items-center gap-2.5 rounded-2xl border border-amber-900/15 bg-white px-4 py-3 text-xs font-bold text-[#422006] hover:bg-amber-50/70 transition-colors shadow-2xs"
-                >
-                  <ShieldCheck className="h-4 w-4 text-[#713f12]" />
-                  <span>About Us</span>
-                </Link>
-
-                {/* Consultation */}
-                <Link
-                  href="/consultation"
-                  onClick={() => setSheetOpen(false)}
-                  className="flex items-center gap-2.5 rounded-2xl border border-amber-900/15 bg-white px-4 py-3 text-xs font-bold text-[#422006] hover:bg-amber-50/70 transition-colors shadow-2xs"
-                >
-                  <Calendar className="h-4 w-4 text-[#713f12]" />
-                  <span>Astrology Consultation</span>
-                </Link>
-
-                {/* Blogs */}
-                <Link
-                  href="/blogs"
-                  onClick={() => setSheetOpen(false)}
-                  className="flex items-center gap-2.5 rounded-2xl border border-amber-900/15 bg-white px-4 py-3 text-xs font-bold text-[#422006] hover:bg-amber-50/70 transition-colors shadow-2xs"
-                >
-                  <BookOpen className="h-4 w-4 text-[#713f12]" />
-                  <span>Vedic Wisdom Blogs</span>
-                </Link>
-              </div>
-
-              {/* Drawer Bottom Actions */}
-              <div className="p-4 space-y-2.5 border-t border-amber-900/10 bg-white">
-                <CurrencySelector variant="full" />
-
-                {isAuthenticated ? (
-                  <div className="rounded-2xl border border-amber-900/15 bg-amber-50/40 p-3 space-y-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#713f12] text-xs font-bold text-white">
-                        {userInitials}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-bold text-[#422006]">
-                          {userDisplayName}
-                        </p>
-                        <p className="truncate text-[10px] text-[#713f12]/70">
-                          {user?.email}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-amber-900/10">
-                      <Link
-                        href="/profile"
-                        onClick={() => setSheetOpen(false)}
-                        className="rounded-xl bg-white px-2 py-1.5 text-center text-xs font-semibold text-[#422006] shadow-2xs hover:bg-amber-50"
-                      >
-                        Profile
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handleLogout();
-                          setSheetOpen(false);
-                        }}
-                        className="rounded-xl bg-red-100/70 px-2 py-1.5 text-center text-xs font-semibold text-red-700 hover:bg-red-200/60 cursor-pointer"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <Link href="/login" onClick={() => setSheetOpen(false)}>
-                    <Button
-                      variant="outline"
-                      className="h-10 w-full gap-2 rounded-full border-amber-900/20 text-xs font-bold text-[#713f12] hover:bg-amber-50"
-                    >
-                      <User className="size-3.5" />
-                      Login / Register
-                    </Button>
-                  </Link>
-                )}
-
-                <Link href="/all-products" onClick={() => setSheetOpen(false)}>
-                  <Button className="h-10 w-full gap-2 rounded-full bg-[#713f12] hover:bg-[#5c330e] text-white text-xs font-bold shadow-xs">
-                    <span>Shop Full Collection</span>
-                    <ArrowRight className="size-3.5" />
-                  </Button>
-                </Link>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-
-        {/* ── Line 2 (Just Below Them): Bigger Buttons for Auth (Login), Cart, and Currency (NPR) ── */}
-        <div className="grid grid-cols-3 gap-2 px-3.5 py-2.5 border-t border-amber-900/10 bg-[#faf7f2]/80">
-          {/* 1. Auth: Login or Profile (Bigger Button) */}
-          {isAuthenticated ? (
-            <Link
-              href="/profile"
-              className="flex h-11 items-center justify-center gap-2 rounded-xl border border-amber-900/15 bg-white px-2.5 text-xs sm:text-sm font-bold text-[#422006] shadow-2xs hover:border-amber-900/35 hover:bg-amber-50 active:scale-95 transition-all"
-            >
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#713f12] text-xs font-bold text-white shrink-0">
-                {userInitials}
-              </div>
-              <span className="truncate text-xs sm:text-sm text-[#422006]">
-                {userDisplayName.split(" ")[0]}
-              </span>
-            </Link>
-          ) : (
-            <Link href="/login" className="block w-full">
-              <div className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-amber-900/15 bg-white px-2.5 text-xs sm:text-sm font-bold text-[#713f12] shadow-2xs hover:border-amber-900/35 hover:bg-amber-50 active:scale-95 transition-all cursor-pointer">
-                <User className="size-4.5 shrink-0 text-[#713f12]" />
-                <span className="text-xs sm:text-sm font-bold tracking-wide">Login</span>
-              </div>
-            </Link>
-          )}
-
-          {/* 2. Cart (Bigger Button) */}
-          <Link href="/cart" className="block w-full">
-            <div className="relative flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-amber-900/15 bg-white px-2.5 text-xs sm:text-sm font-bold text-[#422006] shadow-2xs hover:border-amber-900/35 hover:bg-amber-50 active:scale-95 transition-all cursor-pointer">
-              <ShoppingBag className="size-4.5 shrink-0 text-[#713f12]" />
-              <span className="text-xs sm:text-sm font-bold tracking-wide">Cart</span>
-              {isMounted && totalItems > 0 && (
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#713f12] px-1 text-[11px] font-extrabold text-white shadow-2xs">
-                  {totalItems > 99 ? "99+" : totalItems}
-                </span>
-              )}
-            </div>
-          </Link>
-
-          {/* 3. Currency / NPR (Bigger Button) */}
-          <div className="w-full [&>div]:w-full [&>button]:h-11! [&>button]:w-full! [&>button]:rounded-xl! [&>button]:px-2.5! [&>button]:text-xs! sm:[&>button]:text-sm! [&>button]:font-bold! [&>button]:shadow-2xs! [&>button]:justify-center! [&>button]:border-amber-900/15! [&>button]:bg-white! hover:[&>button]:border-amber-900/35! hover:[&>button]:bg-amber-50!">
-            <CurrencySelector variant="compact" className="w-full" />
-          </div>
-        </div>
-      </div>
+      <MobileNav onOpenSearch={() => setSearchOpen(true)} />
 
       {/* ═════════════════════════════════════════════════════════════════════════════ */}
-      {/* ── SEARCH DIALOG MODAL (Warm Sacred Theme) ──                                */}
+      {/* ── SEARCH DIALOG MODAL ──                                                    */}
       {/* ═════════════════════════════════════════════════════════════════════════════ */}
-      {searchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-16 sm:pt-24 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-amber-900/15 bg-white shadow-2xl animate-in zoom-in-95 duration-200 text-[#422006]">
-            {/* Search Input Box */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="relative border-b border-amber-900/10 p-4"
-            >
-              <div className="flex items-center gap-3">
-                <Search className="h-5 w-5 text-[#713f12] shrink-0" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder="Search 1-21 Mukhi, Siddh Mala, bracelets, deity..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent text-sm sm:text-base font-medium placeholder:text-[#5c3a1e]/40 outline-none text-[#422006]"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="rounded-full p-1 text-[#713f12]/60 hover:bg-amber-50 hover:text-[#713f12] cursor-pointer"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSearchOpen(false);
-                    setSearchQuery("");
-                  }}
-                  className="h-7 px-2 text-[11px] font-semibold text-[#713f12]/70 hover:bg-amber-50"
-                >
-                  ESC
-                </Button>
-              </div>
-            </form>
-
-            {/* Modal Body */}
-            <div className="max-h-[60vh] overflow-y-auto p-5">
-              {searchQuery.trim() ? (
-                /* Live Results */
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#713f12] mb-3">
-                    Found {filteredResults.length} Items
-                  </p>
-
-                  {filteredResults.length === 0 ? (
-                    <div className="py-8 text-center">
-                      <span className="text-3xl mb-2 inline-block">🔍</span>
-                      <p className="text-sm font-bold text-[#422006]">
-                        No matching sacred beads found
-                      </p>
-                      <p className="text-xs text-[#5c3a1e]/70 mt-1">
-                        Try searching for &quot;5 Mukhi&quot;, &quot;Siddh Mala&quot;, or &quot;Gauri Shankar&quot;.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {filteredResults.map((item) => (
-                        <Link
-                          key={item.id}
-                          href="/all-products"
-                          onClick={() => setSearchOpen(false)}
-                          className="flex items-center justify-between rounded-2xl border border-amber-900/10 p-3.5 shadow-2xs transition hover:bg-amber-50/60"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100/50 text-xl">
-                              {item.emoji}
-                            </span>
-                            <div>
-                              <h4 className="text-xs sm:text-sm font-bold text-[#422006]">
-                                {item.name}
-                              </h4>
-                              <p className="text-[11px] text-[#713f12]/70">
-                                {item.mukhi} · {item.deity}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3">
-                            <span className="text-xs sm:text-sm font-extrabold text-[#713f12]">
-                              {item.price}
-                            </span>
-                            <ArrowRight className="h-4 w-4 text-[#713f12]/60" />
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                /* Default State / Popular Searches */
-                <div>
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#713f12] mb-3">
-                    <Sparkles className="h-3.5 w-3.5 text-[#713f12]" />
-                    Popular Searches
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {popularSearches.map((term) => (
-                      <button
-                        key={term}
-                        onClick={() => setSearchQuery(term)}
-                        className="rounded-full border border-amber-900/15 bg-white px-3.5 py-1.5 text-xs font-medium text-[#5c3a1e] hover:border-amber-900/35 hover:bg-amber-50 hover:text-[#713f12] transition-colors cursor-pointer"
-                      >
-                        {term}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-amber-900/10 pt-4">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[#713f12] mb-3">
-                      Featured Collections
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <Link
-                        href="/all-products"
-                        onClick={() => setSearchOpen(false)}
-                        className="flex items-center gap-3 rounded-2xl border border-amber-900/10 p-3 hover:bg-amber-50/60"
-                      >
-                        <span className="text-xl">📿</span>
-                        <div>
-                          <p className="text-xs font-bold text-[#422006]">Nepal Siddh Malas</p>
-                          <p className="text-[10px] text-[#713f12]/70">108+1 Blessed Beads</p>
-                        </div>
-                      </Link>
-
-                      <Link
-                        href="/all-products"
-                        onClick={() => setSearchOpen(false)}
-                        className="flex items-center gap-3 rounded-2xl border border-amber-900/10 p-3 hover:bg-amber-50/60"
-                      >
-                        <span className="text-xl">🌙</span>
-                        <div>
-                          <p className="text-xs font-bold text-[#422006]">1 to 21 Mukhi Beads</p>
-                          <p className="text-[10px] text-[#713f12]/70">Rare Collector Grades</p>
-                        </div>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer CTA */}
-            <div className="border-t border-amber-900/10 p-3.5 px-5 sm:flex sm:items-center sm:justify-between text-center bg-[#faf7f2]/50">
-              <span className="text-[11px] text-[#713f12]/70 hidden sm:inline">
-                Press <kbd className="rounded border border-amber-900/15 bg-white px-1 py-0.5 font-mono text-[10px]">Enter</kbd> to search full catalog
-              </span>
-              <Link
-                href="/all-products"
-                onClick={() => setSearchOpen(false)}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#713f12] hover:underline"
-              >
-                <span>View Full Catalog</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
     </div>
   );
 }
