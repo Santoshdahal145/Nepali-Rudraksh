@@ -8,6 +8,7 @@ import AllProductsMobileFilter from "./AllProductsMobileFilter";
 import PublicProductCard from "./PublicProductCard";
 import PublicProductSearchAndFilter from "./PublicProductSearchAndFilter";
 import { AllProductsSearchParamsPublic } from "./types";
+import PublicAllProductsHeader from "./PublicAllProductsHeader";
 
 interface PageContentProps {
   products: ProductType[];
@@ -33,39 +34,37 @@ export default function PageContent({
   };
 
   return (
-    <main className="min-h-screen bg-[#faf7f2] pb-20 pt-8 sm:pt-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
-        <div>
-          <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#422006]">
-                Authentic Himalayan Rudraksha
-              </h1>
-              <p className="mt-2 text-xs sm:text-sm text-[#5c3a1e]/80 max-w-2xl leading-relaxed">
-                Every bead in our sacred sanctuary is 100% naturally formed,
-                lab-certified, and energized according to Vedic rites at the
-                holy Pashupatinath Temple in Kathmandu.
-              </p>
-            </div>
-          </div>
-        </div>
+    <main
+      className="
+    min-h-screen w-full
+    bg-[#faf7f2]
+    px-3.5 pb-24 pt-4
+    sm:px-6 sm:pt-6
+    md:pt-8
+    lg:px-8
+    space-y-6 sm:space-y-8
+    mx-auto max-w-7xl
+  "
+    >
+      <PublicAllProductsHeader />
 
-        <PublicProductSearchAndFilter
-          initialSearch={searchParams.search}
-          initialSortBy={searchParams.sortBy}
-          initialSortOrder={searchParams.sortOrder}
-          initialMukhi={searchParams.mukhi}
-          totalFound={pagination.total}
-          onOpenMobileFilter={() => setMobileFilterOpen(true)}
-        />
+      <PublicProductSearchAndFilter
+        initialSearch={searchParams.search}
+        initialSortBy={searchParams.sortBy}
+        initialSortOrder={searchParams.sortOrder}
+        initialMukhi={searchParams.mukhi}
+        totalFound={pagination.total}
+        onOpenMobileFilter={() => setMobileFilterOpen(true)}
+      />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
-          {products.map((product) => (
-            <PublicProductCard key={product.id} product={product} />
-          ))}
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
+        {products.map((product) => (
+          <PublicProductCard key={product.id} product={product} />
+        ))}
+      </div>
 
-        {pagination.totalPages > 1 && (
+      {pagination.totalPages > 1 && (
+        <div className="border-t border-amber-900/10 pt-4">
           <Pagination
             page={pagination.page}
             totalPages={pagination.totalPages}
@@ -73,13 +72,13 @@ export default function PageContent({
             hasPrevPage={pagination.hasPrevPage}
             onPageChange={navigateToPage}
           />
-        )}
+        </div>
+      )}
 
-        <AllProductsMobileFilter
-          isOpen={mobileFilterOpen}
-          onClose={() => setMobileFilterOpen(false)}
-        />
-      </div>
+      <AllProductsMobileFilter
+        isOpen={mobileFilterOpen}
+        onClose={() => setMobileFilterOpen(false)}
+      />
     </main>
   );
 }

@@ -151,16 +151,16 @@ export default function PublicProductSearchAndFilter({
         </form>
 
         {/* Controls: Mukhi filter & Sort select */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5">
           {onOpenMobileFilter && (
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onOpenMobileFilter}
-              className="sm:hidden h-10.5 rounded-xl border-amber-900/20 text-[#713f12] gap-1.5 px-3 text-xs font-semibold"
+              className="sm:hidden h-10 rounded-xl border-amber-900/20 text-[#713f12] gap-1.5 px-3 text-xs font-semibold shrink-0 cursor-pointer"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal className="h-3.5 w-3.5" />
               <span>Filters</span>
             </Button>
           )}

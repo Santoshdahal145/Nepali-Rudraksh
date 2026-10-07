@@ -8,8 +8,6 @@ import AllProductsPageError from "./AllProductsPageError";
 import AllProductsFilterEmpty from "./AllProductsFilterEmpty";
 import PageContent from "./PageContent";
 
-//META DATA FUNCTION
-
 export async function generateMetadata({
   searchParams,
 }: {
@@ -91,7 +89,7 @@ export default async function AllProductsPage({
     return <AllProductsPageError />;
   }
 
-  const products = response.products || [];
+  const products = response?.products || [];
 
   if (products.length === 0) {
     return <AllProductsFilterEmpty />;
