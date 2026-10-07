@@ -23,6 +23,8 @@ import CurrencySelector from "./CurrencySelector";
 import MobileNav from "./MobileNav";
 import SearchModal from "./SearchModal";
 import { shopMegaMenu } from "./nav-data";
+import Image from "next/image";
+import appLogo from "@/assets/nepali-rudraksh-logo.png";
 
 export default function NavBar() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -123,17 +125,24 @@ export default function NavBar() {
       {/* ═════════════════════════════════════════════════════════════════════════════ */}
       {/* ── DESKTOP NAVIGATION BAR (lg:flex, hidden on mobile) ──                     */}
       {/* ═════════════════════════════════════════════════════════════════════════════ */}
-      <div className="hidden lg:flex relative mx-auto h-16 max-w-7xl items-center justify-between px-6 xl:px-8 border-b border-amber-900/10">
+      <div className="hidden lg:flex relative mx-auto h-18 max-w-7xl items-center justify-between px-6 xl:px-8 border-b border-amber-900/10">
         {/* Brand: Logo & Name */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#713f12] text-base text-amber-100 shadow-sm transition-transform duration-300 group-hover:scale-105">
-            🌿
-          </span>
+        <Link href="/" className="flex items-center gap-3.5 shrink-0 group">
+          <div className="relative flex h-13 w-13 lg:h-14 lg:w-14 shrink-0 items-center justify-center rounded-full bg-white p-1 border border-amber-900/15 shadow-xs transition-transform duration-300 group-hover:scale-105 overflow-hidden">
+            <Image
+              src={appLogo}
+              alt="Nepali Rudraksh Logo"
+              width={72}
+              height={72}
+              className="h-full w-full object-contain"
+              priority
+            />
+          </div>
           <div className="flex flex-col">
-            <span className="font-bold text-base tracking-tight text-[#422006]">
+            <span className="font-extrabold text-lg lg:text-xl tracking-tight text-[#422006] leading-tight">
               Nepali <span className="text-[#713f12]">Rudraksh</span>
             </span>
-            <span className="text-[9px] font-medium tracking-wider uppercase text-[#713f12]/60">
+            <span className="text-[10px] lg:text-[11px] font-bold tracking-wider uppercase text-[#713f12]/80 mt-0.5">
               Authentic Himalayan Beads
             </span>
           </div>

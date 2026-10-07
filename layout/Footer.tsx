@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import appLogo from "@/assets/nepali-rudraksh-logo.png";
 
 export default function Footer() {
   return (
@@ -23,6 +25,10 @@ export default function Footer() {
               <h3 className="mt-1 text-xl font-bold text-white sm:text-2xl">
                 Receive Vedic Blessings &amp; Rare Bead Alerts
               </h3>
+              <p className="mt-1 text-xs text-amber-200/70 sm:text-sm">
+                Get notified when rare 1-21 Mukhi harvests arrive from Eastern
+                Nepal.
+              </p>
             </div>
 
             <form
@@ -48,14 +54,25 @@ export default function Footer() {
         <div className="space-y-8 lg:grid lg:grid-cols-5 lg:gap-10 lg:space-y-0">
           {/* Brand / Intro */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-base text-[#422006] shadow-md shadow-black/20 sm:h-9 sm:w-9 sm:text-lg">
-                🌿
-              </span>
+            <Link href="/" className="flex items-center gap-3.5 group">
+              <div className="relative flex h-14 w-14 sm:h-15 sm:w-15 shrink-0 items-center justify-center rounded-full bg-white p-1 shadow-md shadow-black/40 border border-amber-400/40 transition-transform duration-300 group-hover:scale-105 overflow-hidden">
+                <Image
+                  src={appLogo}
+                  alt="Nepali Rudraksh Logo"
+                  width={64}
+                  height={64}
+                  className="h-full w-full object-contain"
+                />
+              </div>
 
-              <span className="text-lg font-bold tracking-tight text-white sm:text-xl">
-                Nepali <span className="text-amber-400">Rudraksh</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight">
+                  Nepali <span className="text-amber-400">Rudraksh</span>
+                </span>
+                <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-amber-200/70 mt-0.5">
+                  Authentic Himalayan Beads
+                </span>
+              </div>
             </Link>
 
             <p className="mt-3 max-w-sm text-xs leading-relaxed text-amber-200/70 sm:mt-4 sm:text-sm">

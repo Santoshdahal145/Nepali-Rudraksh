@@ -27,6 +27,8 @@ import { useAuth } from "@/providers/AuthContext";
 import useCart from "@/hooks/tanstack-hooks/useCart";
 import CurrencySelector from "./CurrencySelector";
 import { shopMegaMenu } from "./nav-data";
+import Image from "next/image";
+import appLogo from "@/assets/nepali-rudraksh-logo.png";
 
 interface MobileNavProps {
   onOpenSearch: () => void;
@@ -75,10 +77,17 @@ export default function MobileNav({ onOpenSearch }: MobileNavProps) {
       {/* ── Line 1 (Above): App Logo & Name at Left, Search & Menu at Right ── */}
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left: App Logo & Name */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#713f12] text-lg text-amber-100 shadow-xs transition-transform duration-200 group-active:scale-95">
-            🌿
-          </span>
+        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group">
+          <div className="relative flex h-12 w-12 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-full bg-white p-0.5 border border-amber-900/15 shadow-xs transition-transform duration-200 group-active:scale-95 overflow-hidden">
+            <Image
+              src={appLogo}
+              alt="Nepali Rudraksh Logo"
+              width={64}
+              height={64}
+              className="h-full w-full object-contain"
+              priority
+            />
+          </div>
           <div className="flex flex-col">
             <span className="text-base sm:text-lg font-black tracking-tight text-[#422006] leading-tight">
               Nepali <span className="text-[#713f12]">Rudraksh</span>
@@ -120,10 +129,16 @@ export default function MobileNav({ onOpenSearch }: MobileNavProps) {
             >
               {/* Drawer Header */}
               <div className="flex items-center justify-between border-b border-amber-900/10 px-5 py-4 bg-white">
-                <SheetTitle className="flex items-center gap-2 text-sm font-bold text-[#422006]">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#713f12] text-xs text-amber-100">
-                    🌿
-                  </span>
+                <SheetTitle className="flex items-center gap-2.5 text-base font-bold text-[#422006]">
+                  <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white p-0.5 border border-amber-900/15 shadow-2xs overflow-hidden">
+                    <Image
+                      src={appLogo}
+                      alt="Nepali Rudraksh Logo"
+                      width={52}
+                      height={52}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
                   Nepali Rudraksh
                 </SheetTitle>
                 <Button
