@@ -197,12 +197,12 @@ export default function CurrencySelector({
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
           aria-label={`Select currency, currently ${currency}`}
-          className={`group flex h-9 items-center gap-2 rounded-full border border-amber-900/15 bg-white/90 px-3.5 text-xs font-semibold text-[#5c3a1e] shadow-2xs transition-all duration-200 hover:border-amber-900/35 hover:bg-amber-50 hover:text-[#713f12] cursor-pointer ${triggerClassName}`}
+          className={`group flex h-9.5 items-center gap-2 rounded-full border border-amber-900/15 bg-white/90 px-3.5 text-sm font-semibold text-[#5c3a1e] shadow-2xs transition-all duration-200 hover:border-amber-900/35 hover:bg-amber-50 hover:text-[#713f12] cursor-pointer ${triggerClassName}`}
         >
           <CurrencyFlag currencyCode={currency} flagUrl={activeItem?.flag} size="md" />
           <span className="tracking-wide">{currency}</span>
           <ChevronDown
-            className={`size-3 text-[#713f12]/60 transition-transform duration-200 ${
+            className={`size-3.5 text-[#713f12]/60 transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
