@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -11,6 +11,7 @@ import {
   X,
   ArrowRight,
   ChevronDown,
+  ChevronUp,
   Layers,
   ShieldCheck,
   Calendar,
@@ -27,6 +28,7 @@ import { useAuth } from "@/providers/AuthContext";
 import useCart from "@/hooks/tanstack-hooks/useCart";
 import CurrencySelector from "./CurrencySelector";
 import { shopMegaMenu } from "./nav-data";
+import { usePrice } from "@/providers/PriceContext";
 import Image from "next/image";
 import appLogo from "@/assets/nepali-rudraksh-logo.png";
 
@@ -37,10 +39,55 @@ interface MobileNavProps {
 export default function MobileNav({ onOpenSearch }: MobileNavProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [mobileShopExpanded, setMobileShopExpanded] = useState(false);
+  const [isQuickBarOpen, setIsQuickBarOpen] = useState(false);
+
+  // Remember user quick bar state or default to collapsed to save vertical space
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("nepali_rudraksh_mobile_quickbar");
+      if (saved !== null) {
+        setIsQuickBarOpen(saved === "true");
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const toggleQuickBar = () => {
+    setIsQuickBarOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("nepali_rudraksh_mobile_quickbar", String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
+  const { currency } = usePrice();
+  const quickPanelRef = useRef<HTMLDivElement>(null);
+
+  // Auto-close quick action panel when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        quickPanelRef.current &&
+        !quickPanelRef.current.contains(event.target as Node)
+      ) {
+        setIsQuickBarOpen(false);
+      }
+    }
+    if (isQuickBarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isQuickBarOpen]);
 
   const isMounted = useSyncExternalStore(
     () => () => {},
@@ -73,41 +120,86 @@ export default function MobileNav({ onOpenSearch }: MobileNavProps) {
   };
 
   return (
-    <div className="lg:hidden flex flex-col bg-white border-b border-amber-900/10">
-      {/* ── Line 1 (Above): App Logo & Name at Left, Search & Menu at Right ── */}
-      <div className="flex items-center justify-between px-4 py-3">
+    <div ref={quickPanelRef} className="lg:hidden relative flex flex-col bg-white border-b border-amber-900/10">
+      {/* ── Main Mobile Header: Clean Single Row with Integrated Quick Controller ── */}
+      <div className="flex items-center justify-between px-3.5 sm:px-4 py-2.5 sm:py-3">
         {/* Left: App Logo & Name */}
-        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group">
-          <div className="relative flex h-12 w-12 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-full bg-white p-0.5 border border-amber-900/15 shadow-xs transition-transform duration-200 group-active:scale-95 overflow-hidden">
+        <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group">
+          <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-white p-0.5 border border-amber-900/15 shadow-xs transition-transform duration-200 group-active:scale-95 overflow-hidden">
             <Image
               src={appLogo}
               alt="Nepali Rudraksh Logo"
-              width={64}
-              height={64}
+              width={56}
+              height={56}
               className="h-full w-full object-contain"
               priority
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-base sm:text-lg font-black tracking-tight text-[#422006] leading-tight">
+            <span className="text-sm sm:text-base font-black tracking-tight text-[#422006] leading-tight">
               Nepali <span className="text-[#713f12]">Rudraksh</span>
             </span>
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-[#713f12]/80 leading-none mt-0.5">
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase text-[#713f12]/80 leading-none mt-0.5">
               Authentic Himalayan Beads
             </span>
           </div>
         </Link>
 
-        {/* Right: Search & Drawer Menu Trigger */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Right: Search, Slide Controller Pill, and Drawer Menu */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Search Trigger Button */}
           <button
             type="button"
             onClick={onOpenSearch}
             aria-label="Search items"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-900/15 bg-white text-[#713f12] shadow-2xs hover:border-amber-900/35 hover:bg-amber-50 active:scale-95 transition-all cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-900/15 bg-white text-[#713f12] shadow-2xs hover:border-amber-900/35 hover:bg-amber-50 active:scale-95 transition-all cursor-pointer"
           >
-            <Search className="size-5" />
+            <Search className="size-4.5" />
+          </button>
+
+          {/* Quick Actions Controller (Cart • Login • Currency) */}
+          <button
+            type="button"
+            onClick={toggleQuickBar}
+            aria-expanded={isQuickBarOpen}
+            aria-label={isQuickBarOpen ? "Close quick actions drawer" : "Open quick actions drawer"}
+            className={`group relative flex h-9 items-center gap-1.5 rounded-full border px-2.5 sm:px-3 text-xs font-bold transition-all active:scale-95 cursor-pointer ${
+              isQuickBarOpen
+                ? "border-[#713f12] bg-[#713f12] text-white shadow-xs"
+                : "border-amber-900/15 bg-[#faf7f2] text-[#422006] hover:bg-amber-100/60 shadow-2xs"
+            }`}
+          >
+            {/* Cart Icon & Live Badge */}
+            <div className="relative flex items-center">
+              <ShoppingBag
+                className={`size-4 ${
+                  isQuickBarOpen ? "text-amber-100" : "text-[#713f12]"
+                }`}
+              />
+              {isMounted && totalItems > 0 && (
+                <span className="absolute -top-1.5 -right-2 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#2c5339] px-1 text-[8.5px] font-black text-white ring-1 ring-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
+            </div>
+
+            {/* Currency Pill text */}
+            <span
+              className={`text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wide ${
+                isQuickBarOpen ? "text-amber-100" : "text-[#713f12]"
+              }`}
+            >
+              {currency}
+            </span>
+
+            {/* Animated Chevron */}
+            <ChevronDown
+              className={`size-3.5 transition-transform duration-200 ${
+                isQuickBarOpen
+                  ? "rotate-180 text-amber-200"
+                  : "text-[#713f12]/60 group-hover:text-[#713f12]"
+              }`}
+            />
           </button>
 
           {/* Menu Drawer Sheet */}
@@ -310,49 +402,119 @@ export default function MobileNav({ onOpenSearch }: MobileNavProps) {
         </div>
       </div>
 
-      {/* ── Line 2 (Just Below Them): Quick Action Bar (Auth / Cart / Currency) ── */}
-      <div className="grid grid-cols-3 gap-2 px-3.5 py-2.5 border-t border-amber-900/10 bg-[#faf7f2]/80">
-        {/* 1. Auth: Login or Profile (Warm Sand Palette) */}
-        {isAuthenticated ? (
-          <Link
-            href="/profile"
-            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-[#e2d5c4] bg-[#f6eee4] px-2.5 text-xs sm:text-sm font-bold text-[#553c2a] shadow-2xs hover:bg-[#ede1d0] hover:border-[#d0bfa8] active:scale-95 transition-all"
-          >
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#7a5538] text-xs font-bold text-[#f6eee4] shrink-0">
-              {userInitials}
-            </div>
-            <span className="truncate text-xs sm:text-sm font-bold">
-              {userDisplayName.split(" ")[0]}
-            </span>
-          </Link>
-        ) : (
-          <Link href="/login" className="block w-full">
-            <div className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#e2d5c4] bg-[#f6eee4] px-2.5 text-xs sm:text-sm font-bold text-[#553c2a] shadow-2xs hover:bg-[#ede1d0] hover:border-[#d0bfa8] active:scale-95 transition-all cursor-pointer">
-              <User className="size-4.5 shrink-0 text-[#7a5538]" />
-              <span className="text-xs sm:text-sm font-bold tracking-wide">
-                Login
-              </span>
-            </div>
-          </Link>
-        )}
+      {/* ── Slideable Quick Actions Panel (Login, Cart, Currency) ── */}
+      <div
+        id="mobile-quick-actions-bar"
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+          isQuickBarOpen
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0 pointer-events-none"
+        }`}
+      >
+        <div
+          className={`${
+            isQuickBarOpen ? "overflow-visible" : "overflow-hidden"
+          } border-t border-amber-900/10 bg-[#faf7f2]/95 backdrop-blur-md shadow-lg`}
+        >
+          <div className="p-3.5 space-y-2.5">
+            {/* 1. Account & Cart Cards */}
+            <div className="grid grid-cols-2 gap-2">
+              {/* Account Card */}
+              {isAuthenticated ? (
+                <Link
+                  href="/profile"
+                  onClick={() => setIsQuickBarOpen(false)}
+                  className="flex flex-col justify-between rounded-2xl border border-[#e2d5c4] bg-white p-3 shadow-2xs hover:border-[#d0bfa8] active:scale-[0.98] transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#7a5538] text-xs font-bold text-[#f6eee4] shrink-0">
+                      {userInitials}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-bold text-[#553c2a]">
+                        {userDisplayName.split(" ")[0]}
+                      </p>
+                      <p className="text-[10px] text-[#7a5538]/70">Profile</p>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-[#713f12]">
+                    <span>Orders & Account</span>
+                    <ArrowRight className="size-3" />
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsQuickBarOpen(false)}
+                  className="flex flex-col justify-between rounded-2xl border border-[#e2d5c4] bg-white p-3 shadow-2xs hover:border-[#d0bfa8] active:scale-[0.98] transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f6eee4] border border-[#e2d5c4] text-[#7a5538] shrink-0">
+                      <User className="size-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-[#553c2a]">Account</p>
+                      <p className="text-[10px] text-[#7a5538]/70">Sign In</p>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-[#713f12]">
+                    <span>Login / Register</span>
+                    <ArrowRight className="size-3" />
+                  </div>
+                </Link>
+              )}
 
-        {/* 2. Cart (Himalayan Botanical Sage Palette 🌿) */}
-        <Link href="/cart" className="block w-full">
-          <div className="relative flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#c7d7c9] bg-[#eaf0eb] px-2.5 text-xs sm:text-sm font-bold text-[#243d2c] shadow-2xs hover:bg-[#dbe6dd] hover:border-[#b0c8b3] active:scale-95 transition-all cursor-pointer">
-            <ShoppingBag className="size-4.5 shrink-0 text-[#2c5339]" />
-            <span className="text-xs sm:text-sm font-bold tracking-wide text-[#243d2c]">
-              Cart
-            </span>
-            {isMounted && totalItems > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#2c5339] px-1 text-[11px] font-black text-white shadow-xs">
-                {totalItems > 99 ? "99+" : totalItems}
-              </span>
-            )}
+              {/* Cart Card */}
+              <Link
+                href="/cart"
+                onClick={() => setIsQuickBarOpen(false)}
+                className="flex flex-col justify-between rounded-2xl border border-[#c7d7c9] bg-white p-3 shadow-2xs hover:border-[#b0c8b3] active:scale-[0.98] transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#eaf0eb] border border-[#c7d7c9] text-[#2c5339] shrink-0">
+                      <ShoppingBag className="size-3.5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#243d2c]">Cart</p>
+                      <p className="text-[10px] text-[#2c5339]/70">
+                        {isMounted && totalItems > 0
+                          ? `${totalItems} ${totalItems === 1 ? "item" : "items"}`
+                          : "Empty"}
+                      </p>
+                    </div>
+                  </div>
+                  {isMounted && totalItems > 0 && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#2c5339] px-1.5 text-[10px] font-black text-white">
+                      {totalItems > 99 ? "99+" : totalItems}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-[#2c5339]">
+                  <span>View Cart</span>
+                  <ArrowRight className="size-3" />
+                </div>
+              </Link>
+            </div>
+
+            {/* 2. Currency Selector */}
+            <div className="relative z-20">
+              <CurrencySelector variant="full" className="w-full" />
+            </div>
+
+            {/* 3. Handle to Slide Back Up */}
+            <div className="pt-0.5 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsQuickBarOpen(false)}
+                className="flex items-center gap-1 text-[10px] font-bold text-[#713f12]/75 hover:text-[#713f12] active:scale-95 transition-all cursor-pointer py-1"
+              >
+                <ChevronUp className="size-3" />
+                <span>Slide Up</span>
+              </button>
+            </div>
           </div>
-        </Link>
-
-        {/* 3. Currency / NPR (Kept as it is) */}
-        <CurrencySelector variant="mobile" className="w-full" />
+        </div>
       </div>
     </div>
   );

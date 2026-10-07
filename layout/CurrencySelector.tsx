@@ -214,12 +214,10 @@ export default function CurrencySelector({
         <div
           role="listbox"
           aria-label="Currencies"
-          className={`absolute z-50 mt-1.5 max-h-80 overflow-y-auto rounded-2xl border border-amber-900/15 bg-[#faf7f2] p-1.5 shadow-xl backdrop-blur-md transition-all animate-in fade-in zoom-in-95 duration-150 ${
-            variant === "full"
+          className={`absolute z-50 mt-1.5 max-h-72 sm:max-h-80 overflow-y-auto rounded-2xl border border-amber-900/15 bg-[#faf7f2] p-1.5 shadow-xl backdrop-blur-md transition-all animate-in fade-in zoom-in-95 duration-150 ${
+            variant === "full" || variant === "mobile"
               ? "left-0 right-0 w-full"
-              : variant === "mobile"
-                ? "right-0 w-56"
-                : "right-0 min-w-55"
+              : "right-0 min-w-55"
           }`}
         >
           <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#713f12]/60 border-b border-amber-900/10 mb-1">
