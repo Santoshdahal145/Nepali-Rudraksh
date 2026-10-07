@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, SlidersHorizontal, ArrowUpDown, X, Sparkles } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Search, X, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface ProductFilterBarProps {
+interface PublicProductSearchAndFilterProps {
   initialSearch?: string;
   initialSortBy?: string;
   initialSortOrder?: string;
   initialMukhi?: string;
   totalFound: number;
+  onOpenMobileFilter?: () => void;
 }
 
 const MUKHI_OPTIONS = [
@@ -32,16 +32,17 @@ const MUKHI_OPTIONS = [
   { label: "21 Mukhi", value: "21" },
 ];
 
-export function ProductFilterBar({
+export default function PublicProductSearchAndFilter({
   initialSearch = "",
   initialSortBy = "createdAt",
   initialSortOrder = "desc",
   initialMukhi = "",
   totalFound,
-}: ProductFilterBarProps) {
+  onOpenMobileFilter,
+}: PublicProductSearchAndFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
@@ -108,7 +109,10 @@ export function ProductFilterBar({
           : "newest";
 
   const hasActiveFilters = Boolean(
-    initialSearch || initialMukhi || initialSortBy !== "createdAt" || searchParams.get("type")
+    initialSearch ||
+    initialMukhi ||
+    initialSortBy !== "createdAt" ||
+    searchParams.get("type"),
   );
 
   const handleClearAll = () => {
@@ -148,6 +152,19 @@ export function ProductFilterBar({
 
         {/* Controls: Mukhi filter & Sort select */}
         <div className="flex items-center gap-2.5">
+          {onOpenMobileFilter && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onOpenMobileFilter}
+              className="sm:hidden h-10.5 rounded-xl border-amber-900/20 text-[#713f12] gap-1.5 px-3 text-xs font-semibold"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              <span>Filters</span>
+            </Button>
+          )}
+
           {/* Mukhi dropdown */}
           <select
             value={initialMukhi}
@@ -202,7 +219,7 @@ export function ProductFilterBar({
               key={m}
               type="button"
               onClick={() => updateParams({ mukhi: isActive ? "" : m })}
-              className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
                 isActive
                   ? "bg-[#713f12] text-white shadow-xs"
                   : "bg-white border border-amber-900/15 text-[#5c3a1e] hover:bg-amber-50 hover:border-amber-900/30"

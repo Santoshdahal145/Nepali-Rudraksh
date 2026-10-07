@@ -1,15 +1,16 @@
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Layers, MapPin, ShieldCheck } from "lucide-react";
 import { ProductType } from "@/app/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Layers, MapPin, ShieldCheck } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 
-interface ProductCardProps {
+interface PublicProductCardProps {
   product: ProductType;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export default function PublicProductCard({ product }: PublicProductCardProps) {
   // Determine primary image
   const primaryImage =
     product.productImages?.[0]?.url ||
@@ -122,11 +123,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-baseline gap-1">
             <span className="text-base sm:text-lg font-black text-[#713f12]">
               {minPrice !== null ? (
-                minPrice === maxPrice ? (
-                  `Rs. ${minPrice.toLocaleString()}`
-                ) : (
-                  `Rs. ${minPrice.toLocaleString()}`
-                )
+                `Rs. ${minPrice.toLocaleString()}`
               ) : (
                 <span className="text-xs text-muted-foreground italic">
                   Inquire
