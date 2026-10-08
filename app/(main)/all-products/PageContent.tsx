@@ -10,6 +10,8 @@ import PublicProductSearchAndFilter from "./PublicProductSearchAndFilter";
 import PublicProductSidebarFilter from "./PublicProductSidebarFilter";
 import { AllProductsSearchParamsPublic } from "./types";
 import PublicAllProductsHeader from "./PublicAllProductsHeader";
+import { Breadcrumbs } from "@/components/ui/breadcrumb";
+import { Home } from "lucide-react";
 
 interface PageContentProps {
   products: ProductType[];
@@ -32,9 +34,45 @@ export default function PageContent({
     router.push(`/all-products?${params.toString()}`);
   };
 
+  const breadcrumbItems = [
+    {
+      label: "Home",
+      href: "/",
+      icon: <Home className="h-3.5 w-3.5" />,
+    },
+    ...(searchParams.type === "INDIVIDUAL_RUDRAKSHA"
+      ? [
+          {
+            label: "All Products",
+            href: "/all-products",
+          },
+          {
+            label: "Individual Rudrakshas",
+          },
+        ]
+      : searchParams.type === "RUDRAKSHA_MALA"
+      ? [
+          {
+            label: "All Products",
+            href: "/all-products",
+          },
+          {
+            label: "Sacred Japa Malas",
+          },
+        ]
+      : [
+          {
+            label: "All Products",
+          },
+        ]),
+  ];
+
   return (
     <div className="min-h-screen w-full bg-[#faf7f2] pb-24 pt-4 sm:pt-6 md:pt-8">
       <main className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumbs items={breadcrumbItems} />
+
         {/* Header */}
         <PublicAllProductsHeader />
 
