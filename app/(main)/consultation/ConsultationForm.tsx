@@ -12,9 +12,11 @@ import {
   ShieldCheck,
   Sparkles,
   User,
+  Loader2,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useCreateConsultation } from "@/hooks/tanstack-hooks/useConsultationRequest";
 
 export function ConsultationForm() {
   const [formData, setFormData] = useState({
@@ -30,7 +32,7 @@ export function ConsultationForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createConsultation = useCreateConsultation();
 
   const intentionsList = [
     "Career, Wealth & Business Prosperity",
@@ -60,14 +62,30 @@ export function ConsultationForm() {
       return;
     }
 
-    setIsSubmitting(true);
-    // Simulate brief client submission
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    toast.success(
-      "Consultation request submitted! Ujwal Bhandari will reach out shortly.",
-    );
+    try {
+      await createConsultation.mutateAsync({
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        dob: formData.dob.trim() || null,
+        tob: formData.tob.trim() || null,
+        pob: formData.pob.trim() || null,
+        intention: formData.intention,
+        preferredMode: formData.preferredMode,
+        notes: formData.notes.trim() || null,
+      });
+      setSubmitted(true);
+      toast.success(
+        "Consultation request submitted! Ujwal Bhandari will reach out shortly.",
+      );
+    } catch (err) {
+      console.error("Consultation submit error:", err);
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit consultation request. Please try again.",
+      );
+    }
   };
 
   const whatsappDirectUrl = `https://wa.me/9779801234567?text=${encodeURIComponent(
@@ -328,11 +346,14 @@ export function ConsultationForm() {
 
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={createConsultation.isPending}
                 className="w-full sm:w-auto h-12 px-8 bg-[#713f12] hover:bg-[#5c330e] text-white font-bold text-xs sm:text-sm shadow-lg shadow-amber-950/20 gap-2 transition-all active:scale-[0.99]"
               >
-                {isSubmitting ? (
-                  <span>Evaluating chart...</span>
+                {createConsultation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Submitting Request...</span>
+                  </>
                 ) : (
                   <>
                     <Send className="h-4 w-4" />

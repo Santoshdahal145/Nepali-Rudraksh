@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ShoppingCart,
   Sliders,
+  Sparkles,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -35,6 +36,12 @@ const navItems = [
     href: "/admin/blogs",
     icon: BookOpen,
     badge: "Articles",
+  },
+  {
+    name: "Consultations",
+    href: "/admin/consultation-requests",
+    icon: Sparkles,
+    badge: "Vedic",
   },
   {
     name: "Orders",
