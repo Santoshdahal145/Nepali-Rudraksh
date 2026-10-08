@@ -313,7 +313,7 @@ export default function MobileNav({ onOpenSearch }: MobileNavProps) {
 
                 {/* About Us */}
                 <Link
-                  href="/#story"
+                  href="/about"
                   onClick={() => setSheetOpen(false)}
                   className="flex items-center gap-2.5 rounded-2xl border border-amber-900/15 bg-white px-4 py-3 text-xs font-bold text-[#422006] hover:bg-amber-50/70 transition-colors shadow-2xs"
                 >

@@ -307,7 +307,7 @@ export default function NavBar() {
 
           {/* About Us */}
           <Link
-            href="/#story"
+            href="/about"
             className="rounded-full px-3.5 py-2 text-sm font-semibold text-[#5c3a1e] hover:bg-amber-50 hover:text-[#713f12] transition-all"
           >
             About Us
