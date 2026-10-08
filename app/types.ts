@@ -98,3 +98,5 @@ export type DashboardResponseType = {
   totalProducts: number;
   totalCustomers: number;
 };
+
+export type SingleSectionType = FieldOutputTypes["public"]["Section"];
