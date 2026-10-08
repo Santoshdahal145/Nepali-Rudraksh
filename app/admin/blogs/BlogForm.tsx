@@ -190,7 +190,7 @@ export default function BlogForm({
           isActive: values.isActive,
           isFeatured: values.isFeatured,
           customTags: rawTags,
-          sections: processedSections,
+          sections: values.variant === "EXTENDED" ? processedSections : [],
         };
 
         await onSubmit(payload);
@@ -380,34 +380,35 @@ export default function BlogForm({
             </CardContent>
           </Card>
 
-          {/* Dynamic Sections Card */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Layers className="size-5 text-primary" />
-                  Structured Sections
-                </CardTitle>
-                <CardDescription>
-                  Add modular content blocks (Info, Image, Link, HTML)
-                </CardDescription>
-              </div>
-              <Badge variant="outline" className="font-mono text-xs">
-                {sections.length} Block{sections.length === 1 ? "" : "s"}
-              </Badge>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              {sections.length === 0 ? (
-                <div className="border border-dashed rounded-lg p-6 text-center text-muted-foreground space-y-2 bg-muted/10">
-                  <Layers className="size-8 mx-auto text-muted-foreground/60" />
-                  <p className="text-sm">No structured sections added yet</p>
-                  <p className="text-xs text-muted-foreground/80">
-                    Use the buttons below to append custom blocks to this article.
-                  </p>
+          {/* Dynamic Sections Card — ONLY shown and enabled for EXTENDED articles */}
+          {formik.values.variant === "EXTENDED" && (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Layers className="size-5 text-primary" />
+                    Structured Sections
+                  </CardTitle>
+                  <CardDescription>
+                    Add modular content blocks (Info, Image, Link, HTML)
+                  </CardDescription>
                 </div>
-              ) : (
-                <div className="space-y-4">
+                <Badge variant="default" className="text-xs uppercase">
+                  {sections.length} Block{sections.length === 1 ? "" : "s"}
+                </Badge>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {sections.length === 0 ? (
+                  <div className="border border-dashed rounded-lg p-6 text-center text-muted-foreground space-y-2 bg-muted/10">
+                    <Layers className="size-8 mx-auto text-muted-foreground/60" />
+                    <p className="text-sm">No structured sections added yet</p>
+                    <p className="text-xs text-muted-foreground/80">
+                      Use the buttons below to append custom blocks to this article.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
                   {sections.map((section, idx) => (
                     <div
                       key={section.tempId}
@@ -615,6 +616,7 @@ export default function BlogForm({
               </div>
             </CardContent>
           </Card>
+        )}
         </div>
 
         {/* Right Column (1/3): Media & Configuration Settings */}
@@ -669,6 +671,11 @@ export default function BlogForm({
                     </button>
                   ))}
                 </div>
+                <p className="text-[11px] text-muted-foreground">
+                  {formik.values.variant === "EXTENDED"
+                    ? "Extended layout enabled: Add modular sections on the left."
+                    : "Standard layout: Cover image + main rich content only."}
+                </p>
               </div>
 
               {/* Status toggles */}

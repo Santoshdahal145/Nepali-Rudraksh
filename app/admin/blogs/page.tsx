@@ -292,7 +292,11 @@ export default function AdminBlogsPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Layers className="size-3" />
-                    <span>{blog.sections?.length ?? 0} sections</span>
+                    <span>
+                      {blog.variant === "EXTENDED"
+                        ? `${blog.sections?.length ?? 0} sections`
+                        : "Standard"}
+                    </span>
                   </div>
                 </div>
               </CardContent>

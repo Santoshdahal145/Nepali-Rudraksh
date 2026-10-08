@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BookOpen,
   ChevronRight,
   ExternalLink,
   LayoutDashboard,
@@ -28,6 +29,12 @@ const navItems = [
     href: "/admin/all-products",
     icon: Package,
     badge: "Inventory",
+  },
+  {
+    name: "Blogs",
+    href: "/admin/blogs",
+    icon: BookOpen,
+    badge: "Articles",
   },
   {
     name: "Orders",

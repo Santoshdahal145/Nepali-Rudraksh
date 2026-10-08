@@ -61,12 +61,14 @@ export default function PublicBlogCard({ blog }: PublicBlogCardProps) {
               <Calendar className="size-3 text-[#713f12]" />
               {formattedDate}
             </span>
-            {blog.sections && blog.sections.length > 0 && (
-              <>
-                <span>•</span>
-                <span>{blog.sections.length} insights</span>
-              </>
-            )}
+            {blog.variant === "EXTENDED" &&
+              blog.sections &&
+              blog.sections.length > 0 && (
+                <>
+                  <span>•</span>
+                  <span>{blog.sections.length} insights</span>
+                </>
+              )}
           </div>
 
           {/* Title */}

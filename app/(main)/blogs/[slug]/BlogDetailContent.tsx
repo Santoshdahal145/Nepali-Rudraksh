@@ -119,8 +119,8 @@ export default function BlogDetailContent({ blog }: BlogDetailContentProps) {
           />
         </section>
 
-        {/* Modular Structured Content Sections */}
-        {blog.sections && blog.sections.length > 0 && (
+        {/* Modular Structured Content Sections — ONLY visible for EXTENDED articles */}
+        {blog.variant === "EXTENDED" && blog.sections && blog.sections.length > 0 && (
           <section className="space-y-6">
             <div className="flex items-center gap-2 border-b border-amber-900/15 pb-3">
               <Sparkles className="size-5 text-[#713f12]" />

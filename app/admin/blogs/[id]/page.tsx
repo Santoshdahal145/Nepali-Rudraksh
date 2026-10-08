@@ -285,55 +285,74 @@ export default function SingleBlogAdminPage() {
             </CardContent>
           </Card>
 
-          {/* Structured Sections */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <div>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Layers className="size-4 text-primary" />
-                  Structured Content Blocks
-                </CardTitle>
-                <CardDescription>
-                  Additional modular sections configured for this article
-                </CardDescription>
-              </div>
-              <Badge variant="outline" className="font-mono text-xs">
-                {blog.sections?.length ?? 0} Blocks
-              </Badge>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              {!blog.sections || blog.sections.length === 0 ? (
-                <div className="text-center py-6 text-sm text-muted-foreground border border-dashed rounded-lg bg-muted/10">
-                  No additional structured sections added to this blog.
+          {/* Structured Sections (Extended Only) */}
+          {blog.variant === "EXTENDED" ? (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <div>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Layers className="size-4 text-primary" />
+                    Structured Content Blocks
+                  </CardTitle>
+                  <CardDescription>
+                    Additional modular sections configured for this article
+                  </CardDescription>
                 </div>
-              ) : (
-                <div className="space-y-6">
-                  {blog.sections.map(
-                    (section: SingleSectionType, index: number) => (
-                      <div
-                        key={section.id || index}
-                        className="border rounded-lg p-4 bg-card/60 shadow-xs space-y-3"
-                      >
-                        <div className="flex items-center justify-between border-b pb-2 text-xs text-muted-foreground">
-                          <span className="font-bold">Block #{index + 1}</span>
-                          <Badge
-                            variant="secondary"
-                            className="text-[11px] uppercase"
-                          >
-                            {section.type.replace("_", " ")}
-                          </Badge>
+                <Badge variant="outline" className="font-mono text-xs">
+                  {blog.sections?.length ?? 0} Blocks
+                </Badge>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {!blog.sections || blog.sections.length === 0 ? (
+                  <div className="text-center py-6 text-sm text-muted-foreground border border-dashed rounded-lg bg-muted/10">
+                    No additional structured sections added to this extended blog.
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {blog.sections.map(
+                      (section: SingleSectionType, index: number) => (
+                        <div
+                          key={section.id || index}
+                          className="border rounded-lg p-4 bg-card/60 shadow-xs space-y-3"
+                        >
+                          <div className="flex items-center justify-between border-b pb-2 text-xs text-muted-foreground">
+                            <span className="font-bold">Block #{index + 1}</span>
+                            <Badge
+                              variant="secondary"
+                              className="text-[11px] uppercase"
+                            >
+                              {section.type.replace("_", " ")}
+                            </Badge>
+                          </div>
+
+                          {/* Render block with SectionRenderer */}
+                          <SectionRenderer section={section} />
                         </div>
-
-                        {/* Render block with SectionRenderer */}
-                        <SectionRenderer section={section} />
-                      </div>
-                    ),
-                  )}
+                      ),
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-dashed bg-muted/15">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2 text-muted-foreground">
+                    <Layers className="size-4" />
+                    Structured Sections Disabled
+                  </CardTitle>
+                  <Badge variant="outline" className="text-xs">
+                    Standard Layout
+                  </Badge>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                <CardDescription>
+                  This article is published using the Standard layout. Modular content sections are only permitted and rendered on Extended layout articles.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          )}
         </div>
 
         {/* Right (1/3): Thumbnail & Meta Overview */}

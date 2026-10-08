@@ -11,7 +11,8 @@
     "contract:emit": "prisma contract emit",
     "seed:everything": "bun run scripts/seed-everything.ts",
     "seed:products": "bun run scripts/seed-product.ts",
-    "seed:users": "bun run scripts/seed-user.ts"
+    "seed:users": "bun run scripts/seed-user.ts",
+    "seed:admin": "bun run scripts/seed-admin.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

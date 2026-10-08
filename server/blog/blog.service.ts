@@ -167,8 +167,12 @@ export async function createBlog(input: CreateBlogInput) {
       customTags: input.customTags ?? [],
     });
 
-    // 2. Create sections if provided
-    if (input.sections && input.sections.length > 0) {
+    // 2. Create sections ONLY if variant is EXTENDED
+    if (
+      blog.variant === "EXTENDED" &&
+      input.sections &&
+      input.sections.length > 0
+    ) {
       for (let i = 0; i < input.sections.length; i++) {
         const sec = input.sections[i];
         await tx.orm.public.Section.create({
@@ -236,14 +240,16 @@ export async function updateBlog(id: number, input: UpdateBlogInput) {
     if (input.customTags !== undefined)
       blogUpdates.customTags = input.customTags;
 
-    blogUpdates.updatedAt = new Date();
-
     if (Object.keys(blogUpdates).length > 0) {
       await tx.orm.public.Blog.where({ id }).update(blogUpdates);
     }
 
-    // Replace sections if provided
-    if (input.sections !== undefined) {
+    const targetVariant = input.variant ?? existing.variant;
+
+    // Only EXTENDED blogs allow sections; STANDARD blogs clear them
+    if (targetVariant === "STANDARD") {
+      await tx.orm.public.Section.where({ blogId: id }).delete();
+    } else if (targetVariant === "EXTENDED" && input.sections !== undefined) {
       await tx.orm.public.Section.where({ blogId: id }).delete();
 
       for (let i = 0; i < input.sections.length; i++) {

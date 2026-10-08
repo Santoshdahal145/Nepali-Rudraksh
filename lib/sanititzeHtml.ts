@@ -1,5 +1,5 @@
 import DomPurify from "dompurify";
-import he from "he";
+import * as he from "he";
 
 export const decodeHtmlWithHe = (rawHtml: string) => {
   if (!rawHtml) return "";
