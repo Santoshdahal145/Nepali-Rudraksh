@@ -1,7 +1,7 @@
 "use client";
 
-import { FileText, HelpCircle, Lock, Mail, Scale } from "lucide-react";
-import Link from "next/link";
+import { FileText, HelpCircle, Lock, Mail } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumb";
 import { useState } from "react";
 
 export default function TermsAndPrivacyPage({
@@ -15,34 +15,31 @@ export default function TermsAndPrivacyPage({
     <main className="flex-1 pb-20 pt-8 sm:pt-12">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}
-        <div className="mb-6 flex items-center gap-2 text-xs font-medium text-[#5c3a1e]/70">
-          <Link href="/" className="hover:text-[#713f12]">
-            Home
-          </Link>
-          <span>/</span>
-          <span className="text-[#713f12] font-semibold">
-            Legal &amp; Policies
-          </span>
-        </div>
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Legal & Policies" },
+          ]}
+          className="mb-8"
+        />
 
-        {/* Page Hero Header */}
-        <div className="mb-8 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/20 bg-amber-50 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#713f12] sm:text-xs">
-            <Scale className="h-3.5 w-3.5" />
-            Nepali Rudraksh Trust &amp; Governance
-          </div>
-          <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-[#2d1a0e] sm:text-4xl">
-            Terms of Service &amp; Privacy Policy
+        {/* Page Header */}
+        <div className="space-y-3 border-b border-amber-900/10 pb-6 sm:pb-8 mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[#422006] leading-[1.15]">
+            Terms of Service &amp;{" "}
+            <span className="bg-linear-to-r from-[#713f12] via-[#92400e] to-[#b45309] bg-clip-text text-transparent">
+              Privacy Policy
+            </span>
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-[#5c3a1e]/70 max-w-2xl">
-            Last updated:{" "}
+          <p className="max-w-2xl text-xs sm:text-sm text-[#5c3a1e]/80 leading-relaxed">
+            Our sacred commitment to authenticity, devotee privacy, and spiritual
+            integrity. Last updated:{" "}
             {new Date().toLocaleDateString("en-US", {
               month: "long",
               day: "numeric",
               year: "numeric",
             })}
-            . Our sacred commitment to authenticity, privacy, and spiritual
-            integrity.
+            .
           </p>
         </div>
 
