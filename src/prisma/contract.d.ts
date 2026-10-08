@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'9fff9120650f880eb3710bc63c753128ae7bccf8eee614f5d9ea62ff5c49d789'>;
+  StorageHashBase<'c6199b43c4866444cd19dd6ca024efcbed1b0ab9d76c12a3bc88755ff997c0a1'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -267,6 +267,22 @@ export type FieldOutputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly variantId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly ConsultationRequest: {
+      readonly adminNotes: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly dob: CodecTypes['pg/text@1']['output'] | null;
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly fullName: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly intention: CodecTypes['pg/text@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly phone: CodecTypes['pg/text@1']['output'];
+      readonly pob: CodecTypes['pg/text@1']['output'] | null;
+      readonly preferredMode: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+      readonly tob: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
     readonly IndividualRudrakshaDetail: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -429,6 +445,22 @@ export type FieldInputTypes = {
       readonly quantity: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly variantId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly ConsultationRequest: {
+      readonly adminNotes: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly dob: CodecTypes['pg/text@1']['input'] | null;
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly fullName: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly intention: CodecTypes['pg/text@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly phone: CodecTypes['pg/text@1']['input'];
+      readonly pob: CodecTypes['pg/text@1']['input'] | null;
+      readonly preferredMode: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+      readonly tob: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
     readonly IndividualRudrakshaDetail: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
@@ -593,6 +625,22 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly variantId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly ConsultationRequest: {
+      readonly adminNotes: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly dob: CodecTypes['pg/text@1']['output'] | null;
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly fullName: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly intention: CodecTypes['pg/text@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly phone: CodecTypes['pg/text@1']['output'];
+      readonly pob: CodecTypes['pg/text@1']['output'] | null;
+      readonly preferredMode: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+      readonly tob: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
     readonly IndividualRudrakshaDetail: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -755,6 +803,22 @@ export type StorageColumnInputTypes = {
       readonly quantity: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly variantId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly ConsultationRequest: {
+      readonly adminNotes: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly dob: CodecTypes['pg/text@1']['input'] | null;
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly fullName: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly intention: CodecTypes['pg/text@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly phone: CodecTypes['pg/text@1']['input'];
+      readonly pob: CodecTypes['pg/text@1']['input'] | null;
+      readonly preferredMode: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+      readonly tob: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
     readonly IndividualRudrakshaDetail: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
@@ -928,6 +992,23 @@ export namespace Models {
     cart: public_Cart;
     variant: public_ProductVariant;
     readonly [RelationKeys]?: 'cart' | 'variant';
+  };
+  export type public_ConsultationRequest = {
+    adminNotes: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    dob: CodecTypes['pg/text@1']['output'] | null;
+    email: CodecTypes['pg/text@1']['output'];
+    fullName: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    intention: CodecTypes['pg/text@1']['output'];
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    phone: CodecTypes['pg/text@1']['output'];
+    pob: CodecTypes['pg/text@1']['output'] | null;
+    preferredMode: CodecTypes['pg/text@1']['output'];
+    status: 'PENDING' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+    tob: CodecTypes['pg/text@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    readonly [RelationKeys]?: never;
   };
   export type public_IndividualRudrakshaDetail = {
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -1105,6 +1186,7 @@ export declare const models: {
     Blog: Models.public_Blog;
     Cart: Models.public_Cart;
     CartItem: Models.public_CartItem;
+    ConsultationRequest: Models.public_ConsultationRequest;
     IndividualRudrakshaDetail: Models.public_IndividualRudrakshaDetail;
     IndividualVariantAttrs: Models.public_IndividualVariantAttrs;
     MalaVariantAttrs: Models.public_MalaVariantAttrs;
@@ -1436,6 +1518,108 @@ type ContractBase = Omit<
                   };
                 },
               ];
+            };
+            readonly ConsultationRequest: {
+              columns: {
+                readonly adminNotes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly dob: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly email: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly fullName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly intention: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly notes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly phone: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly pob: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly preferredMode: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                  readonly many: false;
+                };
+                readonly tob: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
             };
             readonly IndividualRudrakshaDetail: {
               columns: {
@@ -2440,6 +2624,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['STANDARD', 'EXTENDED'];
             };
+            readonly ConsultationStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'CONTACTED', 'COMPLETED', 'CANCELLED'];
+            };
             readonly OtpType: {
               readonly kind: 'valueSet';
               readonly values: readonly [
@@ -2479,6 +2667,10 @@ type ContractBase = Omit<
     readonly Blog: { readonly namespace: 'public' & NamespaceId; readonly model: 'Blog' };
     readonly Cart: { readonly namespace: 'public' & NamespaceId; readonly model: 'Cart' };
     readonly CartItem: { readonly namespace: 'public' & NamespaceId; readonly model: 'CartItem' };
+    readonly ConsultationRequest: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ConsultationRequest';
+    };
     readonly IndividualRudrakshaDetail: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'IndividualRudrakshaDetail';
@@ -2783,6 +2975,93 @@ type ContractBase = Omit<
                 readonly quantity: { readonly column: 'quantity' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly variantId: { readonly column: 'variantId' };
+              };
+            };
+          };
+          readonly ConsultationRequest: {
+            readonly fields: {
+              readonly adminNotes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly dob: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly email: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly fullName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly intention: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly phone: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly pob: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly preferredMode: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly tob: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'ConsultationRequest';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly adminNotes: { readonly column: 'adminNotes' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly dob: { readonly column: 'dob' };
+                readonly email: { readonly column: 'email' };
+                readonly fullName: { readonly column: 'fullName' };
+                readonly id: { readonly column: 'id' };
+                readonly intention: { readonly column: 'intention' };
+                readonly notes: { readonly column: 'notes' };
+                readonly phone: { readonly column: 'phone' };
+                readonly pob: { readonly column: 'pob' };
+                readonly preferredMode: { readonly column: 'preferredMode' };
+                readonly status: { readonly column: 'status' };
+                readonly tob: { readonly column: 'tob' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
@@ -3762,6 +4041,15 @@ type ContractBase = Omit<
               { readonly name: 'EXTENDED'; readonly value: 'EXTENDED' },
             ];
           };
+          readonly ConsultationStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'CONTACTED'; readonly value: 'CONTACTED' },
+              { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
+              { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
+            ];
+          };
           readonly OtpType: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -3807,6 +4095,12 @@ type ContractBase = Omit<
           readonly BlogVariant: readonly [
             { readonly name: 'STANDARD'; readonly value: 'STANDARD' },
             { readonly name: 'EXTENDED'; readonly value: 'EXTENDED' },
+          ];
+          readonly ConsultationStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'CONTACTED'; readonly value: 'CONTACTED' },
+            { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
+            { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
           ];
           readonly OtpType: readonly [
             { readonly name: 'EMAIL_VERIFICATION'; readonly value: 'EMAIL_VERIFICATION' },

@@ -1,22 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Calendar,
-  Clock,
-  Sparkles,
-  Send,
-  CheckCircle2,
-  MessageCircle,
-  ShieldCheck,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  HelpCircle,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Calendar,
+  CheckCircle2,
+  Mail,
+  MessageCircle,
+  Phone,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  User,
+} from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export function ConsultationForm() {
@@ -54,7 +51,11 @@ export function ConsultationForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName.trim() || !formData.email.trim() || !formData.phone.trim()) {
+    if (
+      !formData.fullName.trim() ||
+      !formData.email.trim() ||
+      !formData.phone.trim()
+    ) {
       toast.error("Please enter your name, email, and phone number.");
       return;
     }
@@ -64,11 +65,13 @@ export function ConsultationForm() {
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSubmitting(false);
     setSubmitted(true);
-    toast.success("Consultation request submitted! Ujwal Bhandari will reach out shortly.");
+    toast.success(
+      "Consultation request submitted! Ujwal Bhandari will reach out shortly.",
+    );
   };
 
   const whatsappDirectUrl = `https://wa.me/9779801234567?text=${encodeURIComponent(
-    `Namaste Ujwal ji, my name is ${formData.fullName || "Devotee"}. I submitted a consultation request for ${formData.intention}. Looking forward to connecting!`
+    `Namaste Ujwal ji, my name is ${formData.fullName || "Devotee"}. I submitted a consultation request for ${formData.intention}. Looking forward to connecting!`,
   )}`;
 
   return (
@@ -83,7 +86,9 @@ export function ConsultationForm() {
             Request a Consultation with Ujwal Bhandari
           </h2>
           <p className="text-xs sm:text-sm text-[#5c3a1e]/75 max-w-xl mx-auto">
-            Provide your birth details and questions below. Ujwal will review your planetary configuration and suggest the exact Mukhi beads suited for you.
+            Provide your birth details and questions below. Ujwal will review
+            your planetary configuration and suggest the exact Mukhi beads
+            suited for you.
           </p>
         </div>
 
@@ -98,7 +103,9 @@ export function ConsultationForm() {
             </h3>
 
             <p className="text-xs sm:text-sm text-emerald-900/80 max-w-lg mx-auto leading-relaxed">
-              Your consultation request has been delivered directly to Ujwal Bhandari&apos;s desk. You will receive an astrological evaluation and direct contact via {formData.preferredMode}.
+              Your consultation request has been delivered directly to Ujwal
+              Bhandari&apos;s desk. You will receive an astrological evaluation
+              and direct contact via {formData.preferredMode}.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">

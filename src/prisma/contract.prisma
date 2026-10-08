@@ -270,3 +270,27 @@ model Section {
 
   @@index([blogId])
 }
+
+enum ConsultationStatus {
+  PENDING
+  CONTACTED
+  COMPLETED
+  CANCELLED
+}
+
+model ConsultationRequest {
+  id            Int                @id @default(autoincrement())
+  fullName      String
+  email         String
+  phone         String
+  dob           String?
+  tob           String?
+  pob           String?
+  intention     String
+  preferredMode String
+  notes         String?
+  status        ConsultationStatus @default(PENDING)
+  adminNotes    String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @default(now())
+}

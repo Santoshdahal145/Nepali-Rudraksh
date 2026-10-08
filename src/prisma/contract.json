@@ -20,6 +20,10 @@
       "model": "CartItem",
       "namespace": "public"
     },
+    "ConsultationRequest": {
+      "model": "ConsultationRequest",
+      "namespace": "public"
+    },
     "IndividualRudrakshaDetail": {
       "model": "IndividualRudrakshaDetail",
       "namespace": "public"
@@ -91,6 +95,27 @@
               {
                 "name": "EXTENDED",
                 "value": "EXTENDED"
+              }
+            ]
+          },
+          "ConsultationStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "CONTACTED",
+                "value": "CONTACTED"
+              },
+              {
+                "name": "COMPLETED",
+                "value": "COMPLETED"
+              },
+              {
+                "name": "CANCELLED",
+                "value": "CANCELLED"
               }
             ]
           },
@@ -590,6 +615,163 @@
               },
               "namespaceId": "public",
               "table": "CartItem"
+            }
+          },
+          "ConsultationRequest": {
+            "fields": {
+              "adminNotes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "dob": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "fullName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "intention": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "pob": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "preferredMode": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ConsultationStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "tob": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "adminNotes": {
+                  "column": "adminNotes"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "dob": {
+                  "column": "dob"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "fullName": {
+                  "column": "fullName"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "intention": {
+                  "column": "intention"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "pob": {
+                  "column": "pob"
+                },
+                "preferredMode": {
+                  "column": "preferredMode"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "tob": {
+                  "column": "tob"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ConsultationRequest"
             }
           },
           "IndividualRudrakshaDetail": {
@@ -2498,6 +2680,117 @@
                 }
               ]
             },
+            "ConsultationRequest": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'CONTACTED', 'COMPLETED', 'CANCELLED')",
+                  "name": "ConsultationRequest_status_check_0f9ae299",
+                  "prefix": "ConsultationRequest_status_check"
+                }
+              ],
+              "columns": {
+                "adminNotes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "dob": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "fullName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "intention": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "pob": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "preferredMode": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ConsultationStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "tob": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "IndividualRudrakshaDetail": {
               "columns": {
                 "createdAt": {
@@ -3738,6 +4031,15 @@
                 "EXTENDED"
               ]
             },
+            "ConsultationStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "CONTACTED",
+                "COMPLETED",
+                "CANCELLED"
+              ]
+            },
             "OtpType": {
               "kind": "valueSet",
               "values": [
@@ -3784,7 +4086,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9fff9120650f880eb3710bc63c753128ae7bccf8eee614f5d9ea62ff5c49d789"
+    "storageHash": "c6199b43c4866444cd19dd6ca024efcbed1b0ab9d76c12a3bc88755ff997c0a1"
   },
   "capabilities": {
     "postgres": {
