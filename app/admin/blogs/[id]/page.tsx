@@ -34,7 +34,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { prepareSafeHtml } from "@/lib/sanititzeHtml";
-import { SectionRenderer } from "@/app/(main)/blogs/SectionRenderer";
+import { SectionRenderer } from "@/components/SectionRenderer";
 import { SingleSectionType } from "@/app/types";
 
 export default function SingleBlogAdminPage() {
@@ -42,7 +42,12 @@ export default function SingleBlogAdminPage() {
   const router = useRouter();
   const blogId = Number(params?.id);
 
-  const { data: blog, isLoading, isError, refetch } = useSingleBlogAdmin(blogId);
+  const {
+    data: blog,
+    isLoading,
+    isError,
+    refetch,
+  } = useSingleBlogAdmin(blogId);
   const { updateBlog, deleteBlog } = useBlogAdminHook();
 
   const [copiedSlug, setCopiedSlug] = useState(false);
@@ -107,7 +112,9 @@ export default function SingleBlogAdminPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-3">
         <Loader2 className="size-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Loading article details...</p>
+        <p className="text-sm text-muted-foreground">
+          Loading article details...
+        </p>
       </div>
     );
   }
@@ -128,7 +135,8 @@ export default function SingleBlogAdminPage() {
               <CardTitle>Article Not Found</CardTitle>
             </div>
             <CardDescription>
-              The blog article with ID #{blogId} could not be loaded or may have been deleted.
+              The blog article with ID #{blogId} could not be loaded or may have
+              been deleted.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -220,9 +228,7 @@ export default function SingleBlogAdminPage() {
             }`}
           >
             <Star
-              className={`size-3.5 ${
-                blog.isFeatured ? "fill-current" : ""
-              }`}
+              className={`size-3.5 ${blog.isFeatured ? "fill-current" : ""}`}
             />
             {blog.isFeatured ? "Featured" : "Mark Featured"}
           </Button>
@@ -303,22 +309,27 @@ export default function SingleBlogAdminPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {blog.sections.map((section: SingleSectionType, index: number) => (
-                    <div
-                      key={section.id || index}
-                      className="border rounded-lg p-4 bg-card/60 shadow-xs space-y-3"
-                    >
-                      <div className="flex items-center justify-between border-b pb-2 text-xs text-muted-foreground">
-                        <span className="font-bold">Block #{index + 1}</span>
-                        <Badge variant="secondary" className="text-[11px] uppercase">
-                          {section.type.replace("_", " ")}
-                        </Badge>
-                      </div>
+                  {blog.sections.map(
+                    (section: SingleSectionType, index: number) => (
+                      <div
+                        key={section.id || index}
+                        className="border rounded-lg p-4 bg-card/60 shadow-xs space-y-3"
+                      >
+                        <div className="flex items-center justify-between border-b pb-2 text-xs text-muted-foreground">
+                          <span className="font-bold">Block #{index + 1}</span>
+                          <Badge
+                            variant="secondary"
+                            className="text-[11px] uppercase"
+                          >
+                            {section.type.replace("_", " ")}
+                          </Badge>
+                        </div>
 
-                      {/* Render block with SectionRenderer */}
-                      <SectionRenderer section={section} />
-                    </div>
-                  ))}
+                        {/* Render block with SectionRenderer */}
+                        <SectionRenderer section={section} />
+                      </div>
+                    ),
+                  )}
                 </div>
               )}
             </CardContent>
@@ -357,7 +368,9 @@ export default function SingleBlogAdminPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-xs">
               <div className="flex items-center justify-between py-1.5 border-b">
-                <span className="text-muted-foreground">Publication Status:</span>
+                <span className="text-muted-foreground">
+                  Publication Status:
+                </span>
                 {blog.isActive ? (
                   <Badge className="bg-emerald-600 text-white">Active</Badge>
                 ) : (
@@ -366,7 +379,9 @@ export default function SingleBlogAdminPage() {
               </div>
 
               <div className="flex items-center justify-between py-1.5 border-b">
-                <span className="text-muted-foreground">Featured Spotlight:</span>
+                <span className="text-muted-foreground">
+                  Featured Spotlight:
+                </span>
                 {blog.isFeatured ? (
                   <Badge className="bg-amber-500 text-white">Featured</Badge>
                 ) : (
