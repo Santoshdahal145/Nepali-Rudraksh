@@ -4,67 +4,75 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "account": {
+    "Account": {
       "model": "Account",
       "namespace": "public"
     },
-    "cart": {
+    "Blog": {
+      "model": "Blog",
+      "namespace": "public"
+    },
+    "Cart": {
       "model": "Cart",
       "namespace": "public"
     },
-    "cartItem": {
+    "CartItem": {
       "model": "CartItem",
       "namespace": "public"
     },
-    "individualRudrakshaDetail": {
+    "IndividualRudrakshaDetail": {
       "model": "IndividualRudrakshaDetail",
       "namespace": "public"
     },
-    "individualVariantAttrs": {
+    "IndividualVariantAttrs": {
       "model": "IndividualVariantAttrs",
       "namespace": "public"
     },
-    "malaVariantAttrs": {
+    "MalaVariantAttrs": {
       "model": "MalaVariantAttrs",
       "namespace": "public"
     },
-    "otp": {
+    "Otp": {
       "model": "Otp",
       "namespace": "public"
     },
-    "paymentSettings": {
+    "PaymentSettings": {
       "model": "PaymentSettings",
       "namespace": "public"
     },
-    "product": {
+    "Product": {
       "model": "Product",
       "namespace": "public"
     },
-    "productImage": {
+    "ProductImage": {
       "model": "ProductImage",
       "namespace": "public"
     },
-    "productVariant": {
+    "ProductVariant": {
       "model": "ProductVariant",
       "namespace": "public"
     },
-    "rudrakshaMalaDetail": {
+    "RudrakshaMalaDetail": {
       "model": "RudrakshaMalaDetail",
       "namespace": "public"
     },
-    "rudrakshaOrigin": {
+    "RudrakshaOrigin": {
       "model": "RudrakshaOrigin",
       "namespace": "public"
     },
-    "storeSettings": {
+    "Section": {
+      "model": "Section",
+      "namespace": "public"
+    },
+    "StoreSettings": {
       "model": "StoreSettings",
       "namespace": "public"
     },
-    "user": {
+    "User": {
       "model": "User",
       "namespace": "public"
     },
-    "variantImage": {
+    "VariantImage": {
       "model": "VariantImage",
       "namespace": "public"
     }
@@ -73,6 +81,19 @@
     "namespaces": {
       "public": {
         "enum": {
+          "BlogVariant": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "STANDARD",
+                "value": "STANDARD"
+              },
+              {
+                "name": "EXTENDED",
+                "value": "EXTENDED"
+              }
+            ]
+          },
           "OtpType": {
             "codecId": "pg/text@1",
             "members": [
@@ -121,6 +142,27 @@
               {
                 "name": "RUDRAKSHA_MALA",
                 "value": "RUDRAKSHA_MALA"
+              }
+            ]
+          },
+          "SectionType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "INFO_BLOCK",
+                "value": "INFO_BLOCK"
+              },
+              {
+                "name": "IMAGE_BLOCK",
+                "value": "IMAGE_BLOCK"
+              },
+              {
+                "name": "LINK_BLOCK",
+                "value": "LINK_BLOCK"
+              },
+              {
+                "name": "HTML_BLOCK",
+                "value": "HTML_BLOCK"
               }
             ]
           },
@@ -173,6 +215,7 @@
             "relations": {
               "user": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "userId"
@@ -203,7 +246,163 @@
                 }
               },
               "namespaceId": "public",
-              "table": "account"
+              "table": "Account"
+            }
+          },
+          "Blog": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "customTags": {
+                "many": {
+                  "elementNullable": false
+                },
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "isFeatured": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "mainDescription": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "shortDescription": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "slug": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "thumbnailImage": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "variant": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BlogVariant",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "sections": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "blogId"
+                  ]
+                },
+                "to": {
+                  "model": "Section",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "customTags": {
+                  "column": "customTags"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isActive": {
+                  "column": "isActive"
+                },
+                "isFeatured": {
+                  "column": "isFeatured"
+                },
+                "mainDescription": {
+                  "column": "mainDescription"
+                },
+                "shortDescription": {
+                  "column": "shortDescription"
+                },
+                "slug": {
+                  "column": "slug"
+                },
+                "thumbnailImage": {
+                  "column": "thumbnailImage"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "variant": {
+                  "column": "variant"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Blog"
             }
           },
           "Cart": {
@@ -255,6 +454,7 @@
               },
               "user": {
                 "cardinality": "N:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "userId"
@@ -285,7 +485,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "cart"
+              "table": "Cart"
             }
           },
           "CartItem": {
@@ -336,6 +536,7 @@
             "relations": {
               "cart": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "cartId"
@@ -351,6 +552,7 @@
               },
               "variant": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "variantId"
@@ -387,7 +589,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "cartItem"
+              "table": "CartItem"
             }
           },
           "IndividualRudrakshaDetail": {
@@ -431,6 +633,7 @@
             "relations": {
               "product": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "productId"
@@ -464,7 +667,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "individualRudrakshaDetail"
+              "table": "IndividualRudrakshaDetail"
             }
           },
           "IndividualVariantAttrs": {
@@ -494,6 +697,7 @@
             "relations": {
               "variant": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "variantId"
@@ -521,7 +725,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "individualVariantAttrs"
+              "table": "IndividualVariantAttrs"
             }
           },
           "MalaVariantAttrs": {
@@ -558,6 +762,7 @@
             "relations": {
               "variant": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "variantId"
@@ -588,7 +793,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "malaVariantAttrs"
+              "table": "MalaVariantAttrs"
             }
           },
           "Otp": {
@@ -659,6 +864,7 @@
             "relations": {
               "user": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "userId"
@@ -701,7 +907,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "otp"
+              "table": "Otp"
             }
           },
           "PaymentSettings": {
@@ -772,7 +978,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "paymentSettings"
+              "table": "PaymentSettings"
             }
           },
           "Product": {
@@ -836,6 +1042,7 @@
             "relations": {
               "individualRudrakshaDetail": {
                 "cardinality": "1:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "id"
@@ -881,6 +1088,7 @@
               },
               "rudrakshaMalaDetail": {
                 "cardinality": "1:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "id"
@@ -920,7 +1128,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "product"
+              "table": "Product"
             }
           },
           "ProductImage": {
@@ -978,6 +1186,7 @@
             "relations": {
               "product": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "productId"
@@ -1017,7 +1226,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "productImage"
+              "table": "ProductImage"
             }
           },
           "ProductVariant": {
@@ -1111,6 +1320,7 @@
               },
               "individualVariantAttrs": {
                 "cardinality": "1:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "id"
@@ -1126,6 +1336,7 @@
               },
               "malaVariantAttrs": {
                 "cardinality": "1:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "id"
@@ -1141,6 +1352,7 @@
               },
               "origin": {
                 "cardinality": "N:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "originId"
@@ -1156,6 +1368,7 @@
               },
               "product": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "productId"
@@ -1219,7 +1432,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "productVariant"
+              "table": "ProductVariant"
             }
           },
           "RudrakshaMalaDetail": {
@@ -1263,6 +1476,7 @@
             "relations": {
               "product": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "productId"
@@ -1296,7 +1510,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "rudrakshaMalaDetail"
+              "table": "RudrakshaMalaDetail"
             }
           },
           "RudrakshaOrigin": {
@@ -1373,7 +1587,151 @@
                 }
               },
               "namespaceId": "public",
-              "table": "rudrakshaOrigin"
+              "table": "RudrakshaOrigin"
+            }
+          },
+          "Section": {
+            "fields": {
+              "blogId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "html": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "image": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "link": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "position": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "SectionType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "blog": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "blogId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Blog",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "blogId": {
+                  "column": "blogId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "html": {
+                  "column": "html"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "image": {
+                  "column": "image"
+                },
+                "link": {
+                  "column": "link"
+                },
+                "position": {
+                  "column": "position"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Section"
             }
           },
           "StoreSettings": {
@@ -1454,7 +1812,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "storeSettings"
+              "table": "StoreSettings"
             }
           },
           "User": {
@@ -1568,6 +1926,7 @@
               },
               "cart": {
                 "cardinality": "1:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "id"
@@ -1637,7 +1996,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "user"
+              "table": "User"
             }
           },
           "VariantImage": {
@@ -1695,6 +2054,7 @@
             "relations": {
               "variant": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "variantId"
@@ -1734,7 +2094,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "variantImage"
+              "table": "VariantImage"
             }
           }
         }
@@ -1746,49 +2106,52 @@
       "public": {
         "entries": {
           "table": {
-            "account": {
+            "Account": {
               "columns": {
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "provider": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "providerAccountId": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "userId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "Account_userId_idx_a489d58a"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "userId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "account"
+                    "tableName": "Account"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "user"
+                    "tableName": "User"
                   }
                 }
               ],
@@ -1797,8 +2160,8 @@
                   "columns": [
                     "userId"
                   ],
-                  "name": "account_userId_idx_a489d58a",
-                  "prefix": "account_userId_idx",
+                  "name": "Account_userId_idx_a489d58a",
+                  "prefix": "Account_userId_idx",
                   "unique": false
                 }
               ],
@@ -1816,70 +2179,189 @@
                 }
               ]
             },
-            "cart": {
+            "Blog": {
+              "checks": [
+                {
+                  "expression": "array_position(\"customTags\", NULL) IS NULL",
+                  "name": "Blog_customTags_elem_not_null_99f72456",
+                  "prefix": "Blog_customTags_elem_not_null"
+                },
+                {
+                  "expression": "\"variant\" IN ('STANDARD', 'EXTENDED')",
+                  "name": "Blog_variant_check_c0563640",
+                  "prefix": "Blog_variant_check"
+                }
+              ],
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "customTags": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": {
+                    "elementNullable": false
+                  },
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nullable": false
+                },
+                "isFeatured": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
+                "mainDescription": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "shortDescription": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "slug": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "thumbnailImage": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "variant": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BlogVariant",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "slug"
+                  ]
+                }
+              ]
+            },
+            "Cart": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 },
                 "userId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": true
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "userId"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "userId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "cart"
+                    "tableName": "Cart"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "user"
+                    "tableName": "User"
                   }
                 }
               ],
-              "indexes": [
-                {
-                  "columns": [
-                    "userId"
-                  ],
-                  "name": "cart_userId_idx_a489d58a",
-                  "prefix": "cart_userId_idx",
-                  "unique": false
-                }
-              ],
+              "indexes": [],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -1893,88 +2375,94 @@
                 }
               ]
             },
-            "cartItem": {
+            "CartItem": {
               "columns": {
                 "cartId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "quantity": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "kind": "literal",
                     "value": 1
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "variantId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "CartItem_cartId_idx_79939295"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "cartId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "cartItem"
+                    "tableName": "CartItem"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "cart"
+                    "tableName": "Cart"
                   }
                 },
                 {
+                  "index": {
+                    "name": "CartItem_variantId_idx_e16bb45d"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "variantId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "cartItem"
+                    "tableName": "CartItem"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productVariant"
+                    "tableName": "ProductVariant"
                   }
                 }
               ],
@@ -1983,16 +2471,16 @@
                   "columns": [
                     "cartId"
                   ],
-                  "name": "cartItem_cartId_idx_79939295",
-                  "prefix": "cartItem_cartId_idx",
+                  "name": "CartItem_cartId_idx_79939295",
+                  "prefix": "CartItem_cartId_idx",
                   "unique": false
                 },
                 {
                   "columns": [
                     "variantId"
                   ],
-                  "name": "cartItem_variantId_idx_e16bb45d",
-                  "prefix": "cartItem_variantId_idx",
+                  "name": "CartItem_variantId_idx_e16bb45d",
+                  "prefix": "CartItem_variantId_idx",
                   "unique": false
                 }
               ],
@@ -2010,62 +2498,67 @@
                 }
               ]
             },
-            "individualRudrakshaDetail": {
+            "IndividualRudrakshaDetail": {
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "mukhi": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "productId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "productId"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "productId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "individualRudrakshaDetail"
+                    "tableName": "IndividualRudrakshaDetail"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "product"
+                    "tableName": "Product"
                   }
                 }
               ],
@@ -2083,44 +2576,49 @@
                 }
               ]
             },
-            "individualVariantAttrs": {
+            "IndividualVariantAttrs": {
               "columns": {
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "size": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "variantId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "variantId"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "variantId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "individualVariantAttrs"
+                    "tableName": "IndividualVariantAttrs"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productVariant"
+                    "tableName": "ProductVariant"
                   }
                 }
               ],
@@ -2138,49 +2636,54 @@
                 }
               ]
             },
-            "malaVariantAttrs": {
+            "MalaVariantAttrs": {
               "columns": {
                 "beadCount": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "material": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "variantId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "variantId"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "variantId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "malaVariantAttrs"
+                    "tableName": "MalaVariantAttrs"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productVariant"
+                    "tableName": "ProductVariant"
                   }
                 }
               ],
@@ -2198,64 +2701,64 @@
                 }
               ]
             },
-            "otp": {
+            "Otp": {
               "checks": [
                 {
                   "expression": "\"type\" IN ('EMAIL_VERIFICATION', 'PASSWORD_RESET', 'PHONE_VERIFICATION')",
-                  "name": "otp_type_check_8270ed16",
-                  "prefix": "otp_type_check"
+                  "name": "Otp_type_check_8270ed16",
+                  "prefix": "Otp_type_check"
                 }
               ],
               "columns": {
                 "attempts": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "kind": "literal",
                     "value": 0
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "codeHash": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "consumedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "expiresAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "type": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2266,25 +2769,28 @@
                 },
                 "userId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "Otp_userId_idx_a489d58a"
+                  },
                   "source": {
                     "columns": [
                       "userId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "otp"
+                    "tableName": "Otp"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "user"
+                    "tableName": "User"
                   }
                 }
               ],
@@ -2293,8 +2799,8 @@
                   "columns": [
                     "userId"
                   ],
-                  "name": "otp_userId_idx_a489d58a",
-                  "prefix": "otp_userId_idx",
+                  "name": "Otp_userId_idx_a489d58a",
+                  "prefix": "Otp_userId_idx",
                   "unique": false
                 }
               ],
@@ -2313,60 +2819,60 @@
                 }
               ]
             },
-            "paymentSettings": {
+            "PaymentSettings": {
               "columns": {
                 "codEnabled": {
                   "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
                     "kind": "literal",
                     "value": true
                   },
-                  "nativeType": "bool",
                   "nullable": false
                 },
                 "esewaEnabled": {
                   "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
                     "kind": "literal",
                     "value": true
                   },
-                  "nativeType": "bool",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "khaltiEnabled": {
                   "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
                     "kind": "literal",
                     "value": true
                   },
-                  "nativeType": "bool",
                   "nullable": false
                 },
                 "stripeEnabled": {
                   "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
                     "kind": "literal",
                     "value": true
                   },
-                  "nativeType": "bool",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 }
               },
@@ -2379,51 +2885,51 @@
               },
               "uniques": []
             },
-            "product": {
+            "Product": {
               "checks": [
                 {
                   "expression": "\"type\" IN ('INDIVIDUAL_RUDRAKSHA', 'RUDRAKSHA_MALA')",
-                  "name": "product_type_check_a5397763",
-                  "prefix": "product_type_check"
+                  "name": "Product_type_check_a5397763",
+                  "prefix": "Product_type_check"
                 }
               ],
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "description": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "slug": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "type": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2434,11 +2940,11 @@
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 }
               },
@@ -2448,8 +2954,8 @@
                   "columns": [
                     "type"
                   ],
-                  "name": "product_type_idx_b6b604ea",
-                  "prefix": "product_type_idx",
+                  "name": "Product_type_idx_b6b604ea",
+                  "prefix": "Product_type_idx",
                   "unique": false
                 }
               ],
@@ -2466,76 +2972,79 @@
                 }
               ]
             },
-            "productImage": {
+            "ProductImage": {
               "columns": {
                 "altText": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "position": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "kind": "literal",
                     "value": 0
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "productId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "url": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "ProductImage_productId_idx_5858600a"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "productId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productImage"
+                    "tableName": "ProductImage"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "product"
+                    "tableName": "Product"
                   }
                 }
               ],
@@ -2544,8 +3053,8 @@
                   "columns": [
                     "productId"
                   ],
-                  "name": "productImage_productId_idx_5858600a",
-                  "prefix": "productImage_productId_idx",
+                  "name": "ProductImage_productId_idx_5858600a",
+                  "prefix": "ProductImage_productId_idx",
                   "unique": false
                 }
               ],
@@ -2556,111 +3065,117 @@
               },
               "uniques": []
             },
-            "productVariant": {
+            "ProductVariant": {
               "columns": {
                 "color": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "originId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": true
                 },
                 "price": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "kind": "literal",
                     "value": 0
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "productId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "sku": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "stock": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "kind": "literal",
                     "value": 0
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "weightGrams": {
                   "codecId": "pg/float8@1",
-                  "nativeType": "float8",
+                  "dataType": "pg/float8",
                   "nullable": true
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "ProductVariant_productId_idx_5858600a"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "productId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productVariant"
+                    "tableName": "ProductVariant"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "product"
+                    "tableName": "Product"
                   }
                 },
                 {
+                  "index": {
+                    "name": "ProductVariant_originId_idx_9130075c"
+                  },
                   "source": {
                     "columns": [
                       "originId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productVariant"
+                    "tableName": "ProductVariant"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "rudrakshaOrigin"
+                    "tableName": "RudrakshaOrigin"
                   }
                 }
               ],
@@ -2669,16 +3184,16 @@
                   "columns": [
                     "originId"
                   ],
-                  "name": "productVariant_originId_idx_9130075c",
-                  "prefix": "productVariant_originId_idx",
+                  "name": "ProductVariant_originId_idx_9130075c",
+                  "prefix": "ProductVariant_originId_idx",
                   "unique": false
                 },
                 {
                   "columns": [
                     "productId"
                   ],
-                  "name": "productVariant_productId_idx_5858600a",
-                  "prefix": "productVariant_productId_idx",
+                  "name": "ProductVariant_productId_idx_5858600a",
+                  "prefix": "ProductVariant_productId_idx",
                   "unique": false
                 }
               ],
@@ -2695,62 +3210,67 @@
                 }
               ]
             },
-            "rudrakshaMalaDetail": {
+            "RudrakshaMalaDetail": {
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "mukhi": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": true
                 },
                 "productId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "productId"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "productId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "rudrakshaMalaDetail"
+                    "tableName": "RudrakshaMalaDetail"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "product"
+                    "tableName": "Product"
                   }
                 }
               ],
@@ -2768,43 +3288,43 @@
                 }
               ]
             },
-            "rudrakshaOrigin": {
+            "RudrakshaOrigin": {
               "columns": {
                 "country": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 }
               },
@@ -2824,49 +3344,175 @@
                 }
               ]
             },
-            "storeSettings": {
+            "Section": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('INFO_BLOCK', 'IMAGE_BLOCK', 'LINK_BLOCK', 'HTML_BLOCK')",
+                  "name": "Section_type_check_182e4095",
+                  "prefix": "Section_type_check"
+                }
+              ],
               "columns": {
-                "customerSupportEmail": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "freeShippingThreshold": {
+                "blogId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "primaryTempleConsecrationOrigin": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "standardConsecrationFee": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "storeName": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
+                "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "html": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "image": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "link": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "position": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "SectionType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Section_blogId_idx_47542c9e"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "blogId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Section"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Blog"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "blogId"
+                  ],
+                  "name": "Section_blogId_idx_47542c9e",
+                  "prefix": "Section_blogId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "StoreSettings": {
+              "columns": {
+                "customerSupportEmail": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "freeShippingThreshold": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "primaryTempleConsecrationOrigin": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "standardConsecrationFee": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "storeName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 }
               },
@@ -2879,84 +3525,84 @@
               },
               "uniques": []
             },
-            "user": {
+            "User": {
               "checks": [
                 {
                   "expression": "\"role\" IN ('ADMIN', 'USER')",
-                  "name": "user_role_check_5b1978b5",
-                  "prefix": "user_role_check"
+                  "name": "User_role_check_5b1978b5",
+                  "prefix": "User_role_check"
                 }
               ],
               "columns": {
                 "adminNote": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "email": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "firstName": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "hashedRefreshToken": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "isEmailVerified": {
                   "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
                     "kind": "literal",
                     "value": false
                   },
-                  "nativeType": "bool",
                   "nullable": true
                 },
                 "lastName": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "password": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "phoneNumber": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "role": {
                   "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "default": {
                     "kind": "literal",
                     "value": "USER"
                   },
-                  "nativeType": "text",
                   "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2967,11 +3613,11 @@
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 }
               },
@@ -2990,76 +3636,79 @@
                 }
               ]
             },
-            "variantImage": {
+            "VariantImage": {
               "columns": {
                 "altText": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "position": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "kind": "literal",
                     "value": 0
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "url": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "variantId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "VariantImage_variantId_idx_e16bb45d"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "variantId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "variantImage"
+                    "tableName": "VariantImage"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "productVariant"
+                    "tableName": "ProductVariant"
                   }
                 }
               ],
@@ -3068,8 +3717,8 @@
                   "columns": [
                     "variantId"
                   ],
-                  "name": "variantImage_variantId_idx_e16bb45d",
-                  "prefix": "variantImage_variantId_idx",
+                  "name": "VariantImage_variantId_idx_e16bb45d",
+                  "prefix": "VariantImage_variantId_idx",
                   "unique": false
                 }
               ],
@@ -3082,6 +3731,13 @@
             }
           },
           "valueSet": {
+            "BlogVariant": {
+              "kind": "valueSet",
+              "values": [
+                "STANDARD",
+                "EXTENDED"
+              ]
+            },
             "OtpType": {
               "kind": "valueSet",
               "values": [
@@ -3106,6 +3762,15 @@
                 "RUDRAKSHA_MALA"
               ]
             },
+            "SectionType": {
+              "kind": "valueSet",
+              "values": [
+                "INFO_BLOCK",
+                "IMAGE_BLOCK",
+                "LINK_BLOCK",
+                "HTML_BLOCK"
+              ]
+            },
             "UserRole": {
               "kind": "valueSet",
               "values": [
@@ -3119,11 +3784,13 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a0817dc9e07df28fde443442e96ea245f9a307b8ee293bc259f038d77be5b6ec"
+    "storageHash": "9fff9120650f880eb3710bc63c753128ae7bccf8eee614f5d9ea62ff5c49d789"
   },
   "capabilities": {
     "postgres": {
       "distinctOn": true,
+      "forKeyShare": true,
+      "forNoKeyUpdate": true,
       "jsonAgg": true,
       "lateral": true,
       "limit": true,
@@ -3134,7 +3801,14 @@
       "checkConstraint": true,
       "defaultInInsert": true,
       "enums": true,
+      "forShare": true,
+      "forUpdate": true,
+      "insertOnConflictSkip": true,
+      "insertOnConflictWithoutTarget": true,
       "lateral": true,
+      "lockNowait": true,
+      "lockOf": true,
+      "lockSkipLocked": true,
       "returning": true,
       "scalarList": true
     }

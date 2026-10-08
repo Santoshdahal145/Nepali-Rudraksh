@@ -1,3 +1,5 @@
+// use prisma-8
+
 enum UserRole {
   ADMIN
   USER
@@ -221,4 +223,50 @@ model CartItem {
   @@unique([cartId, variantId])
   @@index([cartId])
   @@index([variantId])
+}
+
+enum BlogVariant {
+  STANDARD
+  EXTENDED
+}
+
+enum SectionType {
+  INFO_BLOCK
+  IMAGE_BLOCK
+  LINK_BLOCK
+  HTML_BLOCK
+}
+
+model Blog {
+  id               Int         @id @default(autoincrement())
+  slug             String      @unique
+  title            String
+  isActive         Boolean     @default(true)
+  isFeatured       Boolean     @default(false)
+  shortDescription String
+  thumbnailImage   String
+  mainDescription  String
+  variant          BlogVariant
+  customTags       String[]    @default([])
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @default(now())
+
+  sections Section[]
+}
+
+model Section {
+  id          Int         @id @default(autoincrement())
+  blogId      Int
+  blog        Blog        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  type        SectionType
+  title       String?
+  description String?
+  image       String?
+  link        String?
+  html        String?
+  position    Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now())
+
+  @@index([blogId])
 }
