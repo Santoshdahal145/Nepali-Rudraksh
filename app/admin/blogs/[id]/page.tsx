@@ -286,7 +286,7 @@ export default function SingleBlogAdminPage() {
           </Card>
 
           {/* Structured Sections (Extended Only) */}
-          {blog.variant === "EXTENDED" ? (
+          {blog.variant === "EXTENDED" && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <div>
@@ -334,23 +334,6 @@ export default function SingleBlogAdminPage() {
                   </div>
                 )}
               </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-dashed bg-muted/15">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2 text-muted-foreground">
-                    <Layers className="size-4" />
-                    Structured Sections Disabled
-                  </CardTitle>
-                  <Badge variant="outline" className="text-xs">
-                    Standard Layout
-                  </Badge>
-                </div>
-                <CardDescription>
-                  This article is published using the Standard layout. Modular content sections are only permitted and rendered on Extended layout articles.
-                </CardDescription>
-              </CardHeader>
             </Card>
           )}
         </div>

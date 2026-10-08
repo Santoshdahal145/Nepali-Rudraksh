@@ -18,6 +18,9 @@ import {
   Code,
   Layers,
   Sparkles,
+  ChevronDown,
+  ChevronUp,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -113,6 +116,16 @@ export default function BlogForm({
       position: s.position ?? index,
     }));
   });
+
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+
+  const toggleSectionCollapse = (tempId: string) => {
+    setCollapsedSections((prev) => ({
+      ...prev,
+      [tempId]: !prev[tempId],
+    }));
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -380,243 +393,443 @@ export default function BlogForm({
             </CardContent>
           </Card>
 
-          {/* Dynamic Sections Card — ONLY shown and enabled for EXTENDED articles */}
-          {formik.values.variant === "EXTENDED" && (
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-3">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Layers className="size-5 text-primary" />
-                    Structured Sections
-                  </CardTitle>
-                  <CardDescription>
-                    Add modular content blocks (Info, Image, Link, HTML)
-                  </CardDescription>
-                </div>
-                <Badge variant="default" className="text-xs uppercase">
-                  {sections.length} Block{sections.length === 1 ? "" : "s"}
-                </Badge>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                {sections.length === 0 ? (
-                  <div className="border border-dashed rounded-lg p-6 text-center text-muted-foreground space-y-2 bg-muted/10">
-                    <Layers className="size-8 mx-auto text-muted-foreground/60" />
-                    <p className="text-sm">No structured sections added yet</p>
-                    <p className="text-xs text-muted-foreground/80">
-                      Use the buttons below to append custom blocks to this article.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                  {sections.map((section, idx) => (
-                    <div
-                      key={section.tempId}
-                      className="border rounded-lg p-4 bg-card/60 shadow-xs space-y-4 transition-all"
+          {/* Layout Variant Selector & Modular Sections Area */}
+          <div className="space-y-4">
+            {/* Layout Variant Switcher */}
+            <div className="rounded-xl border bg-card p-4 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <Layers className="size-4 text-primary" />
+                    <span className="text-sm font-semibold">Article Layout Type</span>
+                    <Badge
+                      variant={formik.values.variant === "EXTENDED" ? "default" : "secondary"}
+                      className="text-[11px] uppercase tracking-wider font-bold"
                     >
-                      {/* Section header bar */}
-                      <div className="flex items-center justify-between border-b pb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-sm">
-                            #{idx + 1}
-                          </span>
-                          <Badge variant="secondary" className="text-xs uppercase font-semibold">
-                            {section.type.replace("_", " ")}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            disabled={idx === 0}
-                            onClick={() => handleMoveSection(idx, "up")}
-                          >
-                            <MoveUp className="size-3.5" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            disabled={idx === sections.length - 1}
-                            onClick={() => handleMoveSection(idx, "down")}
-                          >
-                            <MoveDown className="size-3.5" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            className="text-destructive hover:bg-destructive/10"
-                            onClick={() => handleRemoveSection(section.tempId)}
-                          >
-                            <Trash2 className="size-3.5" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Common Title input */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-muted-foreground">
-                          Section Heading (Optional)
-                        </label>
-                        <Input
-                          placeholder="e.g. Historical Vedic References"
-                          value={section.title}
-                          onChange={(e) =>
-                            handleUpdateSection(section.tempId, {
-                              title: e.target.value,
-                            })
-                          }
-                          className="h-8 text-sm"
-                        />
-                      </div>
-
-                      {/* Type-specific inputs */}
-                      {section.type === "INFO_BLOCK" && (
-                        <div className="space-y-1">
-                          <label className="text-xs font-medium text-muted-foreground">
-                            Text Description
-                          </label>
-                          <textarea
-                            rows={3}
-                            placeholder="Write informational paragraph text..."
-                            value={section.description}
-                            onChange={(e) =>
-                              handleUpdateSection(section.tempId, {
-                                description: e.target.value,
-                              })
-                            }
-                            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
-                          />
-                        </div>
-                      )}
-
-                      {section.type === "IMAGE_BLOCK" && (
-                        <div className="space-y-2">
-                          <label className="text-xs font-medium text-muted-foreground">
-                            Section Image
-                          </label>
-                          <ImagePicker
-                            type="single"
-                            initialUrl={section.existingImageUrl}
-                            onChange={(file) =>
-                              handleUpdateSection(section.tempId, {
-                                imageFile: file,
-                              })
-                            }
-                          />
-                        </div>
-                      )}
-
-                      {section.type === "LINK_BLOCK" && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div className="space-y-1">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Link URL
-                            </label>
-                            <Input
-                              placeholder="https://nepalirudraksh.com/products/..."
-                              value={section.link}
-                              onChange={(e) =>
-                                handleUpdateSection(section.tempId, {
-                                  link: e.target.value,
-                                })
-                              }
-                              className="h-8 text-sm"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Description / Subtitle
-                            </label>
-                            <Input
-                              placeholder="Explore 1 to 21 Mukhi Rudraksha..."
-                              value={section.description}
-                              onChange={(e) =>
-                                handleUpdateSection(section.tempId, {
-                                  description: e.target.value,
-                                })
-                              }
-                              className="h-8 text-sm"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {section.type === "HTML_BLOCK" && (
-                        <div className="space-y-1">
-                          <label className="text-xs font-medium text-muted-foreground">
-                            Rich Content / HTML Block
-                          </label>
-                          <RichTextInput
-                            value={section.html}
-                            onChange={(content) =>
-                              handleUpdateSection(section.tempId, {
-                                html: content,
-                              })
-                            }
-                            placeholder="Enter rich HTML content..."
-                            height="220px"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      {formik.values.variant}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {formik.values.variant === "EXTENDED"
+                      ? "Extended layout enabled: Modular content sections are unlocked and shown below."
+                      : "Standard layout: Modular sections are disabled and hidden. Main rich text body is used."}
+                  </p>
                 </div>
-              )}
 
-              {/* Add block buttons bar */}
-              <div className="pt-2 border-t">
-                <p className="text-xs font-medium text-muted-foreground mb-3">
-                  Append New Section Block:
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Button
+                <div className="inline-flex rounded-lg border bg-muted/40 p-1 shrink-0">
+                  <button
                     type="button"
-                    variant="outline"
-                    size="xs"
-                    className="gap-1.5"
-                    onClick={() => handleAddSection("INFO_BLOCK")}
+                    onClick={() => formik.setFieldValue("variant", "STANDARD")}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                      formik.values.variant === "STANDARD"
+                        ? "bg-background text-foreground shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                   >
-                    <FileText className="size-3.5 text-blue-500" />
-                    + Info Block
-                  </Button>
-                  <Button
+                    Standard
+                  </button>
+                  <button
                     type="button"
-                    variant="outline"
-                    size="xs"
-                    className="gap-1.5"
-                    onClick={() => handleAddSection("IMAGE_BLOCK")}
+                    onClick={() => formik.setFieldValue("variant", "EXTENDED")}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                      formik.values.variant === "EXTENDED"
+                        ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                   >
-                    <ImageIcon className="size-3.5 text-emerald-500" />
-                    + Image Block
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="xs"
-                    className="gap-1.5"
-                    onClick={() => handleAddSection("LINK_BLOCK")}
-                  >
-                    <Link2 className="size-3.5 text-purple-500" />
-                    + Link Block
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="xs"
-                    className="gap-1.5"
-                    onClick={() => handleAddSection("HTML_BLOCK")}
-                  >
-                    <Code className="size-3.5 text-amber-500" />
-                    + HTML Block
-                  </Button>
+                    Extended (Sections)
+                  </button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+
+            {/* Standard Layout Notice (Sections are hidden) */}
+            {formik.values.variant === "STANDARD" && (
+              <div className="border border-dashed rounded-lg p-5 bg-muted/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      Standard Layout
+                    </Badge>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Modular Sections Hidden
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    This article will publish with the cover thumbnail and main rich text only. To add custom info blocks, images, links, or HTML sections, switch to the Extended layout.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formik.setFieldValue("variant", "EXTENDED")}
+                  className="gap-1.5 shrink-0"
+                >
+                  <Layers className="size-3.5 text-primary" />
+                  Enable Extended Layout
+                </Button>
+              </div>
+            )}
+
+            {/* Dynamic Sections Card — ONLY shown and enabled when EXTENDED layout is active */}
+            {formik.values.variant === "EXTENDED" && (
+              <Card className="border-primary/20 shadow-xs">
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Layers className="size-5 text-primary" />
+                      <CardTitle className="text-base">Structured Sections</CardTitle>
+                      <Badge variant="default" className="text-xs font-mono">
+                        {sections.length} {sections.length === 1 ? "Block" : "Blocks"}
+                      </Badge>
+                    </div>
+                    <CardDescription className="text-xs mt-0.5">
+                      Add and manage modular content blocks (Info, Image, Link, HTML)
+                    </CardDescription>
+                  </div>
+
+                  {/* Interactive toggle to Show/Hide Add Section palette */}
+                  <Button
+                    type="button"
+                    variant={showAddMenu ? "secondary" : "default"}
+                    size="sm"
+                    onClick={() => setShowAddMenu((prev) => !prev)}
+                    className="gap-1.5"
+                  >
+                    {showAddMenu ? (
+                      <>
+                        <X className="size-3.5" />
+                        Close Add Section
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="size-3.5" />
+                        Add Section
+                      </>
+                    )}
+                  </Button>
+                </CardHeader>
+
+                <CardContent className="space-y-6 pt-5">
+                  {/* Collapsible Add Section Palette */}
+                  {showAddMenu && (
+                    <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3 transition-all animate-in fade-in slide-in-from-top-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                          Select Section Block Type to Append
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => setShowAddMenu(false)}
+                        >
+                          <X className="size-3.5 text-muted-foreground" />
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleAddSection("INFO_BLOCK")}
+                          className="flex flex-col items-start p-3 rounded-md border bg-card hover:bg-accent/50 hover:border-primary/50 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-md bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                              <FileText className="size-4" />
+                            </div>
+                            <span className="text-xs font-semibold">Info Block</span>
+                          </div>
+                          <span className="text-[11px] text-muted-foreground leading-tight">
+                            Informational text paragraph with optional heading
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAddSection("IMAGE_BLOCK")}
+                          className="flex flex-col items-start p-3 rounded-md border bg-card hover:bg-accent/50 hover:border-primary/50 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                              <ImageIcon className="size-4" />
+                            </div>
+                            <span className="text-xs font-semibold">Image Block</span>
+                          </div>
+                          <span className="text-[11px] text-muted-foreground leading-tight">
+                            Sacred image upload with caption title
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAddSection("LINK_BLOCK")}
+                          className="flex flex-col items-start p-3 rounded-md border bg-card hover:bg-accent/50 hover:border-primary/50 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-md bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                              <Link2 className="size-4" />
+                            </div>
+                            <span className="text-xs font-semibold">Link Block</span>
+                          </div>
+                          <span className="text-[11px] text-muted-foreground leading-tight">
+                            Call-to-action button linking to products/pages
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAddSection("HTML_BLOCK")}
+                          className="flex flex-col items-start p-3 rounded-md border bg-card hover:bg-accent/50 hover:border-primary/50 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                              <Code className="size-4" />
+                            </div>
+                            <span className="text-xs font-semibold">HTML Block</span>
+                          </div>
+                          <span className="text-[11px] text-muted-foreground leading-tight">
+                            Rich formatted HTML or embedded components
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty state when no sections */}
+                  {sections.length === 0 ? (
+                    <div className="border border-dashed rounded-lg p-6 text-center text-muted-foreground space-y-3 bg-muted/10">
+                      <Layers className="size-8 mx-auto text-muted-foreground/60" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium">No modular sections added yet</p>
+                        <p className="text-xs text-muted-foreground/80">
+                          Click &quot;Add Section&quot; above to append structured blocks to this article.
+                        </p>
+                      </div>
+                      {!showAddMenu && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAddMenu(true)}
+                          className="gap-1.5"
+                        >
+                          <Plus className="size-3.5" />
+                          Add First Section
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {sections.map((section, idx) => {
+                        const isCollapsed = Boolean(collapsedSections[section.tempId]);
+
+                        return (
+                          <div
+                            key={section.tempId}
+                            className="border rounded-lg bg-card/60 shadow-xs overflow-hidden transition-all"
+                          >
+                            {/* Section header bar */}
+                            <div className="flex items-center justify-between p-3 bg-muted/20 border-b">
+                              <div
+                                className="flex items-center gap-2 cursor-pointer select-none"
+                                onClick={() => toggleSectionCollapse(section.tempId)}
+                              >
+                                <button
+                                  type="button"
+                                  className="text-muted-foreground hover:text-foreground"
+                                >
+                                  {isCollapsed ? (
+                                    <ChevronDown className="size-4" />
+                                  ) : (
+                                    <ChevronUp className="size-4" />
+                                  )}
+                                </button>
+                                <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-sm">
+                                  #{idx + 1}
+                                </span>
+                                <Badge variant="secondary" className="text-xs uppercase font-semibold">
+                                  {section.type.replace("_", " ")}
+                                </Badge>
+                                {section.title && (
+                                  <span className="text-xs font-medium text-foreground truncate max-w-[200px] sm:max-w-xs">
+                                    &mdash; {section.title}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-1">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  disabled={idx === 0}
+                                  onClick={() => handleMoveSection(idx, "up")}
+                                  title="Move Up"
+                                >
+                                  <MoveUp className="size-3.5" />
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  disabled={idx === sections.length - 1}
+                                  onClick={() => handleMoveSection(idx, "down")}
+                                  title="Move Down"
+                                >
+                                  <MoveDown className="size-3.5" />
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  className="text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleRemoveSection(section.tempId)}
+                                  title="Delete Section"
+                                >
+                                  <Trash2 className="size-3.5" />
+                                </Button>
+                              </div>
+                            </div>
+
+                            {/* Section Content Area (Visible when not collapsed) */}
+                            {!isCollapsed && (
+                              <div className="p-4 space-y-4">
+                                {/* Common Title input */}
+                                <div className="space-y-1">
+                                  <label className="text-xs font-medium text-muted-foreground">
+                                    Section Heading (Optional)
+                                  </label>
+                                  <Input
+                                    placeholder="e.g. Historical Vedic References"
+                                    value={section.title}
+                                    onChange={(e) =>
+                                      handleUpdateSection(section.tempId, {
+                                        title: e.target.value,
+                                      })
+                                    }
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+
+                                {/* Type-specific inputs */}
+                                {section.type === "INFO_BLOCK" && (
+                                  <div className="space-y-1">
+                                    <label className="text-xs font-medium text-muted-foreground">
+                                      Text Description
+                                    </label>
+                                    <textarea
+                                      rows={3}
+                                      placeholder="Write informational paragraph text..."
+                                      value={section.description}
+                                      onChange={(e) =>
+                                        handleUpdateSection(section.tempId, {
+                                          description: e.target.value,
+                                        })
+                                      }
+                                      className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                                    />
+                                  </div>
+                                )}
+
+                                {section.type === "IMAGE_BLOCK" && (
+                                  <div className="space-y-2">
+                                    <label className="text-xs font-medium text-muted-foreground">
+                                      Section Image
+                                    </label>
+                                    <ImagePicker
+                                      type="single"
+                                      initialUrl={section.existingImageUrl}
+                                      onChange={(file) =>
+                                        handleUpdateSection(section.tempId, {
+                                          imageFile: file,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                )}
+
+                                {section.type === "LINK_BLOCK" && (
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="space-y-1">
+                                      <label className="text-xs font-medium text-muted-foreground">
+                                        Link URL
+                                      </label>
+                                      <Input
+                                        placeholder="https://nepalirudraksh.com/products/..."
+                                        value={section.link}
+                                        onChange={(e) =>
+                                          handleUpdateSection(section.tempId, {
+                                            link: e.target.value,
+                                          })
+                                        }
+                                        className="h-8 text-sm"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-xs font-medium text-muted-foreground">
+                                        Description / Subtitle
+                                      </label>
+                                      <Input
+                                        placeholder="Explore 1 to 21 Mukhi Rudraksha..."
+                                        value={section.description}
+                                        onChange={(e) =>
+                                          handleUpdateSection(section.tempId, {
+                                            description: e.target.value,
+                                          })
+                                        }
+                                        className="h-8 text-sm"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                {section.type === "HTML_BLOCK" && (
+                                  <div className="space-y-1">
+                                    <label className="text-xs font-medium text-muted-foreground">
+                                      Rich Content / HTML Block
+                                    </label>
+                                    <RichTextInput
+                                      value={section.html}
+                                      onChange={(content) =>
+                                        handleUpdateSection(section.tempId, {
+                                          html: content,
+                                        })
+                                      }
+                                      placeholder="Enter rich HTML content..."
+                                      height="220px"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+
+                      {/* Bottom quick add button */}
+                      <div className="pt-2 flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          Total {sections.length} section{sections.length === 1 ? "" : "s"} configured
+                        </span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAddMenu(true)}
+                          className="gap-1.5"
+                        >
+                          <Plus className="size-3.5" />
+                          Add Another Section
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
 
         {/* Right Column (1/3): Media & Configuration Settings */}
