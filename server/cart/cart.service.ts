@@ -26,6 +26,8 @@ export interface CartVariantSummary {
     description: string;
     type: string;
     productImages?: Array<{ url: string; altText?: string | null; position: number }>;
+    individualRudrakshaDetail?: { mukhi?: number | null; rashi?: string | null } | null;
+    rudrakshaMalaDetail?: { mukhi?: number | null } | null;
   };
   variantImages?: Array<{ url: string; altText?: string | null; position: number }>;
   individualVariantAttrs?: { size: number } | null;

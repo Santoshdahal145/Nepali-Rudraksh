@@ -6,9 +6,9 @@ import type {
   MergeCartInput,
   SyncCartInput,
 } from "@/server/cart/cart.schema";
-import type { EnrichedCart } from "@/server/cart/cart.service";
+import type { EnrichedCart, EnrichedCartItem, CartVariantSummary } from "@/server/cart/cart.service";
 
-export type { EnrichedCart };
+export type { EnrichedCart, EnrichedCartItem, CartVariantSummary };
 
 export type GetCartParams = {
   cartId?: number;
