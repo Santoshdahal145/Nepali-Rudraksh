@@ -5,6 +5,9 @@ import SunEditor from "suneditor-react";
 import "suneditor/dist/css/suneditor.min.css";
 import type SunEditorCore from "suneditor/src/lib/core";
 import { Style } from "./style";
+import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/Modal";
+import ModalHeader from "@/components/Modal/ModalHeader";
 
 interface SunEditorOptions {
   buttonList?: string[][];
@@ -54,14 +57,15 @@ export const RichTextInput: React.FC<RichTextEditorProps> = ({
       sunEditor.setOptions({ placeholder });
     }
   };
+
   // Handle external value changes (like when editing existing blog)
   useEffect(() => {
     if (isEditorReady && editorRef.current && !hasInitialized && decodedValue) {
-      // Only set content once during initialization
       editorRef.current.setContents(decodedValue);
       setHasInitialized(true);
     }
   }, [isEditorReady, decodedValue, hasInitialized]);
+
   // Reset initialization flag when value is cleared externally
   useEffect(() => {
     if (!value) {
@@ -107,33 +111,32 @@ export const RichTextInput: React.FC<RichTextEditorProps> = ({
     <>
       <Style />
       {isFullScreen ? (
-        <></>
-      ) : (
-        // <Modal
-        //   isOpen={isFullScreen}
-        //   onClose={onCloseFullScreen}
-        //   className="fixed inset-0 z-100 bg-white flex flex-col p-2"
-        // >
-        //   <ModalHeader
-        //     title="Rich Text Full Screen"
-        //     variant="with-title"
-        //     onClose={onCloseFullScreen}
-        //   />
+        <Modal
+          isOpen={isFullScreen}
+          onClose={onCloseFullScreen}
+          className="fixed inset-0 z-50 bg-white dark:bg-neutral-900 flex flex-col p-4 m-0 max-w-none w-screen h-screen rounded-none"
+        >
+          <ModalHeader
+            title="Rich Text Full Screen"
+            variant="with-title"
+            onClose={onCloseFullScreen}
+          />
 
-        //   <div className="flex-1 max-h-screen overflow-y-auto">
-        //     <SunEditor
-        //       key="fullscreen-editor"
-        //       getSunEditorInstance={getSunEditorInstance}
-        //       setOptions={{ ...editorOptions, height: "100%" }}
-        //       setContents={decodedValue}
-        //       onChange={handleChange}
-        //       placeholder={placeholder}
-        //     />
-        //   </div>
-        // </Modal>
+          <div className="flex-1 max-h-[calc(100vh-80px)] overflow-y-auto">
+            <SunEditor
+              key="fullscreen-editor"
+              getSunEditorInstance={getSunEditorInstance}
+              setOptions={{ ...editorOptions, height: "100%", minHeight: "400px" }}
+              setContents={decodedValue}
+              onChange={handleChange}
+              placeholder={placeholder}
+            />
+          </div>
+        </Modal>
+      ) : (
         <div className="sun-editor-container">
           {label && (
-            <label htmlFor={id} className="text-sm font-medium text-gray-700">
+            <label htmlFor={id} className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {label}
             </label>
           )}
@@ -150,12 +153,17 @@ export const RichTextInput: React.FC<RichTextEditorProps> = ({
           />
 
           <div className="flex justify-end my-2">
-            {/* <Button variant="secondary" onClick={onOpenFullScreen}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="xs"
+              onClick={onOpenFullScreen}
+            >
               Full Screen
-            </Button> */}
+            </Button>
           </div>
 
-          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+          {errorMsg && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
         </div>
       )}
     </>

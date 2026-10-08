@@ -100,3 +100,9 @@ export type DashboardResponseType = {
 };
 
 export type SingleSectionType = FieldOutputTypes["public"]["Section"];
+
+export type BlogType = FieldOutputTypes["public"]["Blog"] & {
+  sections?: SingleSectionType[];
+};
+
+export type AllBlogsResponseType = PaginatedResponse<"blogs", BlogType[]>;
