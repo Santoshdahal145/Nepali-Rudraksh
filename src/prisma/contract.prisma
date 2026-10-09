@@ -1,5 +1,4 @@
 // use prisma-8
-
 enum UserRole {
   ADMIN
   USER
@@ -51,6 +50,7 @@ model User {
   accounts           Account[]
   otps               Otp[]
   cart               Cart?
+  orders             Order[]
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @default(now())
 }
@@ -85,13 +85,13 @@ enum ProductType {
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
-  name        String
-  slug        String      @unique
-  description String
-  type        ProductType
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now())
+  id                        Int                        @id @default(autoincrement())
+  name                      String
+  slug                      String                     @unique
+  description               String
+  type                      ProductType
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @default(now())
 
   productVariants           ProductVariant[]
   productImages             ProductImage[]
@@ -102,25 +102,26 @@ model Product {
 }
 
 model ProductVariant {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id                     Int                     @id @default(autoincrement())
+  productId              Int
+  product                Product                 @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  color       String?
-  originId    Int?
-  origin      RudrakshaOrigin? @relation(fields: [originId], references: [id])
-  weightGrams Float?
+  color                  String?
+  originId               Int?
+  origin                 RudrakshaOrigin?        @relation(fields: [originId], references: [id])
+  weightGrams            Float?
 
-  stock     Int      @default(0)
-  price     Int      @default(0)
-  sku       String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  stock                  Int                     @default(0)
+  price                  Int                     @default(0)
+  sku                    String                  @unique
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @default(now())
 
   individualVariantAttrs IndividualVariantAttrs?
   malaVariantAttrs       MalaVariantAttrs?
   variantImages          VariantImage[]
   cartItems              CartItem[]
+  orderItems             OrderItem[]
 
   @@index([productId])
   @@index([originId])
@@ -169,11 +170,11 @@ model VariantImage {
 }
 
 model RudrakshaOrigin {
-  id        Int      @id @default(autoincrement())
-  name      String
-  country   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id              Int              @id @default(autoincrement())
+  name            String
+  country         String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now())
 
   productVariants ProductVariant[]
 
@@ -181,9 +182,9 @@ model RudrakshaOrigin {
 }
 
 model IndividualRudrakshaDetail {
-  id        Int     @id @default(autoincrement())
-  productId Int     @unique
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  productId Int      @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   mukhi     Int
   createdAt DateTime @default(now())
@@ -251,7 +252,7 @@ model Blog {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @default(now())
 
-  sections Section[]
+  sections         Section[]
 }
 
 model Section {
@@ -293,4 +294,69 @@ model ConsultationRequest {
   adminNotes    String?
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @default(now())
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  orderNumber     String        @unique
+
+  userId          Int?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  guestToken      String?       @unique
+
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String
+  shippingCity    String
+
+  subtotal        Int
+  shippingFee     Int           @default(0)
+  totalAmount     Int
+
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   PaymentMethod
+  paymentRef      String?
+
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @default(now())
+
+  items           OrderItem[]
+
+  @@index([userId])
+  @@index([customerEmail])
+  @@index([status])
+}
+
+model OrderItem {
+  id          Int             @id @default(autoincrement())
+  orderId     Int
+  order       Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  variantId   Int?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  productName String
+  sku         String
+  unitPrice   Int
+  quantity    Int             @default(1)
+
+  @@index([orderId])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
