@@ -12,6 +12,7 @@ bunx prisma@latest db update --db $env:DB --dry-run
 bunx prisma@latest db update --db $env:DB
 
 $env:DB="postgresql://postgres:your_new_password@localhost:5432/nepali-rudraksh?schema=public"
+$env:DB="postgresql://neondb_owner:npg_w4UX7PQndgtj@ep-divine-fog-b4j7fpmj-pooler.c-6.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
 
 contract emit — reads your human-written contract.prisma and compiles it into contract.json (the machine-readable schema) and
 contract.d.ts (the TypeScript types your db.orm.public.* client uses). Nothing downstream sees your .prisma edits until you emit.
