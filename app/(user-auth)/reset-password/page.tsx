@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useState,
   useRef,
   useEffect,
@@ -54,7 +55,7 @@ const resetTips = [
   },
 ];
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || "";
 
@@ -454,5 +455,19 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#faf7f2] text-sm text-[#5c3a1e]/60">
+          Loading...
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

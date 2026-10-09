@@ -1039,12 +1039,12 @@ export async function seedProducts() {
         }
 
         // Type-specific variant attrs (1-1)
-        if (product.type === "INDIVIDUAL_RUDRAKSHA") {
+        if (product.type === "INDIVIDUAL_RUDRAKSHA" && "size" in variant) {
           await tx.orm.public.IndividualVariantAttrs.create({
             size: variant.size,
             variantId: createdVariant.id,
           });
-        } else {
+        } else if ("beadCount" in variant && "material" in variant) {
           await tx.orm.public.MalaVariantAttrs.create({
             beadCount: variant.beadCount,
             material: variant.material,

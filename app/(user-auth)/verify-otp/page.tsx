@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useRef,
   useState,
   useEffect,
@@ -49,7 +50,7 @@ const steps = [
   },
 ];
 
-export default function VerifyOtpPage() {
+function VerifyOtpContent() {
   const searchParams = useSearchParams();
 
   const paramsEmail = searchParams.get("email");
@@ -328,5 +329,19 @@ export default function VerifyOtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#faf7f2] text-sm text-[#5c3a1e]/60">
+          Loading...
+        </div>
+      }
+    >
+      <VerifyOtpContent />
+    </Suspense>
   );
 }

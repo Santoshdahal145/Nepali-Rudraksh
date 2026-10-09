@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreditCard, Lock, Store, User } from "lucide-react";
 import SettingsTopHeader from "./SettingsTopHeader";
@@ -9,7 +10,7 @@ import StoreTab from "./StoreTab";
 import PaymentGatewayTab from "./PaymentGatewayTab";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function AdminSettingsPage() {
+function AdminSettingsContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -60,5 +61,19 @@ export default function AdminSettingsPage() {
         <PaymentGatewayTab />
       </Tabs>
     </div>
+  );
+}
+
+export default function AdminSettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs font-medium text-[#5c3a1e]/60">
+          Loading settings...
+        </div>
+      }
+    >
+      <AdminSettingsContent />
+    </Suspense>
   );
 }
