@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import useBlogAdminHook from "@/hooks/tanstack-hooks/useBlogAdmin";
 import { useDebounce } from "@/hooks/useDebounce";
+import BlogsTopHeader from "./BlogsTopHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -72,39 +73,12 @@ export default function AdminBlogsPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-5">
-        <div>
-          <div className="flex items-center gap-2">
-            <BookOpen className="size-6 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">Blog Management</h1>
-          </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Publish, edit, and organize spiritual and knowledge articles
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => getBlogs.refetch()}
-            disabled={getBlogs.isFetching}
-          >
-            <RefreshCw
-              className={`size-4 mr-1.5 ${getBlogs.isFetching ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </Button>
-          <Link href="/admin/blogs/new">
-            <Button size="sm" className="gap-1.5">
-              <Plus className="size-4" />
-              New Blog
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <BlogsTopHeader
+        onRefresh={() => getBlogs.refetch()}
+        isFetching={getBlogs.isFetching}
+      />
 
       {/* Search and Filters */}
       <div className="flex flex-col md:flex-row gap-3 items-center justify-between bg-card p-4 rounded-lg border">

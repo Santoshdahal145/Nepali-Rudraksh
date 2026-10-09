@@ -24,6 +24,7 @@ import {
   Filter,
 } from "lucide-react";
 import { toast } from "sonner";
+import ConsultationsTopHeader from "./ConsultationsTopHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -92,7 +93,7 @@ export default function ConsultationRequestsAdminPage() {
   const { getRequests, updateRequest, deleteRequest } =
     useConsultationRequestHook(page, 10, search, activeStatus);
 
-  const { data, isLoading, isError, refetch } = getRequests;
+  const { data, isLoading, isError, refetch, isFetching } = getRequests;
   const requests = data?.requests || [];
   const pagination = data?.pagination || {
     page: 1,
@@ -150,32 +151,13 @@ export default function ConsultationRequestsAdminPage() {
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">
-                Vedic Consultations
-              </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Manage devotee astrological inquiries, Janma Kundali reviews,
-                and Mukhi guidance requests.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs px-3 py-1 font-mono">
-            {pagination.total} Total Inquiry{pagination.total === 1 ? "" : "s"}
-          </Badge>
-          <Button variant="outline" size="sm" onClick={() => refetch()}>
-            Refresh
-          </Button>
-        </div>
-      </div>
+      <ConsultationsTopHeader
+        totalInquiries={pagination.total}
+        onRefresh={() => refetch()}
+        isFetching={isFetching}
+      />
 
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

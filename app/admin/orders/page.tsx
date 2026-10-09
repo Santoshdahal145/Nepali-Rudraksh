@@ -22,7 +22,7 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
-import Breadcrumbs from "@/components/Breadcrumb";
+import OrdersTopHeader from "./OrdersTopHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -125,7 +125,7 @@ export default function AdminOrdersPage() {
     "desc",
   );
 
-  const { data, isLoading, isError, refetch } = getOrders;
+  const { data, isLoading, isError, refetch, isFetching } = getOrders;
   const orders = data?.orders || [];
   const stats = data?.stats || {
     totalOrders: 0,
@@ -152,37 +152,11 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: "Admin", href: "/admin" },
-          { label: "Orders Management" },
-        ]}
+    <div className="space-y-6 sm:space-y-8">
+      <OrdersTopHeader
+        onRefresh={() => refetch()}
+        isFetching={isFetching}
       />
-
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-900/10 pb-5">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#422006] tracking-tight flex items-center gap-2.5">
-            <ShoppingBag className="w-7 h-7 text-[#92400e]" />
-            Order Management
-          </h1>
-          <p className="text-sm text-[#78350f]/80 mt-1">
-            Track, process, and manage both devotee accounts and guest customer orders.
-          </p>
-        </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          className="self-start sm:self-auto border-amber-900/20 text-[#713f12] hover:bg-amber-100/50"
-        >
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh Orders
-        </Button>
-      </div>
 
       {/* Statistical Overview Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
