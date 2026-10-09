@@ -13,9 +13,7 @@ export async function seedAdmin() {
   }
 
   // Check whether the admin already exists
-  const existingAdmin = await db.orm.public.User.findUnique({
-    where: { email },
-  });
+  const existingAdmin = await db.orm.public.User.where({ email }).first();
 
   if (existingAdmin) {
     console.log(`Admin already exists: ${existingAdmin.email}. Skipping seed.`);
@@ -29,14 +27,12 @@ export async function seedAdmin() {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const admin = await db.orm.public.User.create({
-    data: {
-      email,
-      firstName,
-      lastName,
-      phoneNumber,
-      password: hashedPassword,
-      role: "ADMIN",
-    },
+    email,
+    firstName,
+    lastName,
+    phoneNumber,
+    password: hashedPassword,
+    role: "ADMIN",
   });
 
   console.log(`Admin seeded: ${admin.email}`);
