@@ -42,7 +42,13 @@ import {
 
 const statusConfig: Record<
   ConsultationStatus,
-  { label: string; color: string; bg: string; border: string; icon: React.ElementType }
+  {
+    label: string;
+    color: string;
+    bg: string;
+    border: string;
+    icon: React.ElementType;
+  }
 > = {
   PENDING: {
     label: "Pending Review",
@@ -77,20 +83,23 @@ const statusConfig: Record<
 export default function ConsultationRequestsAdminPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ConsultationStatus | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<ConsultationStatus | "ALL">(
+    "ALL",
+  );
 
   const activeStatus = statusFilter === "ALL" ? undefined : statusFilter;
 
-  const { getRequests, updateRequest, deleteRequest } = useConsultationRequestHook(
-    page,
-    10,
-    search,
-    activeStatus,
-  );
+  const { getRequests, updateRequest, deleteRequest } =
+    useConsultationRequestHook(page, 10, search, activeStatus);
 
   const { data, isLoading, isError, refetch } = getRequests;
   const requests = data?.requests || [];
-  const pagination = data?.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 };
+  const pagination = data?.pagination || {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+  };
 
   const handleStatusChange = async (
     id: number,
@@ -103,15 +112,25 @@ export default function ConsultationRequestsAdminPage() {
         id,
         data: { status: newStatus },
       });
-      toast.success(`Request #${id} marked as ${statusConfig[newStatus].label}`);
+      toast.success(
+        `Request #${id} marked as ${statusConfig[newStatus].label}`,
+      );
     } catch {
       toast.error("Failed to update status");
     }
   };
 
-  const handleDelete = async (id: number, devoteeName: string, e: React.MouseEvent) => {
+  const handleDelete = async (
+    id: number,
+    devoteeName: string,
+    e: React.MouseEvent,
+  ) => {
     e.stopPropagation();
-    if (window.confirm(`Are you sure you want to delete the consultation request for ${devoteeName}?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the consultation request for ${devoteeName}?`,
+      )
+    ) {
       try {
         await deleteRequest.mutateAsync({ id });
         toast.success("Consultation request deleted successfully");
@@ -136,15 +155,13 @@ export default function ConsultationRequestsAdminPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
-              <Sparkles className="size-5" />
-            </span>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 Vedic Consultations
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Manage devotee astrological inquiries, Janma Kundali reviews, and Mukhi guidance requests.
+                Manage devotee astrological inquiries, Janma Kundali reviews,
+                and Mukhi guidance requests.
               </p>
             </div>
           </div>
@@ -213,7 +230,8 @@ export default function ConsultationRequestsAdminPage() {
             Failed to Load Consultations
           </CardTitle>
           <CardDescription className="text-xs mt-1">
-            An error occurred while fetching consultation requests. Please try again.
+            An error occurred while fetching consultation requests. Please try
+            again.
           </CardDescription>
           <div className="mt-4">
             <Button size="sm" variant="outline" onClick={() => refetch()}>
@@ -227,7 +245,9 @@ export default function ConsultationRequestsAdminPage() {
             <div className="mx-auto size-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center">
               <Sparkles className="size-6" />
             </div>
-            <h3 className="text-base font-bold">No Consultation Requests Found</h3>
+            <h3 className="text-base font-bold">
+              No Consultation Requests Found
+            </h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">
               {search || statusFilter !== "ALL"
                 ? "No inquiries matched your current filter criteria. Try adjusting your search."
@@ -308,7 +328,11 @@ export default function ConsultationRequestsAdminPage() {
 
                     <div className="flex items-center gap-1">
                       <Link href={`/admin/consultation-requests/${req.id}`}>
-                        <Button variant="outline" size="xs" className="gap-1.5 text-xs">
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          className="gap-1.5 text-xs"
+                        >
                           <Eye className="size-3.5" />
                           View
                         </Button>
@@ -370,7 +394,10 @@ export default function ConsultationRequestsAdminPage() {
                       <div className="flex items-center gap-2 text-foreground">
                         <Calendar className="size-3.5 text-amber-600 shrink-0" />
                         <span>
-                          DOB: <span className="font-medium">{req.dob || "Not provided"}</span>
+                          DOB:{" "}
+                          <span className="font-medium">
+                            {req.dob || "Not provided"}
+                          </span>
                         </span>
                         {req.tob && (
                           <span className="text-muted-foreground">
@@ -419,22 +446,27 @@ export default function ConsultationRequestsAdminPage() {
                     <span className="text-muted-foreground text-[11px] mr-1">
                       Set Status:
                     </span>
-                    {(["PENDING", "CONTACTED", "COMPLETED", "CANCELLED"] as const).map(
-                      (st) => (
-                        <button
-                          key={st}
-                          type="button"
-                          onClick={(e) => handleStatusChange(req.id, st, e)}
-                          className={`px-2 py-1 rounded-md text-[11px] font-semibold border transition-all ${
-                            req.status === st
-                              ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                              : "bg-background text-muted-foreground hover:bg-muted border-border"
-                          }`}
-                        >
-                          {statusConfig[st].label.split(" ")[0]}
-                        </button>
-                      ),
-                    )}
+                    {(
+                      [
+                        "PENDING",
+                        "CONTACTED",
+                        "COMPLETED",
+                        "CANCELLED",
+                      ] as const
+                    ).map((st) => (
+                      <button
+                        key={st}
+                        type="button"
+                        onClick={(e) => handleStatusChange(req.id, st, e)}
+                        className={`px-2 py-1 rounded-md text-[11px] font-semibold border transition-all ${
+                          req.status === st
+                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                            : "bg-background text-muted-foreground hover:bg-muted border-border"
+                        }`}
+                      >
+                        {statusConfig[st].label.split(" ")[0]}
+                      </button>
+                    ))}
                   </div>
 
                   <Link
@@ -452,7 +484,8 @@ export default function ConsultationRequestsAdminPage() {
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-between pt-6 border-t">
               <span className="text-xs text-muted-foreground">
-                Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+                Showing page {pagination.page} of {pagination.totalPages} (
+                {pagination.total} total)
               </span>
 
               <div className="flex items-center gap-2">

@@ -55,12 +55,7 @@ const navItems = [
     icon: Users,
     badge: null,
   },
-  {
-    name: "Home Control",
-    href: "/admin/home-control",
-    icon: Sliders,
-    badge: "CMS",
-  },
+
   {
     name: "Settings",
     href: "/admin/settings",

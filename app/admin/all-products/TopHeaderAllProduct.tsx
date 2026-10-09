@@ -7,11 +7,6 @@ export default function TopHeaderAllProduct() {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-6 shadow-xs">
       <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Badge variant="gold" className="text-[10px]">
-            Inventory Management
-          </Badge>
-        </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#422006]">
           All Products
         </h1>

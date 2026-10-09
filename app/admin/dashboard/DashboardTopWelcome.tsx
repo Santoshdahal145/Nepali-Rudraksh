@@ -7,14 +7,6 @@ export default function DashboardTopWelcome() {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-amber-900/10 bg-linear-to-r from-amber-100/70 via-orange-50/50 to-amber-50 p-5 sm:p-7 shadow-xs">
       <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <Badge
-            variant="gold"
-            className="text-[10px] uppercase tracking-wider"
-          >
-            Live Business Intelligence
-          </Badge>
-        </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#422006]">
           Welcome to Temple Administration 🌿
         </h1>
@@ -29,15 +21,6 @@ export default function DashboardTopWelcome() {
           <Button className="h-10 gap-1.5 bg-[#713f12] text-xs font-bold text-white shadow-xs hover:bg-[#5c330e]">
             <Plus className="h-4 w-4" />
             Add Product
-          </Button>
-        </Link>
-        <Link href="/admin/home-control">
-          <Button
-            variant="outline"
-            className="h-10 gap-1.5 border-amber-900/20 bg-white text-xs font-bold text-[#713f12] hover:bg-amber-50"
-          >
-            <Sliders className="h-4 w-4" />
-            Home Control
           </Button>
         </Link>
       </div>

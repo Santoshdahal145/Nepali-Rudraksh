@@ -35,8 +35,11 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
     if (pathname === "/admin/orders") return "Orders Management";
     if (pathname.startsWith("/admin/all-users/")) return "Devotee Profile";
     if (pathname === "/admin/all-users") return "Devotees & Users";
-    if (pathname === "/admin/home-control")
-      return "Homepage CMS & Storefront Control";
+    if (pathname.startsWith("/admin/blogs")) return "Blogs";
+    if (pathname.startsWith("/admin/consultation-requests/"))
+      return "Consultation Inspector";
+    if (pathname === "/admin/consultation-requests")
+      return "Consultation Requests";
     if (pathname === "/admin/settings") return "System & Store Settings";
     return "Admin Portal";
   };
@@ -73,18 +76,6 @@ export function AdminHeader({ onOpenMobileMenu }: AdminHeaderProps) {
 
       {/* Right: Actions, Search, Notifications, Profile */}
       <div className="flex items-center gap-2.5 sm:gap-4">
-        {/* Quick Search */}
-        <div className="relative hidden md:block w-64">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search orders, users, beads..."
-            value={globalSearch}
-            onChange={(e) => setGlobalSearch(e.target.value)}
-            className="h-9 pl-9 text-xs border-amber-900/15 focus-visible:ring-amber-700 bg-white"
-          />
-        </div>
-
         {/* View Store Button */}
         <Link
           href="/"
