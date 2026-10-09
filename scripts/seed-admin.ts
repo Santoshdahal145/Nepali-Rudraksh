@@ -12,26 +12,30 @@ export async function seedAdmin() {
     throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be defined in .env");
   }
 
+  // Check whether the admin already exists
+  const existingAdmin = await db.orm.public.User.findUnique({
+    where: { email },
+  });
+
+  if (existingAdmin) {
+    console.log(`Admin already exists: ${existingAdmin.email}. Skipping seed.`);
+    return;
+  }
+
   if (password.length < 8) {
     throw new Error("Admin password must be at least 8 characters.");
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const admin = await db.orm.public.User.upsert({
-    create: {
+  const admin = await db.orm.public.User.create({
+    data: {
       email,
       firstName,
       lastName,
       phoneNumber,
       password: hashedPassword,
       role: "ADMIN",
-    },
-    update: {
-      password: hashedPassword,
-      firstName,
-      lastName,
-      phoneNumber,
     },
   });
 
