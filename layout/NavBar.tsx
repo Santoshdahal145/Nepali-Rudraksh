@@ -332,18 +332,8 @@ export default function NavBar() {
           </Link>
         </nav>
 
-        {/* Desktop Actions: Search, Currency, Cart, Account, Shop Now */}
+        {/* Desktop Actions: Currency, Cart, Account, Shop Now */}
         <div className="flex items-center gap-2 xl:gap-2.5">
-          {/* Search Trigger */}
-          <button
-            type="button"
-            onClick={() => setSearchOpen(true)}
-            aria-label="Search items"
-            className="flex h-9.5 w-9.5 items-center justify-center rounded-full text-[#713f12]/80 hover:bg-amber-50 hover:text-[#713f12] transition-all cursor-pointer"
-          >
-            <Search className="size-4.5" />
-          </button>
-
           {/* Currency Selector */}
           <CurrencySelector variant="desktop" />
 
