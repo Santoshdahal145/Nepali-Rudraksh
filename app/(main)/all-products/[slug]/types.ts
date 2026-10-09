@@ -47,3 +47,15 @@ export interface ProductDetailHookReturn {
   handleBuyNow: () => Promise<void>;
   handleShare: () => void;
 }
+
+export interface ProductDetailContentProps {
+  product: ProductType;
+  similarProducts?: ProductType[];
+}
+
+export interface SimilarProductsSectionProps {
+  products: ProductType[];
+  title?: string;
+  subtitle?: string;
+}
+

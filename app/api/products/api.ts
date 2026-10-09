@@ -229,6 +229,17 @@ const getPublicProductBySlug = (slug: string): ApiRequestType => ({
   showToast: false,
 });
 
+/** GET /api/products/public/[slug]/similar — Fetch similar products according to current slug */
+const getSimilarProductsAccordingToCurrentSlug = (
+  slug: string,
+  params?: { limit?: number },
+): ApiRequestType => ({
+  method: "get",
+  route: `/products/public/${slug}/similar`,
+  params,
+  showToast: false,
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Exports
 // ─────────────────────────────────────────────────────────────────────────────
@@ -238,6 +249,8 @@ export const productApi = {
   getProductById,
   getPublicProducts,
   getPublicProductBySlug,
+  getSimilarProductsAccordingToCurrentSlug,
+  getSimilarProducts: getSimilarProductsAccordingToCurrentSlug,
   createProduct,
   updateProduct,
   deleteProduct,

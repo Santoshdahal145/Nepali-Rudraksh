@@ -4,12 +4,11 @@ import ProductDetailPageError from "./ProductDetailPageError";
 import ProductDetailContent from "./ProductDetailContent";
 import { ProductDetailPageProps } from "./types";
 
-export async function generateMetadata({
-  params,
-}: ProductDetailPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
+/** Fetch primary product by slug with resilient fallback */
+async function getProduct(
+  slug: string,
+  baseUrl: string,
+): Promise<ProductType | undefined> {
   try {
     const res = await fetch(`${baseUrl}/api/products/public/${slug}`, {
       next: { revalidate: 60, tags: ["products", `product-${slug}`] },
@@ -17,7 +16,78 @@ export async function generateMetadata({
     });
 
     if (res.ok) {
-      const product: ProductType = await res.json();
+      return await res.json();
+    }
+  } catch (error) {
+    console.error(`Error fetching product for slug "${slug}":`, error);
+  }
+
+  // Database fallback if internal HTTP fetch fails
+  try {
+    const { getSingleProductBySlug } = await import(
+      "@/server/product/product.service"
+    );
+    const fallback = await getSingleProductBySlug(slug);
+    if (fallback) {
+      return JSON.parse(JSON.stringify(fallback)) as ProductType;
+    }
+  } catch (err) {
+    console.error(`Fallback error fetching product "${slug}":`, err);
+  }
+
+  return undefined;
+}
+
+/** Fetch similar products based on the current product's slug */
+async function getSimilarProducts(
+  slug: string,
+  baseUrl: string,
+): Promise<ProductType[]> {
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/products/public/${slug}/similar?limit=4`,
+      {
+        next: { revalidate: 60, tags: ["products", `product-similar-${slug}`] },
+        headers: { Accept: "application/json" },
+      },
+    );
+
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (error) {
+    console.error(`Error fetching similar products for slug "${slug}":`, error);
+  }
+
+  // Database fallback if internal HTTP fetch fails
+  try {
+    const { getSimilarProductsAccordingToCurrentSlug } = await import(
+      "@/server/product/product.service"
+    );
+    const fallback = await getSimilarProductsAccordingToCurrentSlug(slug, 4);
+    if (fallback) {
+      return JSON.parse(JSON.stringify(fallback)) as ProductType[];
+    }
+  } catch (err) {
+    console.error(
+      `Fallback error fetching similar products for "${slug}":`,
+      err,
+    );
+  }
+
+  return [];
+}
+
+export async function generateMetadata({
+  params,
+}: ProductDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  try {
+    const product = await getProduct(slug, baseUrl);
+
+    if (product) {
       const primaryImage = product.productImages?.[0]?.url;
       const mukhi =
         product.individualRudrakshaDetail?.mukhi ??
@@ -74,30 +144,21 @@ export default async function SingleProductPage({
   params,
 }: ProductDetailPageProps) {
   const { slug } = await params;
-
-  let product: ProductType | undefined;
-
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const endpoint = `${baseUrl}/api/products/public/${slug}`;
 
-  try {
-    const fetchResponse = await fetch(endpoint, {
-      next: { revalidate: 60, tags: ["products", `product-${slug}`] },
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    if (fetchResponse.ok) {
-      product = await fetchResponse.json();
-    }
-  } catch (error) {
-    console.error(`Error fetching product by slug "${slug}":`, error);
-  }
+  const [product, similarProducts] = await Promise.all([
+    getProduct(slug, baseUrl),
+    getSimilarProducts(slug, baseUrl),
+  ]);
 
   if (!product) {
     return <ProductDetailPageError slug={slug} />;
   }
 
-  return <ProductDetailContent product={product} />;
+  return (
+    <ProductDetailContent
+      product={product}
+      similarProducts={similarProducts}
+    />
+  );
 }

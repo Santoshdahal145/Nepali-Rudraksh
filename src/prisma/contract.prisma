@@ -360,3 +360,11 @@ enum PaymentStatus {
   FAILED
   REFUNDED
 }
+
+model NewsLetterSubscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}

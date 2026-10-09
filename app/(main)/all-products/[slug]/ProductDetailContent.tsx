@@ -6,14 +6,13 @@ import ProductImageGallery from "./ProductImageGallery";
 import ProductPurchaseCard from "./ProductPurchaseCard";
 import ProductSpecifications from "./ProductSpecifications";
 import ProductTrustBanner from "./ProductTrustBanner";
+import SimilarProductsSection from "./SimilarProductsSection";
+import { ProductDetailContentProps } from "./types";
 import { useProductDetail } from "./useProductDetail";
-
-interface ProductDetailContentProps {
-  product: ProductType;
-}
 
 export default function ProductDetailContent({
   product,
+  similarProducts = [],
 }: ProductDetailContentProps) {
   const detail = useProductDetail(product);
 
@@ -61,6 +60,10 @@ export default function ProductDetailContent({
           product={product}
           selectedVariant={detail.selectedVariant}
         />
+
+        {similarProducts.length > 0 && (
+          <SimilarProductsSection products={similarProducts} />
+        )}
 
         <ProductTrustBanner />
       </main>

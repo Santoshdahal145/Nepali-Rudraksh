@@ -156,6 +156,75 @@ export async function getSingleProductBySlug(slug: string) {
 }
 
 /**
+ * Fetch similar products based on the current product's slug
+ * Prioritizes products with the same type and closest mukhi, excluding the current product
+ */
+export async function getSimilarProductsAccordingToCurrentSlug(
+  slug: string,
+  limit: number = 4,
+) {
+  const currentProduct = await getSingleProductBySlug(slug);
+  if (!currentProduct) {
+    return [];
+  }
+
+  const allProducts = await db.orm.public.Product.include("individualRudrakshaDetail")
+    .include("rudrakshaMalaDetail")
+    .include("productImages", (img) => img.orderBy((i) => i.position.asc()))
+    .include("productVariants", (pv) =>
+      pv
+        .include("individualVariantAttrs")
+        .include("malaVariantAttrs")
+        .include("origin")
+        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc())),
+    )
+    .orderBy((p) => p.createdAt.desc())
+    .all();
+
+  // Exclude current product
+  const otherProducts = allProducts.filter((p) => p.id !== currentProduct.id);
+
+  const currentMukhi =
+    currentProduct.type === "INDIVIDUAL_RUDRAKSHA"
+      ? currentProduct.individualRudrakshaDetail?.mukhi
+      : currentProduct.rudrakshaMalaDetail?.mukhi;
+
+  // Rank products:
+  // 1. Same product type
+  // 2. Proximity in mukhi count (if available)
+  // 3. Newest first (already ordered by createdAt desc)
+  const sorted = [...otherProducts].sort((a, b) => {
+    const aTypeMatch = a.type === currentProduct.type ? 1 : 0;
+    const bTypeMatch = b.type === currentProduct.type ? 1 : 0;
+    if (aTypeMatch !== bTypeMatch) {
+      return bTypeMatch - aTypeMatch;
+    }
+
+    if (currentMukhi !== undefined && currentMukhi !== null) {
+      const aMukhi =
+        a.type === "INDIVIDUAL_RUDRAKSHA"
+          ? a.individualRudrakshaDetail?.mukhi
+          : a.rudrakshaMalaDetail?.mukhi;
+      const bMukhi =
+        b.type === "INDIVIDUAL_RUDRAKSHA"
+          ? b.individualRudrakshaDetail?.mukhi
+          : b.rudrakshaMalaDetail?.mukhi;
+
+      const aDiff = aMukhi != null ? Math.abs(aMukhi - currentMukhi) : 999;
+      const bDiff = bMukhi != null ? Math.abs(bMukhi - currentMukhi) : 999;
+
+      if (aDiff !== bDiff) {
+        return aDiff - bDiff;
+      }
+    }
+
+    return 0;
+  });
+
+  return sorted.slice(0, limit);
+}
+
+/**
  * Admin: Fetch all products
  */
 export async function getAllProductsAdmin(
