@@ -5,6 +5,8 @@ import {
   CreateProductVariantInput,
   UpdateProductVariantInput,
   GetProductsQueryInput,
+  GetFeaturedProductsQueryInput,
+  GetTopSellingProductsQueryInput,
 } from "./product.schema";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -222,6 +224,114 @@ export async function getSimilarProductsAccordingToCurrentSlug(
   });
 
   return sorted.slice(0, limit);
+}
+
+/**
+ * Fetch featured products for the storefront.
+ * Can filter by product type and limit the result count (default: 8).
+ */
+export async function getFeaturedProducts(
+  params: GetFeaturedProductsQueryInput = { limit: 8 },
+) {
+  const limit = params.limit && params.limit > 0 ? params.limit : 8;
+
+  let collection = db.orm.public.Product
+    .include("individualRudrakshaDetail")
+    .include("rudrakshaMalaDetail")
+    .include("productImages", (img) => img.orderBy((i) => i.position.asc()))
+    .include("productVariants", (pv) =>
+      pv
+        .include("individualVariantAttrs")
+        .include("malaVariantAttrs")
+        .include("origin")
+        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc())),
+    )
+    .orderBy((p) => p.createdAt.desc());
+
+  if (params.type) {
+    collection = collection.where({ type: params.type });
+  }
+
+  const products = await collection.all();
+  return products.slice(0, limit);
+}
+
+/**
+ * Fetch top selling products based on order volumes, falling back to newest products.
+ * Limits the result count (default: 4).
+ */
+export async function getTopSellingProducts(
+  params: GetTopSellingProductsQueryInput = { limit: 4 },
+) {
+  const limit = params.limit && params.limit > 0 ? params.limit : 4;
+
+  const allProducts = await db.orm.public.Product
+    .include("individualRudrakshaDetail")
+    .include("rudrakshaMalaDetail")
+    .include("productImages", (img) => img.orderBy((i) => i.position.asc()))
+    .include("productVariants", (pv) =>
+      pv
+        .include("individualVariantAttrs")
+        .include("malaVariantAttrs")
+        .include("origin")
+        .include("variantImages", (vi) => vi.orderBy((i) => i.position.asc())),
+    )
+    .orderBy((p) => p.createdAt.desc())
+    .all();
+
+  // Aggregate sales count from OrderItems
+  const salesByVariant = new Map<number, number>();
+  const salesByName = new Map<string, number>();
+
+  try {
+    const orderItems = await db.orm.public.OrderItem.all();
+    for (const item of orderItems) {
+      if (item.variantId) {
+        salesByVariant.set(
+          item.variantId,
+          (salesByVariant.get(item.variantId) || 0) + (item.quantity || 1),
+        );
+      }
+      if (item.productName) {
+        const key = item.productName.trim().toLowerCase();
+        salesByName.set(
+          key,
+          (salesByName.get(key) || 0) + (item.quantity || 1),
+        );
+      }
+    }
+  } catch (err) {
+    console.warn("Could not query OrderItems for top selling products:", err);
+  }
+
+  const productsWithSales = allProducts.map((prod) => {
+    let totalSales = 0;
+    if (prod.productVariants) {
+      for (const variant of prod.productVariants) {
+        totalSales += salesByVariant.get(variant.id) || 0;
+      }
+    }
+    const nameSales = salesByName.get(prod.name.trim().toLowerCase()) || 0;
+    const finalSales = Math.max(totalSales, nameSales);
+
+    return {
+      product: prod,
+      salesCount: finalSales,
+    };
+  });
+
+  // Sort primarily by salesCount desc, secondary by createdAt desc
+  productsWithSales.sort((a, b) => {
+    if (b.salesCount !== a.salesCount) {
+      return b.salesCount - a.salesCount;
+    }
+    return (
+      new Date(b.product.createdAt).getTime() -
+      new Date(a.product.createdAt).getTime()
+    );
+  });
+
+  return productsWithSales.slice(0, limit).map((item) => item.product);
 }
 
 /**

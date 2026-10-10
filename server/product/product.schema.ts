@@ -144,3 +144,19 @@ export const getProductsQuerySchema = z.object({
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 export type GetProductsQueryInput = z.infer<typeof getProductsQuerySchema>;
+
+export const getFeaturedProductsQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(50).default(8),
+  type: ProductTypeEnum.optional(),
+});
+export type GetFeaturedProductsQueryInput = z.infer<
+  typeof getFeaturedProductsQuerySchema
+>;
+
+export const getTopSellingProductsQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(50).default(4),
+});
+export type GetTopSellingProductsQueryInput = z.infer<
+  typeof getTopSellingProductsQuerySchema
+>;
+

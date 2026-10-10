@@ -240,6 +240,27 @@ const getSimilarProductsAccordingToCurrentSlug = (
   showToast: false,
 });
 
+/** GET /api/products/featured — Fetch featured products */
+const getFeaturedProducts = (params?: {
+  limit?: number;
+  type?: ProductType;
+}): ApiRequestType => ({
+  method: "get",
+  route: "/products/featured",
+  params,
+  showToast: false,
+});
+
+/** GET /api/products/top-selling — Fetch top selling products */
+const getTopSellingProducts = (params?: {
+  limit?: number;
+}): ApiRequestType => ({
+  method: "get",
+  route: "/products/top-selling",
+  params,
+  showToast: false,
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Exports
 // ─────────────────────────────────────────────────────────────────────────────
@@ -251,6 +272,8 @@ export const productApi = {
   getPublicProductBySlug,
   getSimilarProductsAccordingToCurrentSlug,
   getSimilarProducts: getSimilarProductsAccordingToCurrentSlug,
+  getFeaturedProducts,
+  getTopSellingProducts,
   createProduct,
   updateProduct,
   deleteProduct,
