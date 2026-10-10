@@ -1,13 +1,61 @@
 "use client";
 
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import appLogo from "@/assets/nepali-rudraksh-logo.png";
+import { toast } from "sonner";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        toast.error(
+          data?.error || "Failed to subscribe. Please try again.",
+        );
+        return;
+      }
+
+      toast.success(
+        data?.message ||
+          "Subscribed successfully! Welcome to the Sacred Circle.",
+      );
+      setEmail("");
+    } catch {
+      toast.error("Network error. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <footer className="relative border-t border-amber-900/10 bg-[#2d1a0e] text-amber-100/90 overflow-hidden">
       {/* Background Ambience / Glow */}
@@ -32,17 +80,34 @@ export default function Footer() {
             </div>
 
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={handleSubscribe}
               className="flex w-full max-w-md flex-col gap-2 xs:flex-row"
             >
               <Input
                 type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
                 placeholder="Enter your email"
-                className="h-10 pl-2.5 rounded-lg sm:h-11 border-white/15 bg-white/10  placeholder:text-amber-200/40 focus-visible:ring-amber-400 text-xs sm:text-sm"
+                className="h-10 pl-2.5 rounded-lg sm:h-11 border-white/15 bg-white/10 placeholder:text-amber-200/40 focus-visible:ring-amber-400 text-xs sm:text-sm text-white"
               />
-              <Button className="h-10 rounded-lg sm:h-11 shrink-0 bg-amber-400 text-xs sm:text-sm font-bold text-[#422006] hover:bg-amber-300">
-                Subscribe
-                <ArrowRight className="ml-1.5 h-3.5 w-3.5 sm:ml-2 sm:h-4 sm:w-4" />
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="h-10 rounded-lg sm:h-11 shrink-0 bg-amber-400 text-xs sm:text-sm font-bold text-[#422006] hover:bg-amber-300 cursor-pointer disabled:opacity-60"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin sm:mr-2 sm:h-4 sm:w-4" />
+                    <span>Subscribing...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Subscribe</span>
+                    <ArrowRight className="ml-1.5 h-3.5 w-3.5 sm:ml-2 sm:h-4 sm:w-4" />
+                  </>
+                )}
               </Button>
             </form>
           </div>
